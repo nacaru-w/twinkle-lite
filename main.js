@@ -4,7 +4,7 @@ mw.loader.load( 'https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-mor
 
 console.log("Loading DeletionRequestMaker");
 
-var listOptions = [
+let listOptions = [
 	{ code:'B', name:'Biografías'},
 	{ code:'CAT', name:'Categorías'},
 	{ code:'D', name:'Deportes y juegos'},
@@ -21,20 +21,20 @@ var listOptions = [
 ];
 
 function getCategoryOptions() {
-	var categoryOptions = [];
-	for (var category of listOptions){
-		var option = {type:'option', value: category.code, label:category.name};
+	let categoryOptions = [];
+	for (let category of listOptions){
+		let option = {type:'option', value: category.code, label:category.name};
 		categoryOptions.push(option);
 	}
 	return categoryOptions;
 }
 
 function createWindow() {
-	var Window = new Morebits.simpleWindow(620, 530);
+	let Window = new Morebits.simpleWindow(620, 530);
 	Window.setTitle('Consulta de borrado');
 	Window.setScriptName('Deletion Request Maker');
 	Window.addFooterLink('Política de consultas de borrado', 'Wikipedia:Consultas_de_borrado_mediante_argumentación');
-	var form = new Morebits.quickForm(submitMessage);
+	let form = new Morebits.quickForm(submitMessage);
 	form.append({
 		type: 'textarea',
 		name: 'reason',
@@ -50,34 +50,60 @@ function createWindow() {
 				label: 'Selecciona la categoría de la página:',
 				list: getCategoryOptions()
 			});
-	var result = form.render();
+	let result = form.render();
 	Window.setContent(result);
 	Window.display();
 }
 
 function submitMessage(e) {
-	var form = e.target;
-	var input = Morebits.quickForm.getInputData(form);
+	let form = e.target;
+	let input = Morebits.quickForm.getInputData(form);
 	if (input.reason === ``) {
 		alert("No se ha establecido un motivo.");
 	} else {
-		alert(buildDeletionTemplate(input.category, input.reason));
-		alert(buildEditSummaryMessage(mw.config.get('wgPageName')));
+//		alert(buildDeletionTemplate(input.category, input.reason));
+        if (window.confirm(`Esto creará una consulta de borrado para el artículo ${mw.config.get('wgPageName')}, ¿estás seguro?`)) {
+            new mw.Api().edit(
+                mw.config.get('wgPageName'),
+                buildEditDRM
+            )
+            .then( function () {
+                console.log( 'Saved!' );
+                location.reload();
+            } );
+        }
+
 	}
 }
 
+// function that builds the text to be inserted in the new DR page.
 function buildDeletionTemplate(category, reason) {
 	return `{{sust:cdb2|pg={{sust:SUBPAGENAME}}|cat=${category}|texto=${reason}|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}}} ~~~~`
 }
 
+//function that builds the text for the edit summary.
 function buildEditSummaryMessage(pagename) {
-	return `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${pagename}]] mediante ''DeletionRequestMaker''.`
+	return `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${pagename}]] mediante DeletionRequestMaker.`
+}
+
+//function that builds the template text to the article to be submitted to DR at the top of the page.
+function addDeletionRequestTemplate(articleContent) {
+    return '{{sust:cdb}}' + articleContent;
+}
+
+//function that fetches the two functions above and actually adds the text to the article to be submitted to DR.
+function buildEditDRM(revision) {
+    return {
+        text: addDeletionRequestTemplate(revision.content),
+        summary: buildEditSummaryMessage(mw.config.get('wgPageName')),
+        minor: false
+    };
 }
 
 if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 	console.log("special or non-existent page");
 } else {
-	var portletLink = mw.util.addPortletLink( 'p-cactions', '#', 'Ejemplo', 'example-button', 'make an example action' );
+	let portletLink = mw.util.addPortletLink( 'p-cactions', '#', 'Ejemplo', 'example-button', 'make an example action' );
 	portletLink.onclick = createWindow;
 }
 
