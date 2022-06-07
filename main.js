@@ -66,7 +66,7 @@ function submitMessage(e) {
         if (window.confirm(`Esto creará una consulta de borrado para el artículo ${nominatedPageName}, ¿estás seguro?`)) {
             new mw.Api().edit(
                 nominatedPageName,
-                buildEditOnNominatedPage()
+                buildEditOnNominatedPage
             )
             .then( function () {
                 console.log( 'Saved!' );
