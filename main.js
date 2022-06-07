@@ -66,7 +66,7 @@ function submitMessage(e) {
         if (window.confirm(`Esto creará una consulta de borrado para el artículo ${nominatedPageName}, ¿estás seguro?`)) {
             new mw.Api().edit(
                 nominatedPageName,
-                buildEditOnNominatedPage
+                buildEditOnNominatedPage()
             )
             .then( function () {
                 console.log( 'Saved!' );
@@ -105,7 +105,7 @@ function buildEditOnNominatedPage(revision) {
 //function that creates the page hosting the deletion request
 //the 'Test' line should later be replaced with buildDeletionTemplate(input.category, input.reason)
 function createDeletionRequestPage() {
-	new mw.Api().create('Usuario:Nacaru/Taller/Tests/2',
+	new mw.Api().create('Usuario:Nacaru/Taller/Tests/3',
 	{ summary: `Creando página de discusión para el borrado de [[${nominatedPageName}]]`},
 	'Test'
 	);
