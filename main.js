@@ -20,6 +20,8 @@ let listOptions = [
 	{ code:'W', name:'Web e internet'}
 ];
 
+let nominatedPageName = mw.config.get('wgPageName')
+
 function getCategoryOptions() {
 	let categoryOptions = [];
 	for (let category of listOptions){
@@ -61,14 +63,14 @@ function submitMessage(e) {
 	if (input.reason === ``) {
 		alert("No se ha establecido un motivo.");
 	} else {
-//		alert(buildDeletionTemplate(input.category, input.reason));
-        if (window.confirm(`Esto creará una consulta de borrado para el artículo ${mw.config.get('wgPageName')}, ¿estás seguro?`)) {
+        if (window.confirm(`Esto creará una consulta de borrado para el artículo ${nominatedPageName}, ¿estás seguro?`)) {
             new mw.Api().edit(
-                mw.config.get('wgPageName'),
-                buildEditDRM
+                nominatedPageName,
+                buildEditOnNominatedPage
             )
             .then( function () {
                 console.log( 'Saved!' );
+				createDeletionRequestPage();
                 location.reload();
             } );
         }
@@ -92,18 +94,27 @@ function addDeletionRequestTemplate(articleContent) {
 }
 
 //function that fetches the two functions above and actually adds the text to the article to be submitted to DR.
-function buildEditDRM(revision) {
+function buildEditOnNominatedPage(revision) {
     return {
         text: addDeletionRequestTemplate(revision.content),
-        summary: buildEditSummaryMessage(mw.config.get('wgPageName')),
+        summary: buildEditSummaryMessage(nominatedPageName),
         minor: false
     };
+}
+
+//function that creates the page hosting the deletion request
+//the 'Test' line should later be replaced with buildDeletionTemplate(input.category, input.reason)
+function createDeletionRequestPage() {
+	new mw.Api().create('Usuario:Nacaru/Taller/Tests/2',
+	{ summary: `Creando página de discusión para el borrado de [[${nominatedPageName}]]`},
+	'Test'
+	);
 }
 
 if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 	console.log("special or non-existent page");
 } else {
-	let portletLink = mw.util.addPortletLink( 'p-cactions', '#', 'Ejemplo', 'example-button', 'make an example action' );
+	let portletLink = mw.util.addPortletLink( 'p-cactions', '#', 'Abrir CDB', 'example-button', 'make an example action' );
 	portletLink.onclick = createWindow;
 }
 
