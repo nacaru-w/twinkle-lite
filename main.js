@@ -2,6 +2,24 @@
 mw.loader.load( 'https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.js&action=raw&ctype=text/javascript' );
 mw.loader.load( 'https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.css&action=raw&ctype=text/css', 'text/css' );
 
+/* Code querying the XTools API to know the top editor of a page (might end up not using it)
+
+console.log("Loading DeletionRequestMaker");
+fetch("https://xtools.wmflabs.org/api/page/top_editors/en.wikipedia/Albert_Einstein///1", {mode: 'no-cors'})
+  .then((response) => {
+  	console.log(response);
+  	return response.text(); 
+  } )
+  .then((data) => { 
+  	if(!data) {
+  		console.log("No data :(");
+  		return;
+  	}
+  	console.log(data); 
+  });
+  
+*/
+
 console.log("Loading DeletionRequestMaker");
 
 let listOptions = [
