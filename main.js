@@ -2,23 +2,6 @@
 mw.loader.load( 'https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.js&action=raw&ctype=text/javascript' );
 mw.loader.load( 'https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.css&action=raw&ctype=text/css', 'text/css' );
 
-/* Code querying the XTools API to know the top editor of a page (might end up not using it)
-
-console.log("Loading DeletionRequestMaker");
-fetch("https://xtools.wmflabs.org/api/page/top_editors/en.wikipedia/Albert_Einstein///1", {mode: 'no-cors'})
-  .then((response) => {
-  	console.log(response);
-  	return response.text(); 
-  } )
-  .then((data) => { 
-  	if(!data) {
-  		console.log("No data :(");
-  		return;
-  	}
-  	console.log(data); 
-  });
-  
-*/
 
 console.log("Loading DeletionRequestMaker");
 
@@ -40,6 +23,31 @@ let listOptions = [
 
 let nominatedPageName = mw.config.get('wgPageName')
 
+function userFromGetReply(data) {
+	let pages = data.query.pages,
+		p;
+	for ( p in pages ) {
+		return pages[ p ].revisions[ 0 ].user;
+	}
+} 
+
+// Returns a promise with the name of the user who created the page
+function getCreator() {
+	let params = {
+		action: 'query',
+		prop: 'revisions',
+		titles: nominatedPageName,
+		rvprop: 'user',
+		rvdir: 'newer',
+		format: 'json',
+		rvlimit: 1,
+	}
+	let apiPromise = new mw.Api().get(params);
+	let userPromise = apiPromise.then(userFromGetReply);
+
+	return userPromise;
+}
+
 function getCategoryOptions() {
 	let categoryOptions = [];
 	for (let category of listOptions){
@@ -58,7 +66,8 @@ function createWindow() {
 	form.append({
 		type: 'textarea',
 		name: 'reason',
-		label: 'Describe el motivo:'
+		label: 'Describe el motivo:',
+		tooltip: 'Puedes usar wikicódigo en tu descripción, la firma se añadirá automáticamente.'
 	});
 	form.append({
 		type: 'submit',
@@ -88,9 +97,15 @@ function submitMessage(e) {
             )
             .then( function () {
                 console.log( 'Saved!' );
-				createDeletionRequestPage();
-                location.reload();
-            } );
+				return createDeletionRequestPage();
+            } )
+			.then( function () {
+				return getCreator().then(postsMessage);
+			})
+			.then( function () {
+				console.log('Refreshing...');
+				location.reload();
+			});
         }
 
 	}
@@ -101,38 +116,41 @@ function buildDeletionTemplate(category, reason) {
 	return `{{sust:cdb2|pg={{sust:SUBPAGENAME}}|cat=${category}|texto=${reason}|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}}} ~~~~`
 }
 
-//function that builds the text for the edit summary.
-function buildEditSummaryMessage(pagename) {
-	return `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${pagename}]] mediante DeletionRequestMaker.`
-}
-
-//function that builds the template text to the article to be submitted to DR at the top of the page.
-function addDeletionRequestTemplate(articleContent) {
-    return '{{sust:cdb}}' + articleContent;
-}
-
 //function that fetches the two functions above and actually adds the text to the article to be submitted to DR.
 function buildEditOnNominatedPage(revision) {
     return {
-        text: addDeletionRequestTemplate(revision.content),
-        summary: buildEditSummaryMessage(nominatedPageName),
+        text: '{{sust:cdb}}' + revision.content,
+        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${nominatedPageName}]] mediante DeletionRequestMaker.`,
         minor: false
     };
 }
 
 //function that creates the page hosting the deletion request
-//the 'Test' line should later be replaced with buildDeletionTemplate(input.category, input.reason)
+//TODO the 'Test' line should later be replaced with buildDeletionTemplate(input.category, input.reason)
 function createDeletionRequestPage() {
-	new mw.Api().create('Usuario:Nacaru/Taller/Tests/3',
+	return new mw.Api().create('Usuario:Nacaru/Taller/Tests/6', //TODO needs to be substituted with `Wikipedia:Consultas de borrado/${nominatedPageName}` after testing is over
 	{ summary: `Creando página de discusión para el borrado de [[${nominatedPageName}]]`},
 	'Test'
 	);
 }
 
+function postsMessage(creator) {
+	return new mw.Api().edit(
+		`Usuario:${creator}/Taller/Tests/1`, // TODO Needs to be substituted with `Usuario_discusión:${creator}` after testing is over
+		function (revision) {
+			return {
+				text: revision.content + `\n{{sust:Aviso cdb|${nominatedPageName}}} ~~~~`,
+				summary: "Aviso al usuario de la apertura de una CDB mediante [[WP:DeletionRequestMaker]]",
+				minor: false
+				}
+			}
+		)
+}
+
 if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 	console.log("special or non-existent page");
 } else {
-	let portletLink = mw.util.addPortletLink( 'p-cactions', '#', 'Abrir CDB', 'example-button', 'make an example action' );
+	let portletLink = mw.util.addPortletLink( 'p-cactions', '#', 'Abrir CDB', 'example-button', 'Abre una consulta de borrado para esta página' );
 	portletLink.onclick = createWindow;
 }
 
