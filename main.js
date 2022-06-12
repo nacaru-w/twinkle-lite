@@ -23,6 +23,20 @@ let listOptions = [
 
 let nominatedPageName = mw.config.get('wgPageName')
 
+function checkOldDeletionRequestExists() {
+    let params = {
+        action: 'query',
+        titles: 'Wikipedia:Consultas_de_Borrado/Samantha Hudson',
+        prop: 'pageprops',
+        format: 'json'
+    };
+    let apiPromise = new mw.Api().get(params);
+    let pagesPromise = apiPromise.then(function (data) {
+        let result = data.query.pages[-1].missing;
+            console.log(result)
+    });
+}
+
 function userFromGetReply(data) {
 	let pages = data.query.pages,
 		p;
