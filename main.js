@@ -22,6 +22,7 @@ let listOptions = [
 ];
 
 let nominatedPageName = mw.config.get('wgPageName')
+let canMakeNewDeletionRequest = true 
 
 function checkOldDeletionRequestExists() {
     let params = {
@@ -31,9 +32,10 @@ function checkOldDeletionRequestExists() {
         format: 'json'
     };
     let apiPromise = new mw.Api().get(params);
-    let pagesPromise = apiPromise.then(function (data) {
-        let result = data.query.pages[-1].missing;
-            console.log(result)
+    apiPromise.then(function (data) {
+        let result = data.query.pages
+		canMakeNewDeletionRequest = result.hasOwnProperty("-1")
+		return result.hasOwnProperty("-1")
     });
 }
 
@@ -109,11 +111,21 @@ function submitMessage(e) {
                 nominatedPageName,
                 buildEditOnNominatedPage
             )
+			.then( function () {
+				console.log ( 'Making sure another DR is not ongoing...')
+				return checkOldDeletionRequestExists()
+			})
             .then( function () {
-                console.log( 'Saved!' );
+				if (!canMakeNewDeletionRequest) {
+					console.log ('testing...')
+					throw new Error( 'Page cannot be created because nomination page already exists' ) 
+				} else {
+                console.log( 'Creating deletion request page...' );
 				return createDeletionRequestPage();
+				}
             } )
 			.then( function () {
+				console.log( 'Dropping a message on the creator\'s talk page...')
 				return getCreator().then(postsMessage);
 			})
 			.then( function () {
