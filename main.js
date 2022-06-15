@@ -23,6 +23,7 @@ let listOptions = [
 
 let nominatedPageName = mw.config.get('wgPageName')
 
+//Returns a boolean that states whether a spot for the creation of the DR page is available
 function canCreateDeletionRequestPage() {
     let params = {
         action: 'query',
@@ -161,6 +162,7 @@ function createDeletionRequestPage(category, reason) {
 	);
 }
 
+// Leaves a message on the creator's talk page
 function postsMessage(creator) {
 	return new mw.Api().edit(
 		`Usuario_discusión:${creator}`,
