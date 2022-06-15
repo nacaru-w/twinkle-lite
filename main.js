@@ -22,19 +22,17 @@ let listOptions = [
 ];
 
 let nominatedPageName = mw.config.get('wgPageName')
-let canMakeNewDeletionRequest = true 
 
-function checkOldDeletionRequestExists() {
+function canCreateDeletionRequestPage() {
     let params = {
         action: 'query',
-        titles: 'Wikipedia:Consultas_de_Borrado/Samantha Hudson',
+        titles: `Wikipedia:Consultas_de_Borrado/${nominatedPageName}`,
         prop: 'pageprops',
         format: 'json'
     };
     let apiPromise = new mw.Api().get(params);
-    apiPromise.then(function (data) {
+    return apiPromise.then(function (data) {
         let result = data.query.pages
-		canMakeNewDeletionRequest = result.hasOwnProperty("-1")
 		return result.hasOwnProperty("-1")
     });
 }
@@ -77,13 +75,13 @@ function createWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
 	Window.setTitle('Consulta de borrado');
 	Window.setScriptName('Deletion Request Maker');
-	Window.addFooterLink('Política de consultas de borrado', 'Wikipedia:Consultas_de_borrado_mediante_argumentación');
+	Window.addFooterLink('Política de borrado', 'Wikipedia:Política de borrado');
 	let form = new Morebits.quickForm(submitMessage);
 	form.append({
 		type: 'textarea',
 		name: 'reason',
 		label: 'Describe el motivo:',
-		tooltip: 'Puedes usar wikicódigo en tu descripción, la firma se añadirá automáticamente.'
+		tooltip: 'Puedes usar wikicódigo en tu descripción, tu firma se añadirá automáticamente.'
 	});
 	form.append({
 		type: 'submit',
@@ -107,31 +105,35 @@ function submitMessage(e) {
 		alert("No se ha establecido un motivo.");
 	} else {
         if (window.confirm(`Esto creará una consulta de borrado para el artículo ${nominatedPageName}, ¿estás seguro?`)) {
-            new mw.Api().edit(
-                nominatedPageName,
-                buildEditOnNominatedPage
-            )
-			.then( function () {
-				console.log ( 'Making sure another DR is not ongoing...')
-				return checkOldDeletionRequestExists()
-			})
-            .then( function () {
+			console.log ( 'Making sure another DR is not ongoing...');
+			canCreateDeletionRequestPage()
+			.then( function (canMakeNewDeletionRequest) {
 				if (!canMakeNewDeletionRequest) {
 					console.log ('testing...')
-					throw new Error( 'Page cannot be created because nomination page already exists' ) 
+					throw new Error( 'La página no puede crearse. Ya existe una candidatura en curso o esta se cerró en el pasado.' ) 
 				} else {
-                console.log( 'Creating deletion request page...' );
-				return createDeletionRequestPage();
+            		return new mw.Api().edit(
+                	nominatedPageName,
+                	buildEditOnNominatedPage
+            		);
 				}
-            } )
+			})
 			.then( function () {
-				console.log( 'Dropping a message on the creator\'s talk page...')
+                console.log( 'Creating deletion request page...' );
+				return createDeletionRequestPage(input.category, input.reason);
+			})
+			.then( function () {
+				console.log( 'Dropping a message on the creator\'s talk page...');
 				return getCreator().then(postsMessage);
 			})
 			.then( function () {
 				console.log('Refreshing...');
 				location.reload();
-			});
+			})
+			.catch( function (error) {
+				console.log('Aborted: nomination page already exists');
+				alert(error.message);
+			})
         }
 
 	}
@@ -145,24 +147,23 @@ function buildDeletionTemplate(category, reason) {
 //function that fetches the two functions above and actually adds the text to the article to be submitted to DR.
 function buildEditOnNominatedPage(revision) {
     return {
-        text: '{{sust:cdb}}' + revision.content,
+        text: '{{sust:cdb}}\n' + revision.content,
         summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${nominatedPageName}]] mediante DeletionRequestMaker.`,
         minor: false
     };
 }
 
 //function that creates the page hosting the deletion request
-//TODO the 'Test' line should later be replaced with buildDeletionTemplate(input.category, input.reason)
-function createDeletionRequestPage() {
-	return new mw.Api().create('Usuario:Nacaru/Taller/Tests/6', //TODO needs to be substituted with `Wikipedia:Consultas de borrado/${nominatedPageName}` after testing is over
+function createDeletionRequestPage(category, reason) {
+	return new mw.Api().create(`Wikipedia:Consultas de borrado/${nominatedPageName}`, 
 	{ summary: `Creando página de discusión para el borrado de [[${nominatedPageName}]]`},
-	'Test'
+	buildDeletionTemplate(category, reason)
 	);
 }
 
 function postsMessage(creator) {
 	return new mw.Api().edit(
-		`Usuario:${creator}/Taller/Tests/1`, // TODO Needs to be substituted with `Usuario_discusión:${creator}` after testing is over
+		`Usuario_discusión:${creator}`,
 		function (revision) {
 			return {
 				text: revision.content + `\n{{sust:Aviso cdb|${nominatedPageName}}} ~~~~`,
