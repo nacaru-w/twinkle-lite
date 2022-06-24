@@ -149,7 +149,7 @@ function buildDeletionTemplate(category, reason) {
 function buildEditOnNominatedPage(revision) {
     return {
         text: '{{sust:cdb}}\n' + revision.content,
-        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${nominatedPageName}]] mediante DeletionRequestMaker.`,
+        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${nominatedPageName}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]].`,
         minor: false
     };
 }
@@ -157,7 +157,7 @@ function buildEditOnNominatedPage(revision) {
 //function that creates the page hosting the deletion request
 function createDeletionRequestPage(category, reason) {
 	return new mw.Api().create(`Wikipedia:Consultas de borrado/${nominatedPageName}`, 
-	{ summary: `Creando página de discusión para el borrado de [[${nominatedPageName}]]`},
+	{ summary: `Creando página de discusión para el borrado de [[${nominatedPageName}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]]`},
 	buildDeletionTemplate(category, reason)
 	);
 }
@@ -169,7 +169,7 @@ function postsMessage(creator) {
 		function (revision) {
 			return {
 				text: revision.content + `\n{{sust:Aviso cdb|${nominatedPageName}}} ~~~~`,
-				summary: "Aviso al usuario de la apertura de una CDB mediante [[WP:DeletionRequestMaker]]",
+				summary: "Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]",
 				minor: false
 				}
 			}
