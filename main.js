@@ -3,7 +3,7 @@ mw.loader.load( 'https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-mor
 mw.loader.load( 'https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.css&action=raw&ctype=text/css', 'text/css' );
 
 
-console.log("Loading DeletionRequestMaker");
+console.log("Loading Deletion Request Maker...");
 
 let listOptions = [
 	{ code:'B', name:'Biografías'},
@@ -110,7 +110,6 @@ function submitMessage(e) {
 			canCreateDeletionRequestPage()
 			.then( function (canMakeNewDeletionRequest) {
 				if (!canMakeNewDeletionRequest) {
-					console.log ('testing...')
 					throw new Error( 'La página no puede crearse. Ya existe una candidatura en curso o esta se cerró en el pasado.' ) 
 				} else {
             		return new mw.Api().edit(
@@ -177,7 +176,7 @@ function postsMessage(creator) {
 }
 
 if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
-	console.log("special or non-existent page");
+	console.log("Special or non-existent page: DRM will therefore not be loaded.");
 } else {
 	let portletLink = mw.util.addPortletLink( 'p-cactions', '#', 'Abrir CDB', 'example-button', 'Abre una consulta de borrado para esta página' );
 	portletLink.onclick = createWindow;
