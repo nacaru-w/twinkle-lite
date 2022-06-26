@@ -22,6 +22,7 @@ let listOptions = [
 ];
 
 let nominatedPageName = mw.config.get('wgPageName')
+let nominatedPageNameWithoutUnderscores = nominatedPageName.replaceAll('_', ' ')
 
 //Returns a boolean that states whether a spot for the creation of the DR page is available
 function canCreateDeletionRequestPage() {
@@ -109,7 +110,7 @@ function submitMessage(e) {
 	if (input.reason === ``) {
 		alert("No se ha establecido un motivo.");
 	} else {
-		if (window.confirm(`Esto creará una consulta de borrado para el artículo ${nominatedPageName}, ¿estás seguro?`)) {
+		if (window.confirm(`Esto creará una consulta de borrado para el artículo ${nominatedPageNameWithoutUnderscores}, ¿estás seguro?`)) {
 			console.log('Making sure another DR is not ongoing...');
 			canCreateDeletionRequestPage()
 				.then(function (canMakeNewDeletionRequest) {
@@ -160,7 +161,7 @@ function buildEditOnNominatedPage(revision) {
 //function that creates the page hosting the deletion request
 function createDeletionRequestPage(category, reason) {
 	return new mw.Api().create(`Wikipedia:Consultas de borrado/${nominatedPageName}`,
-		{ summary: `Creando página de discusión para el borrado de [[${nominatedPageName}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]]` },
+		{ summary: `Creando página de discusión para el borrado de [[${nominatedPageNameWithoutUnderscores}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]]` },
 		buildDeletionTemplate(category, reason)
 	);
 }
@@ -173,14 +174,14 @@ function postsMessage(creator) {
 				return new mw.Api().create(
 					`Usuario_discusión:${creator}`,
 					{ summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]' },
-					`{{sust:Aviso cdb|${nominatedPageName}}} ~~~~`
+					`{{sust:Aviso cdb|${nominatedPageNameWithoutUnderscores}}} ~~~~`
 				);
 			} else {
 				return new mw.Api().edit(
 					`Usuario_discusión:${creator}`,
 					function (revision) {
 						return {
-							text: revision.content + `\n{{sust:Aviso cdb|${nominatedPageName}}} ~~~~`,
+							text: revision.content + `\n{{sust:Aviso cdb|${nominatedPageNameWithoutUnderscores}}} ~~~~`,
 							summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]',
 							minor: false
 						}
