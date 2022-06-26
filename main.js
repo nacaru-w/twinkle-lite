@@ -25,10 +25,10 @@ let nominatedPageName = mw.config.get('wgPageName')
 
 //Returns a boolean that states whether a spot for the creation of the DR page is available
 function canCreateDeletionRequestPage() {
-	return canCreate(`Wikipedia:Consultas_de_Borrado/${nominatedPageName}`)
+	return isPageMissing(`Wikipedia:Consultas_de_Borrado/${nominatedPageName}`)
 }
 
-function canCreate(title) {
+function isPageMissing(title) {
     let params = {
         action: 'query',
         titles: title,
@@ -167,16 +167,27 @@ function createDeletionRequestPage(category, reason) {
 
 // Leaves a message on the creator's talk page
 function postsMessage(creator) {
-	return new mw.Api().edit(
-		`Usuario_discusión:${creator}`,
-		function (revision) {
-			return {
-				text: revision.content + `\n{{sust:Aviso cdb|${nominatedPageName}}} ~~~~`,
-				summary: "Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]",
-				minor: false
-				}
+ return isPageMissing(`Usuario_discusión:${creator}`)
+ 		.then( function (mustCreateNewTalkPage) {
+	if (mustCreateNewTalkPage) { 
+		return new mw.Api().create(
+			`Usuario_discusión:${creator}`,
+			{ summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]'},
+			`{{sust:Aviso cdb|${nominatedPageName}}} ~~~~`
+			);
+ 		} else {
+			return new mw.Api().edit(
+				`Usuario_discusión:${creator}`,
+					function (revision) {
+						return {
+							text: revision.content + `\n{{sust:Aviso cdb|${nominatedPageName}}} ~~~~`,
+							summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]',
+							minor: false
+							}
+						}
+					)
 			}
-		)
+ 	})
 }
 
 if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
