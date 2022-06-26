@@ -25,9 +25,13 @@ let nominatedPageName = mw.config.get('wgPageName')
 
 //Returns a boolean that states whether a spot for the creation of the DR page is available
 function canCreateDeletionRequestPage() {
+	return canCreate(`Wikipedia:Consultas_de_Borrado/${nominatedPageName}`)
+}
+
+function canCreate(title) {
     let params = {
         action: 'query',
-        titles: `Wikipedia:Consultas_de_Borrado/${nominatedPageName}`,
+        titles: title,
         prop: 'pageprops',
         format: 'json'
     };
