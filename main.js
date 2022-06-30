@@ -77,6 +77,16 @@ function getCategoryOptions() {
 	return categoryOptions;
 }
 
+function createStatusWindow() {
+	let Window = new Morebits.simpleWindow(500, 400);
+	Window.setTitle('Procesando acciones');
+	var statusdiv = document.createElement('div');
+	statusdiv.style.padding = '15px';  // just so it doesn't look broken
+	Window.setContent(statusdiv);
+	Morebits.status.init(statusdiv);
+	Window.display();
+}
+
 function createWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
 	Window.setTitle('Consulta de borrado');
@@ -117,6 +127,8 @@ function submitMessage(e) {
 					if (!canMakeNewDeletionRequest) {
 						throw new Error('La página no puede crearse. Ya existe una candidatura en curso o esta se cerró en el pasado.')
 					} else {
+						createStatusWindow()
+						new Morebits.status("Paso 1", "colocando plantilla en la página nominada...", "info");
 						return new mw.Api().edit(
 							nominatedPageName,
 							buildEditOnNominatedPage
@@ -125,15 +137,18 @@ function submitMessage(e) {
 				})
 				.then(function () {
 					console.log('Creating deletion request page...');
+					new Morebits.status("Paso 2", "creando la página de discusión de la consulta de borrado...", "info");
 					return createDeletionRequestPage(input.category, input.reason);
 				})
 				.then(function () {
 					console.log('Dropping a message on the creator\'s talk page...');
+					new Morebits.status("Paso 3", "publicando un mensaje en la página de discusión del creador...", "info");
 					return getCreator().then(postsMessage);
 				})
 				.then(function () {
 					console.log('Refreshing...');
-					location.reload();
+					new Morebits.status("Finalizado", "actualizando página...", "status");
+					setTimeout(() => { location.reload() }, 2000);
 				})
 				.catch(function (error) {
 					console.log('Aborted: nomination page already exists');
