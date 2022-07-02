@@ -77,8 +77,9 @@ function getCategoryOptions() {
 	return categoryOptions;
 }
 
+//Creates the window that holds the status messages
 function createStatusWindow() {
-	let Window = new Morebits.simpleWindow(500, 400);
+	let Window = new Morebits.simpleWindow(400, 350);
 	Window.setTitle('Procesando acciones');
 	var statusdiv = document.createElement('div');
 	statusdiv.style.padding = '15px';  // just so it doesn't look broken
@@ -87,7 +88,8 @@ function createStatusWindow() {
 	Window.display();
 }
 
-function createWindow() {
+//Creates the window for the form that will later be filled with the pertinent info
+function createFormWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
 	Window.setTitle('Consulta de borrado');
 	Window.setScriptName('Deletion Request Maker');
@@ -210,7 +212,7 @@ if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 	console.log("Special or non-existent page: DRM will therefore not be loaded.");
 } else {
 	let portletLink = mw.util.addPortletLink('p-cactions', '#', 'Abrir CDB', 'example-button', 'Abre una consulta de borrado para esta página');
-	portletLink.onclick = createWindow;
+	portletLink.onclick = createFormWindow;
 }
 
 
