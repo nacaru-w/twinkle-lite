@@ -81,7 +81,7 @@ function getCategoryOptions() {
 function createStatusWindow() {
 	let Window = new Morebits.simpleWindow(400, 350);
 	Window.setTitle('Procesando acciones');
-	var statusdiv = document.createElement('div');
+	let statusdiv = document.createElement('div');
 	statusdiv.style.padding = '15px';  // just so it doesn't look broken
 	Window.setContent(statusdiv);
 	Morebits.status.init(statusdiv);
