@@ -2,7 +2,7 @@
   "name": "twinkle-lite",
   "version": "0.1.0",
   "description": "Light version of Twinkle for eswiki",
-  "homepage": "https://github.com/evad37/modular-wiki-userscript-base",
+  "homepage": "https://github.com/nasch92/twinkle-lite",
   "private": true,
   "scripts": {
     "build": "npx webpack --config webpack.config.js",
@@ -11,7 +11,7 @@
     "deploy": "node ./scripts/deploy.js"
   },
   "author": "",
-  "license": "(MIT OR CC-BY-4.0)",
+  "license": "(GPL 3.0 OR CC-BY-4.0)",
   "devDependencies": {
     "webpack": "^5.73.0",
     "webpack-cli": "^4.7.2"
