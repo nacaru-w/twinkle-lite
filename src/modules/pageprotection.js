@@ -1,5 +1,4 @@
-let pageName = mw.config.get('wgPageName')
-let pageNameWithoutUnderscores = pageName.replaceAll('_', ' ')
+import * as utils from "./utils";
 
 let listProtectionOptions = [
 	{ code: "protección", name: "Solicitar protección", default: true },
@@ -52,7 +51,7 @@ function getProtectionStatus() {
 		action: 'query',
 		prop: 'info',
 		inprop: 'protection',
-		titles: pageName,
+		titles: utils.currentPageName,
 		format: 'json',
 	}
 	let apiPromise = new mw.Api().get(params);
@@ -143,7 +142,7 @@ function submitMessage(e) {
 	if (input.reason === ``) {
 		alert("No se ha establecido un motivo.");
 	} else {
-		if (window.confirm(`¿Quieres solicitar la ${input.protection} del artículo ${pageNameWithoutUnderscores}?`)) {
+		if (window.confirm(`¿Quieres solicitar la ${input.protection} del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
 			console.log("Posting message on the noticeboard...");
 			createStatusWindow();
 			new Morebits.status("Paso 1", `Solicitando la ${input.protection} de la página...`, "info");
@@ -162,10 +161,10 @@ function submitMessage(e) {
 }
 
 function buildEditOnNoticedBoard(input) {
-	let title = `== Solicitud de ${input.protection} de [[${pageNameWithoutUnderscores}]] ==`;
+	let title = `== Solicitud de ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] ==`;
 	if (input.protection === 'protección') {
 		if (input.motive !== 'Otro') {
-			title = `== Solicitud de ${input.protection} de [[${pageNameWithoutUnderscores}]] por ${input.motive.toLowerCase()} ==`;
+			title = `== Solicitud de ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] por ${input.motive.toLowerCase()} ==`;
 		}
 	};
 	return (revision) => {
@@ -173,14 +172,14 @@ function buildEditOnNoticedBoard(input) {
 			text: revision.content + `\n
 ${title} \n
 ;Artículo(s) \n
-* {{a|${pageNameWithoutUnderscores}}} \n
+* {{a|${utils.currentPageNameWithoutUnderscores}}} \n
 ;Causa \n
 ${input.reason} \n
 ; Usuario que lo solicita \n
 * ~~~~ \n
 ;Respuesta \n
 (a rellenar por un bibliotecario)`,
-			summary: `Solicitando ${input.protection} de [[${pageNameWithoutUnderscores}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]].`,
+			summary: `Solicitando ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]].`,
 			minor: false
 		}
 	}
