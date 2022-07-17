@@ -84,7 +84,13 @@ function createFormWindow() {
         type: 'submit',
         label: 'Aceptar'
     });
-    form.append({
+
+    let categoryField = form.append ({
+        type: 'field',
+		label: 'Categorías:',
+    })
+
+    categoryField.append({
         type: 'select',
         name: 'category',
         label: 'Selecciona la categoría de la página:',
