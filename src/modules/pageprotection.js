@@ -47,6 +47,7 @@ function protectionFromGetReply(data) {
 	}
 }
 
+// Returns the protection status of the page as a string through a query to the mw API
 function getProtectionStatus() {
 	let params = {
 		action: 'query',
