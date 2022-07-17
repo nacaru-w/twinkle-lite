@@ -37,9 +37,8 @@ function isPageMissing(title) {
 }
 
 function userFromGetReply(data) {
-    let pages = data.query.pages,
-        p;
-    for (p in pages) {
+    let pages = data.query.pages;
+    for (let p in pages) {
         return pages[p].revisions[0].user;
     }
 }
