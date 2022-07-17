@@ -1,2 +1,2 @@
-# Deletion Request Maker
-Js tool for making the creation of deletion requests easier on the Spanish wikipedia
+# Twinkle lite
+A light version of Twinkle to be implemented on the spanish Wikipedia.
