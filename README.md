@@ -3,7 +3,7 @@ Twinkle Lite is a script written in Javascript that allows for the automatisatio
 
 It mainly uses the [Morebits](https://en.wikipedia.org/wiki/MediaWiki:Gadget-morebits.js) library and [Mediawiki API](https://www.mediawiki.org/wiki/API:Main_page) functionalities. The code is organised in modules and then compiled into one file through [Webpack](https://webpack.js.org/), which is then copied onto a js page on the Spanish Wikipedia [here](https://es.wikipedia.org/wiki/Usuario:Nacaru/twinkle-lite.js).
 
-As of new, the available modules are:
+As of now, the available modules are:
 * Page protection: it automatises the task of requesting page protection through eswiki noticeboards.
 * Deletion request: it facilitates the creation of deletion requests for articles.
 
