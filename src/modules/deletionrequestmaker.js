@@ -68,17 +68,6 @@ function getCategoryOptions() {
     return categoryOptions;
 }
 
-//Creates the window that holds the status messages
-function createStatusWindow() {
-    let Window = new Morebits.simpleWindow(400, 350);
-    Window.setTitle('Procesando acciones');
-    let statusdiv = document.createElement('div');
-    statusdiv.style.padding = '15px';  // just so it doesn't look broken
-    Window.setContent(statusdiv);
-    Morebits.status.init(statusdiv);
-    Window.display();
-}
-
 //Creates the window for the form that will later be filled with the pertinent info
 function createFormWindow() {
     let Window = new Morebits.simpleWindow(620, 530);
@@ -120,7 +109,7 @@ function submitMessage(e) {
                     if (!canMakeNewDeletionRequest) {
                         throw new Error('La página no puede crearse. Ya existe una candidatura en curso o esta se cerró en el pasado.')
                     } else {
-                        createStatusWindow()
+                        utils.createStatusWindow()
                         new Morebits.status("Paso 1", "colocando plantilla en la página nominada...", "info");
                         return new mw.Api().edit(
                             utils.currentPageName,

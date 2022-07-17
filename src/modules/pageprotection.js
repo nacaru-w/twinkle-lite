@@ -60,17 +60,6 @@ function getProtectionStatus() {
 	return protectionPromise;
 }
 
-function createStatusWindow() {
-	let Window = new Morebits.simpleWindow(400, 350);
-	Window.setTitle('Procesando acciones');
-	let statusdiv = document.createElement('div');
-	statusdiv.style.padding = '15px';  // just so it doesn't look broken
-	Window.setContent(statusdiv);
-	Morebits.status.init(statusdiv);
-	Window.display();
-}
-
-
 function createFormWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
 	Window.setTitle('Solicitar protección de la página');
@@ -144,7 +133,7 @@ function submitMessage(e) {
 	} else {
 		if (window.confirm(`¿Quieres solicitar la ${input.protection} del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
 			console.log("Posting message on the noticeboard...");
-			createStatusWindow();
+			utils.createStatusWindow();
 			new Morebits.status("Paso 1", `Solicitando la ${input.protection} de la página...`, "info");
 			new mw.Api().edit(
 				"Usuario:Nacaru/Taller/Tests", // a modificar por «Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual» tras tests
