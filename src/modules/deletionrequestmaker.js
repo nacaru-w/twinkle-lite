@@ -72,7 +72,6 @@ function getCategoryOptions() {
 function createFormWindow() {
     let Window = new Morebits.simpleWindow(620, 530);
     Window.setTitle('Consulta de borrado');
-    Window.setScriptName('Deletion Request Maker');
     Window.addFooterLink('Política de borrado', 'Wikipedia:Política de borrado');
     let form = new Morebits.quickForm(submitMessage);
     form.append({

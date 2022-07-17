@@ -66,6 +66,7 @@ function createFormWindow() {
 	Window.setTitle('Solicitar protección de la página');
 	Window.addFooterLink('Política de protección', 'Wikipedia:Política de protección');
 	let form = new Morebits.quickForm(submitMessage);
+	
 	let radioField = form.append({
 		type: 'field',
 		label: 'Tipo:',
