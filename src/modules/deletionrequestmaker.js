@@ -1,3 +1,5 @@
+import * as utils from "./utils";
+
 let listOptions = [
     { code: 'B', name: 'Biografías' },
     { code: 'CAT', name: 'Categorías' },
@@ -14,12 +16,9 @@ let listOptions = [
     { code: 'W', name: 'Web e internet' }
 ];
 
-let nominatedPageName = mw.config.get('wgPageName')
-let nominatedPageNameWithoutUnderscores = nominatedPageName.replaceAll('_', ' ')
-
 //Returns a boolean that states whether a spot for the creation of the DR page is available
 function canCreateDeletionRequestPage() {
-    return isPageMissing(`Wikipedia:Consultas_de_Borrado/${nominatedPageName}`)
+    return isPageMissing(`Wikipedia:Consultas_de_Borrado/${utils.currentPageName}`)
 }
 
 function isPageMissing(title) {
@@ -48,7 +47,7 @@ function getCreator() {
     let params = {
         action: 'query',
         prop: 'revisions',
-        titles: nominatedPageName,
+        titles: utils.currentPageName,
         rvprop: 'user',
         rvdir: 'newer',
         format: 'json',
@@ -67,17 +66,6 @@ function getCategoryOptions() {
         categoryOptions.push(option);
     }
     return categoryOptions;
-}
-
-//Creates the window that holds the status messages
-function createStatusWindow() {
-    let Window = new Morebits.simpleWindow(400, 350);
-    Window.setTitle('Procesando acciones');
-    let statusdiv = document.createElement('div');
-    statusdiv.style.padding = '15px';  // just so it doesn't look broken
-    Window.setContent(statusdiv);
-    Morebits.status.init(statusdiv);
-    Window.display();
 }
 
 //Creates the window for the form that will later be filled with the pertinent info
@@ -114,17 +102,17 @@ function submitMessage(e) {
     if (input.reason === ``) {
         alert("No se ha establecido un motivo.");
     } else {
-        if (window.confirm(`Esto creará una consulta de borrado para el artículo ${nominatedPageNameWithoutUnderscores}, ¿estás seguro?`)) {
+        if (window.confirm(`Esto creará una consulta de borrado para el artículo ${utils.currentPageNameWithoutUnderscores}, ¿estás seguro?`)) {
             console.log('Making sure another DR is not ongoing...');
             canCreateDeletionRequestPage()
                 .then(function (canMakeNewDeletionRequest) {
                     if (!canMakeNewDeletionRequest) {
                         throw new Error('La página no puede crearse. Ya existe una candidatura en curso o esta se cerró en el pasado.')
                     } else {
-                        createStatusWindow()
+                        utils.createStatusWindow()
                         new Morebits.status("Paso 1", "colocando plantilla en la página nominada...", "info");
                         return new mw.Api().edit(
-                            nominatedPageName,
+                            utils.currentPageName,
                             buildEditOnNominatedPage
                         );
                     }
@@ -162,15 +150,15 @@ function buildDeletionTemplate(category, reason) {
 function buildEditOnNominatedPage(revision) {
     return {
         text: '{{sust:cdb}}\n' + revision.content,
-        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${nominatedPageName}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]].`,
+        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]].`,
         minor: false
     };
 }
 
 //function that creates the page hosting the deletion request
 function createDeletionRequestPage(category, reason) {
-    return new mw.Api().create(`Wikipedia:Consultas de borrado/${nominatedPageName}`,
-        { summary: `Creando página de discusión para el borrado de [[${nominatedPageNameWithoutUnderscores}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]]` },
+    return new mw.Api().create(`Wikipedia:Consultas de borrado/${utils.currentPageName}`,
+        { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]]` },
         buildDeletionTemplate(category, reason)
     );
 }
@@ -183,14 +171,14 @@ function postsMessage(creator) {
                 return new mw.Api().create(
                     `Usuario_discusión:${creator}`,
                     { summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]' },
-                    `{{sust:Aviso cdb|${nominatedPageNameWithoutUnderscores}}} ~~~~`
+                    `{{sust:Aviso cdb|${utils.currentPageNameWithoutUnderscores}}} ~~~~`
                 );
             } else {
                 return new mw.Api().edit(
                     `Usuario_discusión:${creator}`,
                     function (revision) {
                         return {
-                            text: revision.content + `\n{{sust:Aviso cdb|${nominatedPageNameWithoutUnderscores}}} ~~~~`,
+                            text: revision.content + `\n{{sust:Aviso cdb|${utils.currentPageNameWithoutUnderscores}}} ~~~~`,
                             summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]',
                             minor: false
                         }
