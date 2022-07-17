@@ -34,8 +34,8 @@ function getMotiveOptions() {
 
 function protectionFromGetReply(data) {
 	let pages = data.query.pages;
-	for (p in pages) {
-		protectionLevel = pages[p].protection[0]?.level
+	for (let p in pages) {
+		let protectionLevel = pages[p].protection[0]?.level
 		switch (protectionLevel) {
 			case 'sysop':
 				return 'solo bibliotecarios';
@@ -87,7 +87,7 @@ function createFormWindow() {
 		name: 'protection',
 		event:
 			function (e) {
-				nameToModify = document.querySelector("select[name='motive']")
+				let nameToModify = document.querySelector("select[name='motive']")
 				if (e.target.value !== "protección") {
 					nameToModify.setAttribute('disabled', "")
 				} else {
