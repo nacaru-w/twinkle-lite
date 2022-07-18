@@ -14,7 +14,7 @@ let criteriaLists = {
     {code: "g10", name: "G10. Para mantenimiento elemental"},
     {code: "g11", name: "G11. A petición del único autor"}
 ],  articles:[
-    {code: "a1",   name: "A1. Lo que Wikipedia no es"},
+    {code: "a1",   name: "A1. Viola «lo que Wikipedia no es»"},
     {code: "a1.1", name: "A1.1 Artículos que solo incluyen enlaces"},
     {code: "a1.2", name: "A1.2 Definiciones de diccionario o recetas"},
     {code: "a1.3", name: "A1.3 Fuente primaria"},
@@ -53,71 +53,76 @@ function createFormWindow() {
 	Window.addFooterLink('Criterios para el borrado rápido', 'Wikipedia:Criterios para el borrado rápido');
 	let form = new Morebits.quickForm(submitMessage);
 
-	let gField = form.append({
-		type: 'field',
+    let gField = form.append({
+	    type: 'field',
 		label: 'Criterios generales:',
-	});
-
+	    });
     gField.append({
         type: 'checkbox',
         name: 'general',
         list: getOptions("general")
-    })
+        })
 
-    let aField = form.append({
-		type: 'field',
-		label: 'Criterios para artículos:',
-    })
+    if ( mw.config.get( 'wgNamespaceNumber' ) == 0 ) {
+        let aField = form.append({
+		    type: 'field',
+		    label: 'Criterios para artículos:',
+        })
 
-    aField.append({
-        type: 'checkbox',
-        name: 'article',
-        list: getOptions("articles")
-    })
+        aField.append({
+            type: 'checkbox',
+            name: 'article',
+            list: getOptions("articles")
+        })
+    }
+    
+    if (mw.config.get( 'wgIsRedirect' )) {
+        let rField = form.append({
+            type: 'field',
+            label: 'Criterios para páginas de redirección:',
+        })
+        rField.append({
+            type: 'checkbox',
+            name: 'article',
+            list: getOptions("redirects")
+        })
+    }
 
-    let rField = form.append({
-		type: 'field',
-		label: 'Criterios para páginas de redirección:',
-    })
+    if ( mw.config.get( 'wgNamespaceNumber' ) == 14 ) {
+        let cField = form.append({
+            type: 'field',
+            label: 'Criterios para categorías:',
+        })
+        cField.append({
+            type: 'checkbox',
+            name: 'article',
+            list: getOptions("categories")
+        })
+    }
 
-    rField.append({
-        type: 'checkbox',
-        name: 'article',
-        list: getOptions("redirects")
-    })
+    if ( mw.config.get( 'wgNamespaceNumber' ) == 2 ) {
+        let uField = form.append({
+            type: 'field',
+            label: 'Criterios para páginas de usuario:',
+        })
+        uField.append({
+            type: 'checkbox',
+            name: 'article',
+            list: getOptions("userpages")
+        })
+    }
 
-    let cField = form.append({
-		type: 'field',
-		label: 'Criterios para categorías:',
-    })
-
-    cField.append({
-        type: 'checkbox',
-        name: 'article',
-        list: getOptions("categories")
-    })
-
-    let uField = form.append({
-		type: 'field',
-		label: 'Criterios para páginas de redirección:',
-    })
-
-    uField.append({
-        type: 'checkbox',
-        name: 'article',
-        list: getOptions("userpages")
-    })
-
-    let tField = form.append({
-		type: 'field',
-		label: 'Criterios para plantillas:',
-    })
-
-    tField.append({
-        type: 'checkbox',
-        name: 'article',
-        list: getOptions("templates")
-    })
+    if ( mw.config.get( 'wgNamespaceNumber' ) == 10 ) {
+        let tField = form.append({
+            type: 'field',
+            label: 'Criterios para plantillas:',
+        })
+        tField.append({
+            type: 'checkbox',
+            name: 'article',
+            list: getOptions("templates")
+        })
+    }
 
 	form.append({
 		type: 'submit',
