@@ -14,11 +14,20 @@ let criteriaLists = {
     {code: "g10", name: "G10. Para mantenimiento elemental"},
     {code: "g11", name: "G11. A petición del único autor"}
 ],  articles:[
-    {code: "a1",   name: "A1. Viola «lo que Wikipedia no es»"},
-    {code: "a1.1", name: "A1.1 Artículos que solo incluyen enlaces"},
-    {code: "a1.2", name: "A1.2 Definiciones de diccionario o recetas"},
-    {code: "a1.3", name: "A1.3 Fuente primaria"},
-    {code: "a1.4", name: "A1.4 Ensayos de opinión"}
+    {code: "a1", name: "A1. Viola «lo que Wikipedia no es»", subgroup: {
+        type: 'checkbox',
+        name: 'subA',
+        list: [
+        {value: "a1.1", label: "A1.1 Artículos que solo incluyen enlaces"},
+        {value: "a1.2", label: "A1.2 Definiciones de diccionario o recetas"},
+        {value: "a1.3", label: "A1.3 Fuente primaria"},
+        {value: "a1.4", label: "A1.4 Ensayos de opinión"}
+        ]},
+    },
+    {code: "a2",   name: "A2. Infraesbozo"},
+    {code: "a3",   name: "A3. Páginas sin traducir o traducciones automáticas"},
+    {code: "a4",   name: "A4. Contenido no enciclopédico o sin relevancia"},
+    {code: "a5",   name: "A5. Artículo duplicado"}
 ],  redirects:[
     {code: "r1", name: "R1. Redirecciones a páginas inexistentes"},
     {code: "r2", name: "R2. Redirecciones de un espacio de nombres a otro"},
@@ -41,7 +50,7 @@ let criteriaLists = {
 function getOptions(criteriaType) {
 	let options = [];
 	for (let chosenType of criteriaLists[criteriaType]) {
-		let option = { type: 'option', value: chosenType.code, label: chosenType.name, checked: chosenType.default };
+		let option = { type: 'option', value: chosenType.code, label: chosenType.name, checked: chosenType.default, subgroup: chosenType.subgroup };
 		options.push(option);
 	}
 	return options;
@@ -63,7 +72,7 @@ function createFormWindow() {
         list: getOptions("general")
         })
 
-    if ( mw.config.get( 'wgNamespaceNumber' ) == 0 ) {
+    if ( mw.config.get( 'wgNamespaceNumber' ) == 0 && !mw.config.get( 'wgIsRedirect' )) {
         let aField = form.append({
 		    type: 'field',
 		    label: 'Criterios para artículos:',
