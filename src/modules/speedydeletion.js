@@ -3,7 +3,7 @@ import * as utils from "./utils";
 let criteriaLists = {  
     general:[
     {code: "g1", name: "G1. Vandalismo"},
-    {code: "g2", name: "G2. Etiqueta"},
+    {code: "g2", name: "G2. Faltas de etiqueta"},
     {code: "g3", name: "G3. Páginas promocionales"},
     {code: "g4", name: "G4. Páginas de pruebas de edición"},
     {code: "g5", name: "G5. Bulos, fraudes"},
@@ -64,7 +64,7 @@ let criteriaLists = {
 function getOptions(criteriaType) {
 	let options = [];
 	for (let chosenType of criteriaLists[criteriaType]) {
-		let option = { type: 'option', value: chosenType.code, label: chosenType.name, checked: chosenType.default, subgroup: chosenType.subgroup };
+		let option = {value: chosenType.code, label: chosenType.name, checked: chosenType.default, subgroup: chosenType.subgroup };
 		options.push(option);
 	}
 	return options;
