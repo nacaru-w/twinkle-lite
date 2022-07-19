@@ -27,7 +27,13 @@ let criteriaLists = {
     {code: "a2",   name: "A2. Infraesbozo"},
     {code: "a3",   name: "A3. Páginas sin traducir o traducciones automáticas"},
     {code: "a4",   name: "A4. Contenido no enciclopédico o sin relevancia"},
-    {code: "a5",   name: "A5. Artículo duplicado"}
+    {code: "a5",   name: "A5. Artículo duplicado", subgroup: {
+        type: "input",
+        name: "subA5",
+        label: "Nombre del artículo original: ",
+        tooltip: "Escribe el nombre del artículo sin utilizar wikicódigo. Ej.: «Granada (fruta)», «Ensalada» o «Plantilla:Atajos»",
+        required: true
+    }}
 ],  redirects:[
     {code: "r1", name: "R1. Redirecciones a páginas inexistentes"},
     {code: "r2", name: "R2. Redirecciones de un espacio de nombres a otro"},
@@ -45,7 +51,15 @@ let criteriaLists = {
     {code: "p1", name: "P1. Violación de la política de plantillas de navegación"},
     {code: "p2", name: "P2. Subpágina de documentación huérfana"},
     {code: "p3", name: "P3. Plantillas de un solo uso"}
-]}
+],  other:[
+    {code: "o", name: "Otra razón", subgroup:{
+        type: "input",
+        name: "subO",
+        label: "Establece la razón: ",
+        tooltip: "Puedes utilizar wikicódigo en tu respuesta",
+        required: true
+    }}
+]}  
 
 function getOptions(criteriaType) {
 	let options = [];
@@ -133,6 +147,13 @@ function createFormWindow() {
         })
     }
 
+    form.append({
+        type: 'checkbox',
+        label: 'other',
+        list: getOptions("other"),
+        style: "padding-left: 1em; padding-bottom: 0.5em"
+    })
+
 	form.append({
 		type: 'submit',
 		label: 'Aceptar'
@@ -145,6 +166,7 @@ function createFormWindow() {
 
 function submitMessage(e) {
 	let form = e.target;
+    console.log("testing stuff")
 }
 
 export {createFormWindow};
