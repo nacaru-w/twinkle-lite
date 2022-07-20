@@ -136,7 +136,7 @@ function submitMessage(e) {
 		if (window.confirm(`¿Quieres solicitar la ${input.protection} del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
 			console.log("Posting message on the noticeboard...");
 			utils.createStatusWindow();
-			new Morebits.status("Paso 1", `Solicitando la ${input.protection} de la página...`, "info");
+			new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
 			new mw.Api().edit(
 				"Usuario:Nacaru/Taller/Tests", // a modificar por «Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual» tras tests
 				buildEditOnNoticedBoard(input)

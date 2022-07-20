@@ -29,7 +29,7 @@ let criteriaLists = {
     {code: "a4",   name: "A4. Contenido no enciclopédico o sin relevancia"},
     {code: "a5",   name: "A5. Artículo duplicado", subgroup: {
         type: "input",
-        name: "subA5",
+        name: "originalArticleName",
         label: "Nombre del artículo original: ",
         tooltip: "Escribe el nombre del artículo sin utilizar wikicódigo. Ej.: «Granada (fruta)», «Ensalada» o «Plantilla:Atajos»",
         required: true
@@ -52,9 +52,9 @@ let criteriaLists = {
     {code: "p2", name: "P2. Subpágina de documentación huérfana"},
     {code: "p3", name: "P3. Plantillas de un solo uso"}
 ],  other:[
-    {code: "o", name: "Otra razón", subgroup:{
+    {name: "Otra razón", subgroup:{
         type: "input",
-        name: "subO",
+        name: "otherreason",
         label: "Establece la razón: ",
         tooltip: "Puedes utilizar wikicódigo en tu respuesta",
         required: true
@@ -106,7 +106,7 @@ function createFormWindow() {
         })
         rField.append({
             type: 'checkbox',
-            name: 'article',
+            name: 'redirect',
             list: getOptions("redirects")
         })
     }
@@ -118,7 +118,7 @@ function createFormWindow() {
         })
         cField.append({
             type: 'checkbox',
-            name: 'article',
+            name: 'categories',
             list: getOptions("categories")
         })
     }
@@ -130,7 +130,7 @@ function createFormWindow() {
         })
         uField.append({
             type: 'checkbox',
-            name: 'article',
+            name: 'userpages',
             list: getOptions("userpages")
         })
     }
@@ -142,14 +142,13 @@ function createFormWindow() {
         })
         tField.append({
             type: 'checkbox',
-            name: 'article',
+            name: 'templates',
             list: getOptions("templates")
         })
     }
 
     form.append({
         type: 'checkbox',
-        label: 'other',
         list: getOptions("other"),
         style: "padding-left: 1em; padding-bottom: 0.5em"
     })
@@ -166,7 +165,33 @@ function createFormWindow() {
 
 function submitMessage(e) {
 	let form = e.target;
+    let input = Morebits.quickForm.getInputData(form);
     console.log("testing stuff")
+    if (window.confirm(`¿Quieres solicitar el borrado del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
+        utils.createStatusWindow();
+        new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
+        console.log("Posting message on page...");
+        console.log(allCriteria(input));
+    }
 }
+
+function allCriteria(data) {
+    let stringTogether = ''
+        for (let criteriaType in data) {
+                for(let counter = 0; counter < data[criteriaType].length; counter++) {
+                    if ( criteriaType !== "undefined" && data[criteriaType][counter].length > 1) {
+                        stringTogether += (data[criteriaType][counter] + '|');
+                    }
+                }
+        }
+        let reasonString = data?.otherreason ?? '';
+        stringTogether += reasonString;
+        if (stringTogether[stringTogether.length - 1] === '|') {
+            return stringTogether.slice(0, -1);
+        } else {
+            return stringTogether;
+        }
+    }
+
 
 export {createFormWindow};
