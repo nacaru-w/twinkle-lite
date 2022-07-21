@@ -173,8 +173,22 @@ function submitMessage(e) {
         new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
         console.log("Posting message on page...");
         console.log("input:", input)
+        new mw.Api().edit(
+            "Usuario:Nacaru/Taller/2", // a modificar por «currentPageName» tras tests
+            speedyTemplateBuilder(input)
+        )
         console.log("allCriteria output:", allCriteria(input));
     }
+}
+
+function speedyTemplateBuilder(data) {
+    return (revision) => {
+        return {
+        text: "{{destruir|" + allCriteria(data) + "}} \n" + revision.content, // a modificar: broken on purpose as of now for testing purposes
+        summary: 'Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]].',
+        minor: false
+        }
+    } 
 }
 
 function allCriteria(data) {
