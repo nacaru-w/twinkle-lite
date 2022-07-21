@@ -18,45 +18,7 @@ let listOptions = [
 
 //Returns a boolean that states whether a spot for the creation of the DR page is available
 function canCreateDeletionRequestPage() {
-    return isPageMissing(`Wikipedia:Consultas_de_Borrado/${utils.currentPageName}`)
-}
-
-function isPageMissing(title) {
-    let params = {
-        action: 'query',
-        titles: title,
-        prop: 'pageprops',
-        format: 'json'
-    };
-    let apiPromise = new mw.Api().get(params);
-    return apiPromise.then(function (data) {
-        let result = data.query.pages
-        return result.hasOwnProperty("-1")
-    });
-}
-
-function userFromGetReply(data) {
-    let pages = data.query.pages;
-    for (let p in pages) {
-        return pages[p].revisions[0].user;
-    }
-}
-
-// Returns a promise with the name of the user who created the page
-function getCreator() {
-    let params = {
-        action: 'query',
-        prop: 'revisions',
-        titles: utils.currentPageName,
-        rvprop: 'user',
-        rvdir: 'newer',
-        format: 'json',
-        rvlimit: 1,
-    }
-    let apiPromise = new mw.Api().get(params);
-    let userPromise = apiPromise.then(userFromGetReply);
-
-    return userPromise;
+    return utils.isPageMissing(`Wikipedia:Consultas_de_Borrado/${utils.currentPageName}`)
 }
 
 function getCategoryOptions() {
@@ -130,7 +92,7 @@ function submitMessage(e) {
                 .then(function () {
                     console.log('Dropping a message on the creator\'s talk page...');
                     new Morebits.status("Paso 3", "publicando un mensaje en la página de discusión del creador...", "info");
-                    return getCreator().then(postsMessage);
+                    return utils.getCreator().then(postsMessage);
                 })
                 .then(function () {
                     console.log('Refreshing...');
@@ -170,7 +132,7 @@ function createDeletionRequestPage(category, reason) {
 
 // Leaves a message on the creator's talk page
 function postsMessage(creator) {
-    return isPageMissing(`Usuario_discusión:${creator}`)
+    return utils.isPageMissing(`Usuario_discusión:${creator}`)
         .then(function (mustCreateNewTalkPage) {
             if (mustCreateNewTalkPage) {
                 return new mw.Api().create(

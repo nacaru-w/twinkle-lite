@@ -177,14 +177,24 @@ function submitMessage(e) {
             "Usuario:Nacaru/Taller/2", // a modificar por «currentPageName» tras tests
             speedyTemplateBuilder(input)
         )
-        console.log("allCriteria output:", allCriteria(input));
+            .then(function () {
+                console.log('Dropping a message on the creator\'s talk page...');
+                new Morebits.status("Paso 2", "publicando un mensaje en la página de discusión del creador...", "info");
+                return utils.getCreator().then(postsMessage(input));
+            })
+            .then(function () {
+                console.log('Refreshing...');
+                new Morebits.status("Finalizado", "actualizando página...", "status");
+                setTimeout(() => { location.reload() }, 2000);
+            })
+        // Plantilla {{subst:Aviso destruir|Nombre del artículo|criterio A|criterio B|criterio C}} ~~~~
     }
 }
 
 function speedyTemplateBuilder(data) {
     return (revision) => {
         return {
-        text: "{{destruir|" + allCriteria(data) + "}} \n" + revision.content, // a modificar: broken on purpose as of now for testing purposes
+        text: `{{destruir|${allCriteria(data)}}} \n` + revision.content, // a modificar: broken on purpose as of now for testing purposes
         summary: 'Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]].',
         minor: false
         }
@@ -203,8 +213,32 @@ function allCriteria(data) {
     if (reasonString != '') {
         fields.push(reasonString);
     }
-
     return fields.join('|');
+}
+
+function postsMessage(input) { 
+    return (creator) => {
+        return utils.isPageMissing(`Usuario_discusión:${creator}`)
+            .then(function (mustCreateNewTalkPage) {
+                if (mustCreateNewTalkPage) {
+                    return new mw.Api().create(
+                        'Usuario:Nacaru/Taller/3', // to be switched to `Usuario_discusión:${creator}` after testing
+                        { summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
+                        `{{subst:Aviso destruir|${utils.currentPageNameWithoutUnderscores}|${allCriteria(input)}}} ~~~~`
+                    );
+                } else {
+                    return new mw.Api().edit(
+                        'Usuario:Nacaru/Taller/2', // to be switched to `Usuario_discusión:${creator}` after testing
+                        function (revision) {
+                            return {
+                                text: revision.content + `\n{{subst:Aviso destruir|${utils.currentPageName}|${allCriteria(input)}}} ~~~~`,
+                                summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                                minor: false
+                            }
+                        }
+                    )
+                }
+            })}
 }
 
 export {createFormWindow};
