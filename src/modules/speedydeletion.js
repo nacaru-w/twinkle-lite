@@ -52,7 +52,7 @@ let criteriaLists = {
     {code: "p2", name: "P2. Subpágina de documentación huérfana"},
     {code: "p3", name: "P3. Plantillas de un solo uso"}
 ],  other:[
-    {name: "Otra razón", subgroup:{
+    {code: "other", name: "Otra razón", subgroup:{
         type: "input",
         name: "otherreason",
         label: "Establece la razón: ",
@@ -149,6 +149,7 @@ function createFormWindow() {
 
     form.append({
         type: 'checkbox',
+        name: 'other',
         list: getOptions("other"),
         style: "padding-left: 1em; padding-bottom: 0.5em"
     })
@@ -171,27 +172,25 @@ function submitMessage(e) {
         utils.createStatusWindow();
         new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
         console.log("Posting message on page...");
-        console.log(allCriteria(input));
+        console.log("input:", input)
+        console.log("allCriteria output:", allCriteria(input));
     }
 }
 
 function allCriteria(data) {
-    let stringTogether = ''
-        for (let criteriaType in data) {
-                for(let counter = 0; counter < data[criteriaType].length; counter++) {
-                    if ( criteriaType !== "undefined" && data[criteriaType][counter].length > 1) {
-                        stringTogether += (data[criteriaType][counter] + '|');
-                    }
-                }
-        }
-        let reasonString = data?.otherreason ?? '';
-        stringTogether += reasonString;
-        if (stringTogether[stringTogether.length - 1] === '|') {
-            return stringTogether.slice(0, -1);
-        } else {
-            return stringTogether;
+    let fields = [];
+    for (let criteriaType in data) {
+        if (criteriaType !== "other" && Array.isArray(data[criteriaType])) {
+            fields.push(...data[criteriaType]);
         }
     }
 
+    let reasonString = data?.otherreason ?? '';
+    if (reasonString != '') {
+        fields.push(reasonString);
+    }
+
+    return fields.join('|');
+}
 
 export {createFormWindow};
