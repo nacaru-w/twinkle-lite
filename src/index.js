@@ -19,3 +19,10 @@ if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 	let SDportletLink = mw.util.addPortletLink('p-cactions', '#', 'Borrado rápido', 'example-button', 'Solicita el borrado rápido de la página');
 	SDportletLink.onclick = SpeedyDeletion.createFormWindow;
 }
+
+if (mw.config.get('wgNamespaceNumber') != 2 || mw.config.get('wgNamespaceNumber') != 3) {
+	console.log("Non-user page: Reports will therefore not be loaded.")
+} else {
+	let RportletLink = mw.util.addPortletLink('p-cactions', '#', 'Borrado rápido', 'example-button', 'Solicita el borrado rápido de la página');
+	RportletLink.onclick = Reports.createFormWindow;
+}
