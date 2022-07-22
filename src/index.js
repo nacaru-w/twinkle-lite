@@ -1,6 +1,7 @@
 import * as DeletionRequestMaker from "./modules/deletionrequestmaker";
 import * as PageProtection from "./modules/pageprotection";
 import * as SpeedyDeletion from "./modules/speedydeletion";
+import * as Reports from "./modules/reports";
 
 mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.js&action=raw&ctype=text/javascript');
 mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.css&action=raw&ctype=text/css', 'text/css');
