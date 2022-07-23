@@ -1,12 +1,6 @@
 import * as utils from './utils';
 
-let reportedUser;
-if (mw.config.get('wgNamespaceNumber') === 2 || mw.config.get('wgNamespaceNumber') === 3) {
-    reportedUser = utils.currentPageName.split(":")[utils.currentPageName.split(":").length - 1]
-} else {
-    reportedUser = utils.currentPageName.split("/")[utils.currentPageName.split(":").length - 1]
-}
-
+let reportedUser = mw.config.get( "wgRelevantUserName" )
 
 let listMotiveOptions = [
     {value: "VDE", label: "Violación de etiqueta"},
@@ -54,7 +48,6 @@ function createFormWindow() {
         label: 'Nombre de usuario:',
         name: 'username',
         value: reportedUser,
-        sublabel: 'testing2'
     })
 
 	let result = form.render();
