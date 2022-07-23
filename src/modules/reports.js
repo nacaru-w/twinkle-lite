@@ -37,6 +37,18 @@ function createFormWindow() {
         list: getMotiveOptions(),
     })
 
+    let reportInfoField = form.append({
+        type: 'field',
+        label: 'Información:'
+    })
+    reportInfoField.append({
+        type: 'dyninput',
+        label: 'Nombre de usuario:',
+        name: 'username',
+        value: 'testing',
+        sublabel: 'testing2'
+    })
+
 	let result = form.render();
 	Window.setContent(result);
 	Window.display();
