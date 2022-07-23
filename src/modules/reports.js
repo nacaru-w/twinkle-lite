@@ -46,16 +46,20 @@ function createFormWindow() {
     reportInfoField.append({
         type: 'dyninput',
         label: 'Nombre de usuario:',
-        name: 'username',
-        value: reportedUser,
+        name: 'usernamefield',
+        value: "",
+        sublabel: 'prueba: ',
     })
 
 	let result = form.render();
 	Window.setContent(result);
 	Window.display();
+
+    document.querySelector('input[name="usernamefield"]').value = reportedUser
 }
 
 function submitMessage(e) {
+
 	let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
     console.log("testing stuff")
