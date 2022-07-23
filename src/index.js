@@ -21,7 +21,7 @@ if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 	SDportletLink.onclick = SpeedyDeletion.createFormWindow;
 }
 
-if (mw.config.get('wgNamespaceNumber') === 2 || mw.config.get('wgNamespaceNumber') === 3) {
+if (mw.config.get('wgNamespaceNumber') === 2 || mw.config.get('wgNamespaceNumber') === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
 	let RportletLink = mw.util.addPortletLink('p-cactions', '#', 'Denunciar usuario', 'example-button', 'Informa de un problema en relación con el usuario');
 	RportletLink.onclick = Reports.createFormWindow;
 } else {
