@@ -1,12 +1,13 @@
 import * as utils from './utils';
 
 let listMotiveOptions = [
-    {value: "VE", label: "Violación de etiqueta"},
+    {value: "VDE", label: "Violación de etiqueta"},
     {value: "3RR", label: "Guerra de ediciones"},
     {value: "NI", label: "Nombre inapropiado"},
+    {value: "VEC", label: "Vandalismo en curso"},
     {value: "VP", label: "Vandalismo persistente"},
-    {value: "CCV", label: "Cuenta creada para vandalizar"},
-    {value: "EB", label: "Evasión de bloqueo"},
+    {value: "CCPV", label: "Cuenta creada para vandalizar"},
+    {value: "EDB", label: "Evasión de bloqueo"},
     {value: "O", label: "Otro"}
 ]
 
