@@ -3,11 +3,11 @@ import * as utils from './utils';
 let reportedUser = mw.config.get( "wgRelevantUserName" )
 
 let listMotiveOptions = [
-    {value: "VDE", label: "Violación de etiqueta"},
+    {value: "VP", label: "Vandalismo persistente"},
     {value: "3RR", label: "Guerra de ediciones"},
     {value: "NI", label: "Nombre inapropiado"},
     {value: "VEC", label: "Vandalismo en curso"},
-    {value: "VP", label: "Vandalismo persistente"},
+    {value: "VDE", label: "Violación de etiqueta"},
     {value: "CCPV", label: "Cuenta creada para vandalizar"},
     {value: "EDB", label: "Evasión de bloqueo"},
     {value: "O", label: "Otro"}
@@ -40,12 +40,15 @@ function createFormWindow() {
         event: 
             function (e) {
                 let selectedOption = e.target.value
+                document.querySelector("label[for='reasontextareanode']").innerText = 'Desarrolla la razón:'
+                document.getElementById('articlefieldnode').setAttribute('style', 'display:none');
                 switch (selectedOption) {
                     case '3RR' :
-                        document.getElementById('articlefield').removeAttribute('style')
+                        document.getElementById('articlefieldnode').removeAttribute('style')
                         break;
-                    default:
-                        document.getElementById('articlefield').setAttribute('style', 'display:none')
+                    case 'VDE' :
+                        document.querySelector("label[for='reasontextareanode']").innerText = 'Ediciones que constituyen una violación de etiqueta:'
+                        break;
                     }
                 }
              			
@@ -67,7 +70,7 @@ function createFormWindow() {
         label: 'Artículo involucrado:',
         name: 'articlefieldbox',
         style: "display: none;",
-        id: 'articlefield',
+        id: 'articlefieldnode',
         tooltip: 'Escribe el nombre del artículo sin ningún tipo de wikicódigo'
     })
 
@@ -75,7 +78,8 @@ function createFormWindow() {
         type: 'textarea',
         label: 'Desarrolla la razón:',
         name: 'reasontextarea',
-        tooltip: 'Incluye diffs si es necesario. Puedes usar wikicódigo. La firma se añadirá de forma automática.'
+        tooltip: 'Incluye diffs si es necesario. Puedes usar wikicódigo. La firma se añadirá de forma automática.',
+        id: 'reasontextareanode'
     })
 
     form.append({
@@ -94,7 +98,7 @@ function submitMessage(e) {
 
 	let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
-    console.log("testing stuff")
+    console.log(input.usernamefield)
 }
 
 
