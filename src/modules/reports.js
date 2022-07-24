@@ -37,7 +37,19 @@ function createFormWindow() {
         label: 'Selecciona el motivo:',
         name: 'motive',
         list: getMotiveOptions(),
-    })
+        event: 
+            function (e) {
+                let selectedOption = e.target.value
+                switch (selectedOption) {
+                    case '3RR' :
+                        document.getElementById('articlefield').removeAttribute('style')
+                        break;
+                    default:
+                        document.getElementById('articlefield').setAttribute('style', 'display:none')
+                    }
+                }
+             			
+            })
 
     let reportInfoField = form.append({
         type: 'field',
@@ -45,11 +57,28 @@ function createFormWindow() {
     })
     reportInfoField.append({
         type: 'dyninput',
-        label: 'Nombre de usuario:',
+        label: 'Usuario denunciado:',
         name: 'usernamefield',
         value: "",
-        sublabel: 'prueba: ',
     })
+    reportInfoField.append({
+        type: 'dyninput',
+        label: 'Artículos involucrados:',
+        name: 'articlefieldbox',
+        style: "display: none;",
+        id: 'articlefield'
+    })
+
+    reportInfoField.append({
+        type: 'textarea',
+        label: 'Desarrolla la razón:',
+        name: 'reasontextarea',
+    })
+
+    form.append({
+		type: 'submit',
+		label: 'Aceptar'
+	});
 
 	let result = form.render();
 	Window.setContent(result);
