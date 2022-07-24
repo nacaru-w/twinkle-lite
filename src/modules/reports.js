@@ -3,14 +3,14 @@ import * as utils from './utils';
 let reportedUser = mw.config.get( "wgRelevantUserName" )
 
 let listMotiveOptions = [
-    {value: "VP", label: "Vandalismo persistente"},
-    {value: "3RR", label: "Guerra de ediciones"},
-    {value: "NI", label: "Nombre inapropiado"},
-    {value: "VEC", label: "Vandalismo en curso"},
-    {value: "VDE", label: "Violación de etiqueta"},
     {value: "CCPV", label: "Cuenta creada para vandalizar"},
     {value: "EDB", label: "Evasión de bloqueo"},
-    {value: "O", label: "Otro"}
+    {value: "3RR", label: "Guerra de ediciones"},
+    {value: "NI", label: "Nombre inapropiado"},
+    {value: "O", label: "Otro"},
+    {value: "VDE", label: "Violación de etiqueta"},
+    {value: "VEC", label: "Vandalismo en curso"},
+    {value: "VP", label: "Vandalismo persistente"}
 ]
 
 function getMotiveOptions() {
@@ -51,7 +51,6 @@ function createFormWindow() {
                         break;
                     }
                 }
-             			
             })
 
     let reportInfoField = form.append({
