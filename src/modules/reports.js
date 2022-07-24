@@ -60,19 +60,22 @@ function createFormWindow() {
         label: 'Usuario denunciado:',
         name: 'usernamefield',
         value: "",
+        tooltip: 'Escribe el nombre del usuario denunciado sin ningún tipo de wikicódigo'
     })
     reportInfoField.append({
         type: 'dyninput',
-        label: 'Artículos involucrados:',
+        label: 'Artículo involucrado:',
         name: 'articlefieldbox',
         style: "display: none;",
-        id: 'articlefield'
+        id: 'articlefield',
+        tooltip: 'Escribe el nombre del artículo sin ningún tipo de wikicódigo'
     })
 
     reportInfoField.append({
         type: 'textarea',
         label: 'Desarrolla la razón:',
         name: 'reasontextarea',
+        tooltip: 'Incluye diffs si es necesario. Puedes usar wikicódigo. La firma se añadirá de forma automática.'
     })
 
     form.append({
