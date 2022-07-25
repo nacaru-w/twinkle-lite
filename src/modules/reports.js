@@ -59,7 +59,8 @@ function createFormWindow() {
     })
     reportInfoField.append({
         type: 'dyninput',
-        label: 'Usuario denunciado:',
+        label: 'Usuarios denunciados:',
+        sublabel: 'Usuario:',
         name: 'usernamefield',
         value: "",
         tooltip: 'Escribe el nombre del usuario denunciado sin ningún tipo de wikicódigo'
@@ -97,7 +98,8 @@ function submitMessage(e) {
 
 	let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
-    console.log(input.usernamefield)
+    let usernames = Array.from(document.querySelectorAll('input[name=usernamefield]')).map((o) => o.value)
+    console.log(usernames)
 }
 
 
