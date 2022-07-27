@@ -3,14 +3,14 @@ import * as utils from './utils';
 let reportedUser = mw.config.get( "wgRelevantUserName" )
 
 let listMotiveOptions = [
-    {value: "CCPV", label: "Cuenta creada para vandalizar"},
-    {value: "EDB", label: "Evasión de bloqueo"},
+    {value: "Nombres_inapropiados_y_vandalismo_persistente", label: "Cuenta creada para vandalizar"},
+    {value: "Nombres_inapropiados_y_vandalismo_persistente", label: "Evasión de bloqueo"},
     {value: "3RR", label: "Guerra de ediciones"},
-    {value: "NI", label: "Nombre inapropiado"},
-    {value: "O", label: "Otro"},
-    {value: "VDE", label: "Violación de etiqueta"},
-    {value: "VEC", label: "Vandalismo en curso"},
-    {value: "VP", label: "Vandalismo persistente"}
+    {value: "Nombres_inapropiados_y_vandalismo_persistente", label: "Nombre inapropiado"},
+    {value: "Miscelánea", label: "Otro"},
+    {value: "Violaciones_de_etiqueta", label: "Violación de etiqueta"},
+    {value: "Wikipedia:Vandalismo_en_curso", label: "Vandalismo en curso"},
+    {value: "Nombres_inapropiados_y_vandalismo_persistente", label: "Vandalismo persistente"}
 ]
 
 function getMotiveOptions() {
@@ -46,7 +46,7 @@ function createFormWindow() {
                     case '3RR' :
                         document.getElementById('articlefieldnode').removeAttribute('style')
                         break;
-                    case 'VDE' :
+                    case 'Violaciones_de_etiqueta' :
                         document.querySelector("label[for='reasontextareanode']").innerText = 'Ediciones que constituyen una violación de etiqueta:'
                         break;
                     }
@@ -95,23 +95,22 @@ function createFormWindow() {
 }
 
 function submitMessage(e) {
-
 	let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
     let usernames = Array.from(document.querySelectorAll('input[name=usernamefield]')).map((o) => o.value)
-    console.log(usernames)
-    if (input.reason === `` && input.motive != 'NI') {
+    let chosenMotive = input.motive
+    console.log(chosenMotive)
+    /*if (input.reason === `` && input.motive != 'NI') {
 		alert("No se ha establecido un motivo.");
 	} else {
         utils.createStatusWindow()
-        switch (input.motive) {
-            case "CCPV" :
+        new mw.Api().edit(
+        
                 
         }
 
-    }
+    }*/
 }
-
 
 
 
