@@ -139,7 +139,7 @@ function submitMessage(e) {
 			new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
 			new mw.Api().edit(
 				"Usuario:Nacaru/Taller/Tests", // a modificar por «Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual» tras tests
-				buildEditOnNoticedBoard(input)
+				buildEditOnNoticeboard(input)
 			)
 				.then(function () {
 					console.log('Refreshing...');
@@ -151,7 +151,7 @@ function submitMessage(e) {
 	}
 }
 
-function buildEditOnNoticedBoard(input) {
+function buildEditOnNoticeboard(input) {
 	let title = `== Solicitud de ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] ==`;
 	if (input.protection === 'protección') {
 		if (input.motive !== 'Otro') {
