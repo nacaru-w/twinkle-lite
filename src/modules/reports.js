@@ -77,7 +77,7 @@ function createFormWindow() {
     reportInfoField.append({
         type: 'textarea',
         label: 'Desarrolla la razón:',
-        name: 'reasontextarea',
+        name: 'reason',
         tooltip: 'Incluye diffs si es necesario. Puedes usar wikicódigo. La firma se añadirá de forma automática.',
         id: 'reasontextareanode'
     })
@@ -100,6 +100,16 @@ function submitMessage(e) {
     let input = Morebits.quickForm.getInputData(form);
     let usernames = Array.from(document.querySelectorAll('input[name=usernamefield]')).map((o) => o.value)
     console.log(usernames)
+    if (input.reason === `` && input.motive != 'NI') {
+		alert("No se ha establecido un motivo.");
+	} else {
+        utils.createStatusWindow()
+        switch (input.motive) {
+            case "CCPV" :
+                
+        }
+
+    }
 }
 
 
