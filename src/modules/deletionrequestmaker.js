@@ -18,7 +18,7 @@ let listOptions = [
 
 //Returns a boolean that states whether a spot for the creation of the DR page is available
 function canCreateDeletionRequestPage() {
-    return utils.isPageMissing(`Wikipedia:Consultas_de_Borrado/${utils.currentPageName}`)
+    return utils.isPageMissing(`Wikipedia:Consultas_de_borrado/${utils.currentPageName}`)
 }
 
 function getCategoryOptions() {
