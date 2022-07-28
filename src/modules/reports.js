@@ -3,20 +3,39 @@ import * as utils from './utils';
 let reportedUser = mw.config.get( "wgRelevantUserName" )
 
 let listMotiveOptions = [
-    {value: "Nombres_inapropiados_y_vandalismo_persistente", label: "Cuenta creada para vandalizar"},
-    {value: "Nombres_inapropiados_y_vandalismo_persistente", label: "Evasión de bloqueo"},
-    {value: "3RR", label: "Guerra de ediciones"},
-    {value: "Nombres_inapropiados_y_vandalismo_persistente", label: "Nombre inapropiado"},
-    {value: "Miscelánea", label: "Otro"},
-    {value: "Violaciones_de_etiqueta", label: "Violación de etiqueta"},
-    {value: "Wikipedia:Vandalismo_en_curso", label: "Vandalismo en curso"},
-    {value: "Nombres_inapropiados_y_vandalismo_persistente", label: "Vandalismo persistente"}
+    { value : "Cuenta creada para vandalizar" },
+    { value : "Evasión de bloqueo" },
+    { value : "Guerra de ediciones" },
+    { value : "Nombre inapropiado" },
+    { value : "Violación de etiqueta" },
+    { value : "Vandalismo en curso" },
+    { value : "Vandalismo persistente" },
+    { value : "Otro" },
 ]
+
+let motiveOptionsDict = { 
+    "Cuenta creada para vandalizar" :
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"},
+    "Evasión de bloqueo" :
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"},
+    "Guerra de ediciones" :
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual"},
+    "Nombre inapropiado" :
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"},
+    "Violación de etiqueta" :
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violación_de_etiqueta/Actual" },
+    "Vandalismo en curso" :
+        { "link" : "Wikipedia:Vandalismo_en_curso" },
+    "Vandalismo persistente" :
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"},
+    "Otro" :
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"}
+}
 
 function getMotiveOptions() {
         let dropDownOptions = [];
         for (let motive of listMotiveOptions) {
-            let option = {value: motive.value, label: motive.label, subgroup: motive.subgroup };
+            let option = {value: motive.value, label: motive.value, subgroup: motive.subgroup};
             dropDownOptions.push(option);
         }
         return dropDownOptions;
@@ -42,12 +61,16 @@ function createFormWindow() {
                 let selectedOption = e.target.value
                 document.querySelector("label[for='reasontextareanode']").innerText = 'Desarrolla la razón:'
                 document.getElementById('articlefieldnode').setAttribute('style', 'display:none');
+                document.getElementById('otherreasonnode').setAttribute('style', 'display:none');
                 switch (selectedOption) {
-                    case '3RR' :
+                    case 'Guerra de ediciones' :
                         document.getElementById('articlefieldnode').removeAttribute('style')
                         break;
-                    case 'Violaciones_de_etiqueta' :
+                    case 'Violación de etiqueta' :
                         document.querySelector("label[for='reasontextareanode']").innerText = 'Ediciones que constituyen una violación de etiqueta:'
+                        break;
+                    case 'Otro' :
+                        document.getElementById('otherreasonnode').removeAttribute('style')
                         break;
                     }
                 }
@@ -72,6 +95,13 @@ function createFormWindow() {
         style: "display: none;",
         id: 'articlefieldnode',
         tooltip: 'Escribe el nombre del artículo sin ningún tipo de wikicódigo'
+    })
+    reportInfoField.append({
+        type: "input",
+        name: "otherreason",
+        id: "otherreasonnode",
+        style: "display: none;",
+        placeholder: "Título de la denuncia",
     })
 
     reportInfoField.append({
@@ -100,18 +130,28 @@ function submitMessage(e) {
     let usernames = Array.from(document.querySelectorAll('input[name=usernamefield]')).map((o) => o.value)
     let chosenMotive = input.motive
     console.log(chosenMotive)
-    /*if (input.reason === `` && input.motive != 'NI') {
-		alert("No se ha establecido un motivo.");
+    if (input.reason === `` && input.motive != 'NI') {
+		alert("No se ha establecido un motivo."); }
+    else if (input.motive == 'Otro' && input.otherreason == '' ) {
+        alert("No se ha establecido un título para la denuncia")
 	} else {
         utils.createStatusWindow()
+        new Morebits.status("Paso 1", `creando denuncia en el tablón...`, "info");
         new mw.Api().edit(
-        
-                
-        }
+            input.motive == "Wikipedia:Vandalismo_en_curso" ? input.motive : `Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/${input.motive}/Actual`,
+            buildEditOnNoticeboard(input)
+        )
 
-    }*/
+    }
 }
 
+function buildEditOnNoticeboard (data) {
+    title = input.motive 
+    return (revision) => {
+        return {
 
+        }
+    }
+}
 
 export { createFormWindow };
