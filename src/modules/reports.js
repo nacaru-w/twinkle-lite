@@ -156,27 +156,50 @@ function listWords(array) {
     return bulletedWords
 }
 
+function VECReportBuilder(usernames, input) {
+    let finalText = ''
+    for (let user of usernames) {
+        let templateWord = mw.util.isIPAddress(user, true) ? 'VándaloIP' : 'Vándalo';
+        finalText +=    `=== ${user} ===` + '\n' +
+                        `* Posible vándalo: {{${templateWord}|${user}}}` + '\n' +
+                        `* Motivo del reporte: ${input.reason}` + '\n' +
+                        '* Usuario que reporta: ~~~~' + '\n' +
+                        '* Acción administrativa: (a rellenar por un bibliotecario)' + '\n'
+    }
+    return finalText
+}
+
 function buildEditOnNoticeboard (input, usernames, articles) {
-    let title = input.motive == "Otro" ? input.otherreason : input.motive ;
-    let bulletedUserList = listWords(usernames) 
-    let bulletedArticleList = listWords(articles)
-    let reasonTitle = input.motive == "Guerra de ediciones" ? `; Comentario` : `; Motivo`;
-    let shouldAddArticleList = input.motive == "Guerra de ediciones" ? `\n; Artículos en los que se lleva a cabo \n${bulletedArticleList} \n` : '\n';
-    return (revision) => {
-        return {
-            text:   revision.content + '\n' +
-                    `== ${title} ==` + '\n' +
-                    '; Usuarios implicados' + '\n' +
-                    `${bulletedUserList}` +
-                    shouldAddArticleList +
-                    reasonTitle + '\n' +
-                    `${input.reason}` + '\n' +
-                    '; Usuario que lo solicita' + '\n' +
-                    '~~~~' + '\n' +
-                    '; Respuesta' + '\n' + 
-                    '(a rellenar por un bibliotecario)',
-            summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
-            minor: false
+    if (input.motive == "Vandalismo en curso") {
+        return (revision) => {
+            return {
+                text:   revision.content + '\n' + VECReportBuilder(usernames, input),
+                summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                minor:  false
+            }
+        }
+    } else {
+        let title = input.motive == "Otro" ? input.otherreason : input.motive ;
+        let bulletedUserList = listWords(usernames) 
+        let bulletedArticleList = listWords(articles)
+        let reasonTitle = input.motive == "Guerra de ediciones" ? `; Comentario` : `; Motivo`;
+        let articleListIfEditWar = input.motive == "Guerra de ediciones" ? `\n; Artículos en los que se lleva a cabo \n${bulletedArticleList} \n` : '\n';
+        return (revision) => {
+            return {
+                text:   revision.content + '\n' +
+                        `== ${title} ==` + '\n' +
+                        '; Usuarios implicados' + '\n' +
+                        `${bulletedUserList}` +
+                        articleListIfEditWar +
+                        reasonTitle + '\n' +
+                        `${input.reason}` + '\n' +
+                        '; Usuario que lo solicita' + '\n' +
+                        '~~~~' + '\n' +
+                        '; Respuesta' + '\n' + 
+                        '(a rellenar por un bibliotecario)',
+                summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                minor:  false
+            }
         }
     }
 }
