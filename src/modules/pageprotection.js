@@ -170,7 +170,7 @@ ${input.reason} \n
 * ~~~~ \n
 ;Respuesta \n
 (a rellenar por un bibliotecario)`,
-			summary: `Solicitando ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]].`,
+			summary: `Solicitando ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]].`,
 			minor: false
 		}
 	}
