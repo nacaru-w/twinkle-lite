@@ -15,21 +15,21 @@ let listMotiveOptions = [
 
 let motiveOptionsDict = { 
     "Cuenta creada para vandalizar" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"},
+        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV' /*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"*/ },
     "Evasión de bloqueo" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"},
+        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"*/ },
     "Guerra de ediciones" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual"},
+        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual"*/ },
     "Nombre inapropiado" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"},
+        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"*/ },
     "Violación de etiqueta" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violación_de_etiqueta/Actual" },
+        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violaciones_de_etiqueta/Actual"*/ },
     "Vandalismo en curso" :
-        { "link" : "Wikipedia:Vandalismo_en_curso" },
+        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Vandalismo_en_curso"*/ },
     "Vandalismo persistente" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"},
+        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"*/ },
     "Otro" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"}
+        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual"*/ }
 }
 
 function getMotiveOptions() {
@@ -127,29 +127,56 @@ function createFormWindow() {
 function submitMessage(e) {
 	let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
-    let usernames = Array.from(document.querySelectorAll('input[name=usernamefield]')).map((o) => o.value)
-    let chosenMotive = input.motive
-    console.log(chosenMotive)
     if (input.reason === `` && input.motive != 'NI') {
-		alert("No se ha establecido un motivo."); }
-    else if (input.motive == 'Otro' && input.otherreason == '' ) {
-        alert("No se ha establecido un título para la denuncia")
+		alert("No se ha establecido un motivo.");
+    } else if (input.motive == 'Otro' && input.otherreason == '' ) {
+        alert("No se ha establecido un título para la denuncia");
+    } else if (input.usernamefield == '') {
+        alert("No se ha establecido un usuario");
 	} else {
         utils.createStatusWindow()
-        new Morebits.status("Paso 1", `creando denuncia en el tablón...`, "info");
+        new Morebits.status("Paso 1", `obteniendo datos del formulario...`, "info");
+        let usernames = Array.from(document.querySelectorAll('input[name=usernamefield]')).map((o) => o.value)
+        let articles = Array.from(document.querySelectorAll('input[name=articlefieldbox]')).map((o) => o.value)
+        new Morebits.status("Paso 2", `creando denuncia en el tablón...`, "info");
         new mw.Api().edit(
-            input.motive == "Wikipedia:Vandalismo_en_curso" ? input.motive : `Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/${input.motive}/Actual`,
-            buildEditOnNoticeboard(input)
+            motiveOptionsDict[input.motive].link,
+            buildEditOnNoticeboard(input, usernames, articles)
         )
 
     }
 }
 
-function buildEditOnNoticeboard (data) {
-    title = input.motive 
+function listWords(array) {
+    let bulletedWords = '', templateLetter;
+    templateLetter = typeof usernames !== 'undefined' ? 'a' : 'u' ;
+    for (let word of array) {
+        bulletedWords += `* {{${templateLetter}|${word}}} \n`
+    }
+    return bulletedWords
+}
+
+function buildEditOnNoticeboard (input, usernames, articles) {
+    let title = input.motive == "Otro" ? input.otherreason : input.motive ;
+    let bulletedUserList = listWords(usernames) 
+    let bulletedArticleList = listWords(articles)
+    let reasonTitle = input.motive == "Guerra de ediciones" ? `; Comentario` : `; Motivo`;
+    let shouldAddArticleList = input.motive == "Guerra de ediciones" ? `\n; Artículos en los que se lleva a cabo \n${bulletedArticleList} \n` : '\n';
     return (revision) => {
         return {
-
+            text:   revision.content + '\n' +
+                    `== ${title} ==` + '\n' +
+                    '; Usuarios implicados' + '\n' +
+                    `${bulletedUserList}` +
+                    shouldAddArticleList +
+                    reasonTitle + '\n' +
+                    `${input.reason}` + '\n' +
+                    '; Usuario que lo solicita' + '\n' +
+                    '~~~~' + '\n' +
+                    '; Respuesta' + '\n' + 
+                    '(a rellenar por un bibliotecario)',
+            summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+            minor: false
         }
     }
 }
