@@ -15,21 +15,35 @@ let listMotiveOptions = [
 
 let motiveOptionsDict = { 
     "Cuenta creada para vandalizar" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual" },
+        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+            "usersSubtitle" : 'Lista de usuarios' 
+        },
     "Evasión de bloqueo" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual" },
+        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+            "usersSubtitle" : 'Lista de usuarios'
+        },
     "Guerra de ediciones" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual" },
+        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual",
+            "usersSubtitle" : 'Usuarios implicados'
+        },
     "Nombre inapropiado" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual" },
+        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+            "usersSubtitle" : 'Lista de usuarios'
+        },
     "Violación de etiqueta" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violaciones_de_etiqueta/Actual" },
+        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violaciones_de_etiqueta/Actual",
+            "usersSubtitle" : 'Usuarios implicados'
+        },
     "Vandalismo en curso" :
-        { "link" : "Wikipedia:Vandalismo_en_curso" },
+        {   "link" : "Wikipedia:Vandalismo_en_curso" },
     "Vandalismo persistente" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual" },
+        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+            "usersSubtitle" : 'Lista de usuarios'
+        },
     "Otro" :
-        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual" }
+        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual",
+            "usersSubtitle" : 'Usuarios implicados'
+        }
 }
 
 function getMotiveOptions() {
@@ -197,7 +211,7 @@ function buildEditOnNoticeboard (input, usernames, articles) {
             return {
                 text:   revision.content + '\n' + '\n' +
                         `== ${title} ==` + '\n' +
-                        '; Usuarios implicados' + '\n' +
+                        `; ${motiveOptionsDict[input.motive].usersSubtitle}` + '\n' +
                         `${bulletedUserList}` +
                         articleListIfEditWar +
                         reasonTitle + '\n' +
