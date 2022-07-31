@@ -138,7 +138,7 @@ function submitMessage(e) {
 			utils.createStatusWindow();
 			new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
 			new mw.Api().edit(
-				"Usuario:Nacaru/Taller/Tests", // a modificar por «Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual» tras tests
+				"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
 				buildEditOnNoticeboard(input)
 			)
 				.then(function () {
@@ -160,15 +160,15 @@ function buildEditOnNoticeboard(input) {
 	};
 	return (revision) => {
 		return {
-			text: revision.content + `\n
-${title} \n
-;Artículo(s) \n
-* {{a|${utils.currentPageNameWithoutUnderscores}}} \n
-;Causa \n
-${input.reason} \n
-; Usuario que lo solicita \n
-* ~~~~ \n
-;Respuesta \n
+			text: revision.content + `
+${title} 
+;Artículo(s) 
+* {{a|${utils.currentPageNameWithoutUnderscores}}}
+;Causa 
+${input.reason}
+; Usuario que lo solicita
+* ~~~~ 
+;Respuesta
 (a rellenar por un bibliotecario)`,
 			summary: `Solicitando ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]].`,
 			minor: false
