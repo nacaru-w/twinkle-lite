@@ -218,27 +218,31 @@ function allCriteria(data) {
 
 function postsMessage(input) { 
     return (creator) => {
-        return utils.isPageMissing(`Usuario_discusión:${creator}`)
-            .then(function (mustCreateNewTalkPage) {
-                if (mustCreateNewTalkPage) {
-                    return new mw.Api().create(
-                        `Usuario_discusión:${creator}`,
-                        { summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
-                        `{{subst:Aviso destruir|${utils.currentPageNameWithoutUnderscores}|${allCriteria(input)}}} ~~~~`
-                    );
-                } else {
-                    return new mw.Api().edit(
-                        `Usuario_discusión:${creator}`, 
-                        function (revision) {
-                            return {
-                                text: revision.content + `\n{{subst:Aviso destruir|${utils.currentPageName}|${allCriteria(input)}}} ~~~~`,
-                                summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
-                                minor: false
+        if (creator == utils.currentUser) {
+            return;
+        } else {
+            return utils.isPageMissing(`Usuario_discusión:${creator}`)
+                .then(function (mustCreateNewTalkPage) {
+                    if (mustCreateNewTalkPage) {
+                        return new mw.Api().create(
+                            `Usuario_discusión:${creator}`,
+                            { summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
+                            `{{subst:Aviso destruir|${utils.currentPageNameWithoutUnderscores}|${allCriteria(input)}}} ~~~~`
+                        );
+                    } else {
+                        return new mw.Api().edit(
+                            `Usuario_discusión:${creator}`, 
+                            function (revision) {
+                                return {
+                                    text: revision.content + `\n{{subst:Aviso destruir|${utils.currentPageName}|${allCriteria(input)}}} ~~~~`,
+                                    summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                                    minor: false
+                                }
                             }
-                        }
-                    )
-                }
-            })}
+                        )
+                    }
+                })}
+        }    
 }
 
 export {createFormWindow};
