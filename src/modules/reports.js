@@ -195,7 +195,7 @@ function buildEditOnNoticeboard (input, usernames, articles) {
         let articleListIfEditWar = input.motive == "Guerra de ediciones" ? `\n; Artículos en los que se lleva a cabo \n${bulletedArticleList} \n` : '\n';
         return (revision) => {
             return {
-                text:   revision.content + '\n' +
+                text:   revision.content + '\n' + '\n' +
                         `== ${title} ==` + '\n' +
                         '; Usuarios implicados' + '\n' +
                         `${bulletedUserList}` +
