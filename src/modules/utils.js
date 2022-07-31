@@ -49,4 +49,4 @@ function isPageMissing(title) {
     });
 }
 
-export {currentPageName, currentPageNameWithoutUnderscores, createStatusWindow, getCreator, isPageMissing};
+export {currentPageName, currentPageNameWithoutUnderscores, createStatusWindow, getCreator, isPageMissing, currentUser};
