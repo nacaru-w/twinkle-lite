@@ -1,5 +1,6 @@
 const currentPageName = mw.config.get('wgPageName');
 const currentPageNameWithoutUnderscores = currentPageName.replaceAll('_', ' ');
+const currentUser = mw.config.get ('wgUserName');
 
 //Creates the window that holds the status messages
 function createStatusWindow() {
