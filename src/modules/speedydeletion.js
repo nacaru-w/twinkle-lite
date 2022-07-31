@@ -174,7 +174,7 @@ function submitMessage(e) {
         console.log("Posting message on page...");
         console.log("input:", input)
         new mw.Api().edit(
-            "Usuario:Nacaru/Taller/2", // a modificar por «currentPageName» tras tests
+            utils.currentPageName, // a modificar por «currentPageName» tras tests
             speedyTemplateBuilder(input)
         )
             .then(function () {
@@ -194,7 +194,7 @@ function submitMessage(e) {
 function speedyTemplateBuilder(data) {
     return (revision) => {
         return {
-        text: `{{destruir|${allCriteria(data)}}} \n` + revision.content, // a modificar: broken on purpose as of now for testing purposes
+        text: `{{destruir|${allCriteria(data)}}} \n` + revision.content,
         summary: 'Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]].',
         minor: false
         }
@@ -222,13 +222,13 @@ function postsMessage(input) {
             .then(function (mustCreateNewTalkPage) {
                 if (mustCreateNewTalkPage) {
                     return new mw.Api().create(
-                        'Usuario:Nacaru/Taller/3', // to be switched to `Usuario_discusión:${creator}` after testing
+                        `Usuario_discusión:${creator}`,
                         { summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
                         `{{subst:Aviso destruir|${utils.currentPageNameWithoutUnderscores}|${allCriteria(input)}}} ~~~~`
                     );
                 } else {
                     return new mw.Api().edit(
-                        'Usuario:Nacaru/Taller/2', // to be switched to `Usuario_discusión:${creator}` after testing
+                        `Usuario_discusión:${creator}`, 
                         function (revision) {
                             return {
                                 text: revision.content + `\n{{subst:Aviso destruir|${utils.currentPageName}|${allCriteria(input)}}} ~~~~`,
