@@ -15,21 +15,21 @@ let listMotiveOptions = [
 
 let motiveOptionsDict = { 
     "Cuenta creada para vandalizar" :
-        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV' /*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"*/ },
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual" },
     "Evasión de bloqueo" :
-        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"*/ },
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual" },
     "Guerra de ediciones" :
-        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual"*/ },
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual" },
     "Nombre inapropiado" :
-        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"*/ },
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual" },
     "Violación de etiqueta" :
-        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violaciones_de_etiqueta/Actual"*/ },
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violaciones_de_etiqueta/Actual" },
     "Vandalismo en curso" :
-        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Vandalismo_en_curso"*/ },
+        { "link" : "Wikipedia:Vandalismo_en_curso" },
     "Vandalismo persistente" :
-        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual"*/ },
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual" },
     "Otro" :
-        { "link" : 'Usuario:Nacaru/Taller/Tests/CCV'/*"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual"*/ }
+        { "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual" }
 }
 
 function getMotiveOptions() {
@@ -219,14 +219,14 @@ function postsMessage(input) {
                 let title = input.motive == "Otro" ? input.otherreason : input.motive ;
                 if (mustCreateNewTalkPage) {
                     return new mw.Api().create(
-                        'Usuario:Nacaru/Taller/3', // to be switched to `Usuario_discusión:${input.usernamefield}` after testing
+                        `Usuario_discusión:${input.usernamefield}`,
                         { summary: `Aviso al usuario de su denuncia en [[${motiveOptionsDict[input.motive].link}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
                         `\n== ${title} ==\n` +
                         `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`
                     );
                 } else {
                     return new mw.Api().edit(
-                        'Usuario:Nacaru/Taller/2', // to be switched to `Usuario_discusión:${input.usernamefield}` after testing
+                        `Usuario_discusión:${input.usernamefield}`,
                         function (revision) {
                             return {
                                 text: revision.content + `\n== ${title} ==\n` + `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`,
