@@ -90,7 +90,8 @@ function createFormWindow() {
     })
     reportInfoField.append({
         type: 'dyninput',
-        label: 'Artículo involucrado:',
+        label: 'Artículos involucrados:',
+        sublabel: 'Artículo:',
         name: 'articlefieldbox',
         style: "display: none;",
         id: 'articlefieldnode',
