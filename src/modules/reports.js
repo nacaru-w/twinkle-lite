@@ -220,7 +220,7 @@ function postsMessage(input) {
                 if (mustCreateNewTalkPage) {
                     return new mw.Api().create(
                         `Usuario_discusión:${input.usernamefield}`,
-                        { summary: `Aviso al usuario de su denuncia en [[${motiveOptionsDict[input.motive].link}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
+                        { summary: `Aviso al usuario de su denuncia por [[${motiveOptionsDict[input.motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
                         `\n== ${title} ==\n` +
                         `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`
                     );
@@ -230,7 +230,7 @@ function postsMessage(input) {
                         function (revision) {
                             return {
                                 text: revision.content + `\n== ${title} ==\n` + `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`,
-                                summary: `Aviso al usuario de su denuncia en [[${motiveOptionsDict[input.motive].link}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                                summary: `Aviso al usuario de su denuncia por [[${motiveOptionsDict[input.motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                                 minor: false
                             }
                         }
