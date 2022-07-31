@@ -160,7 +160,7 @@ function buildEditOnNoticeboard(input) {
 	};
 	return (revision) => {
 		return {
-			text: revision.content + `
+			text: revision.content + `\n
 ${title} 
 ;Artículo(s) 
 * {{a|${utils.currentPageNameWithoutUnderscores}}}
