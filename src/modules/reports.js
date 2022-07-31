@@ -169,7 +169,7 @@ function VECReportBuilder(usernames, input) {
     let finalText = ''
     for (let user of usernames) {
         let templateWord = mw.util.isIPAddress(user, true) ? 'VándaloIP' : 'Vándalo';
-        finalText +=    `=== ${user} ===` + '\n' +
+        finalText +=    `=== ${user} ===` + '\n' + '\n' + 
                         `* Posible vándalo: {{${templateWord}|${user}}}` + '\n' +
                         `* Motivo del reporte: ${input.reason}` + '\n' +
                         '* Usuario que reporta: ~~~~' + '\n' +
@@ -182,7 +182,7 @@ function buildEditOnNoticeboard (input, usernames, articles) {
     if (input.motive == "Vandalismo en curso") {
         return (revision) => {
             return {
-                text:   revision.content + '\n' + VECReportBuilder(usernames, input),
+                text:   revision.content + '\n' + '\n' + VECReportBuilder(usernames, input),
                 summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                 minor:  false
             }
