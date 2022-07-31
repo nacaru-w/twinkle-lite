@@ -172,14 +172,11 @@ function submitMessage(e) {
         utils.createStatusWindow();
         new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
         console.log("Posting message on page...");
-        console.log("input:", input)
         new mw.Api().edit(
             utils.currentPageName, // a modificar por «currentPageName» tras tests
             speedyTemplateBuilder(input)
         )
             .then(function () {
-                console.log('Dropping a message on the creator\'s talk page...');
-                new Morebits.status("Paso 2", "publicando un mensaje en la página de discusión del creador...", "info");
                 return utils.getCreator().then(postsMessage(input));
             })
             .then(function () {
@@ -221,6 +218,8 @@ function postsMessage(input) {
         if (creator == utils.currentUser) {
             return;
         } else {
+            console.log('Dropping a message on the creator\'s talk page...');
+            new Morebits.status("Paso 2", "publicando un mensaje en la página de discusión del creador...", "info");
             return utils.isPageMissing(`Usuario_discusión:${creator}`)
                 .then(function (mustCreateNewTalkPage) {
                     if (mustCreateNewTalkPage) {
