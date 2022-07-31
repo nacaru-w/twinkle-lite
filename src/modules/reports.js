@@ -143,13 +143,21 @@ function submitMessage(e) {
             motiveOptionsDict[input.motive].link,
             buildEditOnNoticeboard(input, usernames, articles)
         )
+        .then( function() {
+            new Morebits.status("Paso 3", `avisando al usuario reportado...`, "info");
+            return postsMessage(input)
+        })
+        .then(function () {
+            console.log('Refreshing...');
+            new Morebits.status("Finalizado", "actualizando página...", "status");
+            setTimeout(() => { location.reload() }, 1500);
+        })
 
     }
 }
 
-function listWords(array) {
-    let bulletedWords = '', templateLetter;
-    templateLetter = typeof usernames !== 'undefined' ? 'a' : 'u' ;
+function listWords(array, templateLetter) {
+    let bulletedWords = ''
     for (let word of array) {
         bulletedWords += `* {{${templateLetter}|${word}}} \n`
     }
@@ -180,8 +188,8 @@ function buildEditOnNoticeboard (input, usernames, articles) {
         }
     } else {
         let title = input.motive == "Otro" ? input.otherreason : input.motive ;
-        let bulletedUserList = listWords(usernames) 
-        let bulletedArticleList = listWords(articles)
+        let bulletedUserList = listWords(usernames, 'u') 
+        let bulletedArticleList = listWords(articles, 'a')
         let reasonTitle = input.motive == "Guerra de ediciones" ? `; Comentario` : `; Motivo`;
         let articleListIfEditWar = input.motive == "Guerra de ediciones" ? `\n; Artículos en los que se lleva a cabo \n${bulletedArticleList} \n` : '\n';
         return (revision) => {
@@ -202,6 +210,32 @@ function buildEditOnNoticeboard (input, usernames, articles) {
             }
         }
     }
+}
+
+function postsMessage(input) {
+        return utils.isPageMissing(`Usuario_discusión:${input.usernamefield}`)
+            .then(function (mustCreateNewTalkPage) {
+                let title = input.motive == "Otro" ? input.otherreason : input.motive ;
+                if (mustCreateNewTalkPage) {
+                    return new mw.Api().create(
+                        'Usuario:Nacaru/Taller/3', // to be switched to `Usuario_discusión:${input.usernamefield}` after testing
+                        { summary: `Aviso al usuario de su denuncia en [[${motiveOptionsDict[input.motive].link}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
+                        `\n== ${title} ==\n` +
+                        `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`
+                    );
+                } else {
+                    return new mw.Api().edit(
+                        'Usuario:Nacaru/Taller/2', // to be switched to `Usuario_discusión:${input.usernamefield}` after testing
+                        function (revision) {
+                            return {
+                                text: revision.content + `\n== ${title} ==\n` + `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`,
+                                summary: `Aviso al usuario de su denuncia en [[${motiveOptionsDict[input.motive].link}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                                minor: false
+                            }
+                        }
+                    )
+                }
+            })
 }
 
 export { createFormWindow };
