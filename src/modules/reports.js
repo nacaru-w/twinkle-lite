@@ -217,7 +217,7 @@ function buildEditOnNoticeboard (input, usernames, articles) {
                         reasonTitle + '\n' +
                         `${input.reason}` + '\n' +
                         '; Usuario que lo solicita' + '\n' +
-                        '~~~~' + '\n' +
+                        '* ~~~~' + '\n' +
                         '; Respuesta' + '\n' + 
                         '(a rellenar por un bibliotecario)',
                 summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
