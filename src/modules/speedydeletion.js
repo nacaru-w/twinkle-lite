@@ -76,6 +76,19 @@ function createFormWindow() {
 	Window.addFooterLink('Criterios para el borrado rápido', 'Wikipedia:Criterios para el borrado rápido');
 	let form = new Morebits.quickForm(submitMessage);
 
+    form.append({
+        type: 'checkbox',
+        list:
+            [{
+            name: "notify",
+            value: "notify", 
+            label: "Notificar al creador de la página", 
+            checked: true,
+            tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advirtiéndole del posible borrado de su artículo" 
+        }],
+        style: "padding-left: 1em; padding-top:0.5em;"
+    })
+
     let gField = form.append({
 	    type: 'field',
 		label: 'Criterios generales:',
@@ -167,7 +180,7 @@ function createFormWindow() {
 function submitMessage(e) {
 	let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
-    console.log("testing stuff")
+    console.log(input.notify)
     if (window.confirm(`¿Quieres solicitar el borrado del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
         utils.createStatusWindow();
         new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
@@ -213,7 +226,8 @@ function allCriteria(data) {
     return fields.join('|');
 }
 
-function postsMessage(input) { 
+function postsMessage(input) {
+    if (!input.notify) return; 
     return (creator) => {
         if (creator == utils.currentUser) {
             return;

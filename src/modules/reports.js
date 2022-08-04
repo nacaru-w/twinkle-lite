@@ -90,6 +90,18 @@ function createFormWindow() {
                 }
             })
 
+    form.append({
+        type: 'checkbox',
+        list: [{
+            name: "notify",
+            value: "notify", 
+            label: "Notificar al usuario denunciado", 
+            checked: true,
+            tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del usuario reportado avisándole de la denuncia" 
+        }],
+        style: "padding-left: 1em;"
+    })
+
     let reportInfoField = form.append({
         type: 'field',
         label: 'Información:'
@@ -159,7 +171,6 @@ function submitMessage(e) {
             buildEditOnNoticeboard(input, usernames, articles)
         )
         .then( function() {
-            new Morebits.status("Paso 3", `avisando al usuario reportado...`, "info");
             return postsMessage(input)
         })
         .then(function () {
@@ -228,6 +239,8 @@ function buildEditOnNoticeboard (input, usernames, articles) {
 }
 
 function postsMessage(input) {
+    if (!input.notify) return;
+        new Morebits.status("Paso 3", `avisando al usuario reportado...`, "info");
         return utils.isPageMissing(`Usuario_discusión:${input.usernamefield}`)
             .then(function (mustCreateNewTalkPage) {
                 let title = input.motive == "Otro" ? input.otherreason : input.motive ;
