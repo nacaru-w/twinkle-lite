@@ -2,6 +2,7 @@ import * as DeletionRequestMaker from "./modules/deletionrequestmaker";
 import * as PageProtection from "./modules/pageprotection";
 import * as SpeedyDeletion from "./modules/speedydeletion";
 import * as Reports from "./modules/reports";
+import * as Tags from "./modules/tags";
 
 mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.js&action=raw&ctype=text/javascript');
 mw.loader.load('https://en.wikipedia.org/w/index.php?title=MediaWiki:Gadget-morebits.css&action=raw&ctype=text/css', 'text/css');
@@ -19,6 +20,8 @@ if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
 	PPportletLink.onclick = PageProtection.createFormWindow;
 	let SDportletLink = mw.util.addPortletLink('p-cactions', '#', 'Borrado rápido', 'example-button', 'Solicita el borrado rápido de la página');
 	SDportletLink.onclick = SpeedyDeletion.createFormWindow;
+	let TportleltLink = mw.util.addPortletLink('p-cactions', '#', 'Etiquetar', 'example-button', 'Añade una plantilla a la página');
+	TportleltLink.onclick = Tags.createFormWindow;
 }
 
 if (mw.config.get('wgNamespaceNumber') === 2 || mw.config.get('wgNamespaceNumber') === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
