@@ -57,6 +57,7 @@ function getMotiveOptions() {
 
 function createFormWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
+    Window.setScriptName('Twinkle Lite');
 	Window.setTitle('Denunciar usuario');
 	Window.addFooterLink('Tablón de anuncios de los bibliotecarios', 'Wikipedia:Tablón de anuncios de los bibliotecarios');
 	let form = new Morebits.quickForm(submitMessage);

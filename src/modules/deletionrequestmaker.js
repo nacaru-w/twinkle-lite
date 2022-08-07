@@ -33,6 +33,7 @@ function getCategoryOptions() {
 //Creates the window for the form that will later be filled with the pertinent info
 function createFormWindow() {
     let Window = new Morebits.simpleWindow(620, 530);
+    Window.setScriptName('Twinkle Lite');
     Window.setTitle('Consulta de borrado');
     Window.addFooterLink('Política de borrado', 'Wikipedia:Política de borrado');
     let form = new Morebits.quickForm(submitMessage);

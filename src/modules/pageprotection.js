@@ -63,6 +63,7 @@ function getProtectionStatus() {
 
 function createFormWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
+	Window.setScriptName('Twinkle Lite');
 	Window.setTitle('Solicitar protección de la página');
 	Window.addFooterLink('Política de protección', 'Wikipedia:Política de protección');
 	let form = new Morebits.quickForm(submitMessage);

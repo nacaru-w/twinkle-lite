@@ -72,6 +72,7 @@ function getOptions(criteriaType) {
 
 function createFormWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
+    Window.setScriptName('Twinkle Lite');
 	Window.setTitle('Solicitar borrado rápido');
 	Window.addFooterLink('Criterios para el borrado rápido', 'Wikipedia:Criterios para el borrado rápido');
 	let form = new Morebits.quickForm(submitMessage);
