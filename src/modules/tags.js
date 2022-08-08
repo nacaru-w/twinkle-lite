@@ -7,7 +7,10 @@ function createFormWindow() {
 	Window.addFooterLink('Portal de mantenimiento', 'Portal:Mantenimiento');
 	let form = new Morebits.quickForm(submitMessage);
 
-
+    form.append({
+		type: 'submit',
+		label: 'Aceptar'
+	});
 
     let result = form.render();
 	Window.setContent(result);
