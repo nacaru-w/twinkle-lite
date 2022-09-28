@@ -181,7 +181,6 @@ function createFormWindow() {
 function submitMessage(e) {
 	let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
-    console.log(input.notify)
     if (window.confirm(`¿Quieres solicitar el borrado del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
         utils.createStatusWindow();
         new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
