@@ -70,7 +70,7 @@ function createFormWindow() {
             checked: true,
             tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advirtiéndole del posible borrado de su artículo" 
         }],
-        style: "padding-left: 1em; padding-top:0.5em;"
+        style: "padding-left: 1em; padding-bottom:0.5em;"
     })
 
     let result = form.render();
