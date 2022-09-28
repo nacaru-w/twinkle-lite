@@ -59,6 +59,20 @@ function createFormWindow() {
         label: 'Selecciona la categoría de la página:',
         list: getCategoryOptions()
     });
+
+    form.append({
+        type: 'checkbox',
+        list:
+            [{
+            name: "notify",
+            value: "notify", 
+            label: "Notificar al creador de la página", 
+            checked: true,
+            tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advirtiéndole del posible borrado de su artículo" 
+        }],
+        style: "padding-left: 1em; padding-top:0.5em;"
+    })
+
     let result = form.render();
     Window.setContent(result);
     Window.display();
@@ -91,6 +105,7 @@ function submitMessage(e) {
                     return createDeletionRequestPage(input.category, input.reason);
                 })
                 .then(function () {
+                    if (!input.notify) return;
                     console.log('Dropping a message on the creator\'s talk page...');
                     new Morebits.status("Paso 3", "publicando un mensaje en la página de discusión del creador...", "info");
                     return utils.getCreator().then(postsMessage);
