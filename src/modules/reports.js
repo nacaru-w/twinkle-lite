@@ -1,66 +1,73 @@
 import * as utils from './utils';
 
-let reportedUser = mw.config.get( "wgRelevantUserName" )
+let reportedUser = mw.config.get("wgRelevantUserName")
 
 let listMotiveOptions = [
-    { value : "Cuenta creada para vandalizar" },
-    { value : "Evasión de bloqueo" },
-    { value : "Guerra de ediciones" },
-    { value : "Nombre inapropiado" },
-    { value : "Violación de etiqueta" },
-    { value : "Vandalismo en curso" },
-    { value : "Vandalismo persistente" },
-    { value : "Otro" },
+    { value: "Cuenta creada para vandalizar" },
+    { value: "Evasión de bloqueo" },
+    { value: "Guerra de ediciones" },
+    { value: "Nombre inapropiado" },
+    { value: "Violación de etiqueta" },
+    { value: "Vandalismo en curso" },
+    { value: "Vandalismo persistente" },
+    { value: "Otro" },
 ]
 
-let motiveOptionsDict = { 
-    "Cuenta creada para vandalizar" :
-        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
-            "usersSubtitle" : 'Lista de usuarios' 
-        },
-    "Evasión de bloqueo" :
-        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
-            "usersSubtitle" : 'Lista de usuarios'
-        },
-    "Guerra de ediciones" :
-        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual",
-            "usersSubtitle" : 'Usuarios implicados'
-        },
-    "Nombre inapropiado" :
-        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
-            "usersSubtitle" : 'Lista de usuarios'
-        },
-    "Violación de etiqueta" :
-        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violaciones_de_etiqueta/Actual",
-            "usersSubtitle" : 'Usuarios implicados'
-        },
-    "Vandalismo en curso" :
-        {   "link" : "Wikipedia:Vandalismo_en_curso" },
-    "Vandalismo persistente" :
-        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
-            "usersSubtitle" : 'Lista de usuarios'
-        },
-    "Otro" :
-        {   "link" : "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual",
-            "usersSubtitle" : 'Usuarios implicados'
-        }
+let motiveOptionsDict = {
+    "Cuenta creada para vandalizar":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+        "usersSubtitle": 'Lista de usuarios'
+    },
+    "Evasión de bloqueo":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+        "usersSubtitle": 'Lista de usuarios'
+    },
+    "Guerra de ediciones":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/3RR/Actual",
+        "usersSubtitle": 'Usuarios implicados'
+    },
+    "Nombre inapropiado":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+        "usersSubtitle": 'Lista de usuarios'
+    },
+    "Violación de etiqueta":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Violaciones_de_etiqueta/Actual",
+        "usersSubtitle": 'Usuarios implicados'
+    },
+    "Vandalismo en curso":
+        { "link": "Wikipedia:Vandalismo_en_curso" },
+    "Vandalismo persistente":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+        "usersSubtitle": 'Lista de usuarios'
+    },
+    "Otro":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual",
+        "usersSubtitle": 'Usuarios implicados'
+    }
 }
 
 function getMotiveOptions() {
-        let dropDownOptions = [];
-        for (let motive of listMotiveOptions) {
-            let option = {value: motive.value, label: motive.value, subgroup: motive.subgroup};
-            dropDownOptions.push(option);
-        }
-        return dropDownOptions;
+    let dropDownOptions = [];
+    for (let motive of listMotiveOptions) {
+        let option = { value: motive.value, label: motive.value, subgroup: motive.subgroup };
+        dropDownOptions.push(option);
+    }
+    return dropDownOptions;
 }
 
 function createFormWindow() {
-	let Window = new Morebits.simpleWindow(620, 530);
+    let Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
-	Window.setTitle('Denunciar usuario');
-	Window.addFooterLink('Tablón de anuncios de los bibliotecarios', 'Wikipedia:Tablón de anuncios de los bibliotecarios');
-	let form = new Morebits.quickForm(submitMessage);
+    Window.setTitle('Denunciar usuario');
+    Window.addFooterLink('Tablón de anuncios de los bibliotecarios', 'Wikipedia:Tablón de anuncios de los bibliotecarios');
+    let form = new Morebits.quickForm(submitMessage);
 
     let reportTypeField = form.append({
         type: 'field',
@@ -71,34 +78,34 @@ function createFormWindow() {
         label: 'Selecciona el motivo:',
         name: 'motive',
         list: getMotiveOptions(),
-        event: 
+        event:
             function (e) {
                 let selectedOption = e.target.value
                 document.querySelector("label[for='reasontextareanode']").innerText = 'Desarrolla la razón:'
                 document.getElementById('articlefieldnode').setAttribute('style', 'display:none');
                 document.getElementById('otherreasonnode').setAttribute('style', 'display:none');
                 switch (selectedOption) {
-                    case 'Guerra de ediciones' :
+                    case 'Guerra de ediciones':
                         document.getElementById('articlefieldnode').removeAttribute('style')
                         break;
-                    case 'Violación de etiqueta' :
+                    case 'Violación de etiqueta':
                         document.querySelector("label[for='reasontextareanode']").innerText = 'Ediciones que constituyen una violación de etiqueta:'
                         break;
-                    case 'Otro' :
+                    case 'Otro':
                         document.getElementById('otherreasonnode').removeAttribute('style')
                         break;
-                    }
                 }
-            })
+            }
+    })
 
     form.append({
         type: 'checkbox',
         list: [{
             name: "notify",
-            value: "notify", 
-            label: "Notificar al usuario denunciado", 
+            value: "notify",
+            label: "Notificar al usuario denunciado",
             checked: true,
-            tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del usuario reportado avisándole de la denuncia" 
+            tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del usuario reportado avisándole de la denuncia"
         }],
         style: "padding-left: 1em;"
     })
@@ -141,27 +148,27 @@ function createFormWindow() {
     })
 
     form.append({
-		type: 'submit',
-		label: 'Aceptar'
-	});
+        type: 'submit',
+        label: 'Aceptar'
+    });
 
-	let result = form.render();
-	Window.setContent(result);
-	Window.display();
+    let result = form.render();
+    Window.setContent(result);
+    Window.display();
 
     document.querySelector('input[name="usernamefield"]').value = reportedUser
 }
 
 function submitMessage(e) {
-	let form = e.target;
+    let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
     if (input.reason === `` && input.motive != 'NI') {
-		alert("No se ha establecido un motivo.");
-    } else if (input.motive == 'Otro' && input.otherreason == '' ) {
+        alert("No se ha establecido un motivo.");
+    } else if (input.motive == 'Otro' && input.otherreason == '') {
         alert("No se ha establecido un título para la denuncia");
     } else if (input.usernamefield == '') {
         alert("No se ha establecido un usuario");
-	} else {
+    } else {
         utils.createStatusWindow()
         new Morebits.status("Paso 1", `obteniendo datos del formulario...`, "info");
         let usernames = Array.from(document.querySelectorAll('input[name=usernamefield]')).map((o) => o.value)
@@ -171,14 +178,13 @@ function submitMessage(e) {
             motiveOptionsDict[input.motive].link,
             buildEditOnNoticeboard(input, usernames, articles)
         )
-        .then( function() {
-            return postsMessage(input)
-        })
-        .then(function () {
-            console.log('Refreshing...');
-            new Morebits.status("Finalizado", "actualizando página...", "status");
-            setTimeout(() => { location.reload() }, 1500);
-        })
+            .then(function () {
+                return postsMessage(input)
+            })
+            .then(function () {
+                new Morebits.status("Finalizado", "actualizando página...", "status");
+                setTimeout(() => { location.reload() }, 1500);
+            })
 
     }
 }
@@ -195,45 +201,45 @@ function VECReportBuilder(usernames, input) {
     let finalText = ''
     for (let user of usernames) {
         let templateWord = mw.util.isIPAddress(user, true) ? 'VándaloIP' : 'Vándalo';
-        finalText +=    `=== ${user} ===` + '\n' + '\n' + 
-                        `* Posible vándalo: {{${templateWord}|${user}}}` + '\n' +
-                        `* Motivo del reporte: ${input.reason}` + '\n' +
-                        '* Usuario que reporta: ~~~~' + '\n' +
-                        '* Acción administrativa: (a rellenar por un bibliotecario)' + '\n'
+        finalText += `=== ${user} ===` + '\n' + '\n' +
+            `* Posible vándalo: {{${templateWord}|${user}}}` + '\n' +
+            `* Motivo del reporte: ${input.reason}` + '\n' +
+            '* Usuario que reporta: ~~~~' + '\n' +
+            '* Acción administrativa: (a rellenar por un bibliotecario)' + '\n'
     }
     return finalText
 }
 
-function buildEditOnNoticeboard (input, usernames, articles) {
+function buildEditOnNoticeboard(input, usernames, articles) {
     if (input.motive == "Vandalismo en curso") {
         return (revision) => {
             return {
-                text:   revision.content + '\n' + '\n' + VECReportBuilder(usernames, input),
+                text: revision.content + '\n' + '\n' + VECReportBuilder(usernames, input),
                 summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
-                minor:  false
+                minor: false
             }
         }
     } else {
-        let title = input.motive == "Otro" ? input.otherreason : input.motive ;
-        let bulletedUserList = listWords(usernames, 'u') 
+        let title = input.motive == "Otro" ? input.otherreason : input.motive;
+        let bulletedUserList = listWords(usernames, 'u')
         let bulletedArticleList = listWords(articles, 'a')
         let reasonTitle = input.motive == "Guerra de ediciones" ? `; Comentario` : `; Motivo`;
         let articleListIfEditWar = input.motive == "Guerra de ediciones" ? `\n; Artículos en los que se lleva a cabo \n${bulletedArticleList} \n` : '\n';
         return (revision) => {
             return {
-                text:   revision.content + '\n' + '\n' +
-                        `== ${title} ==` + '\n' +
-                        `; ${motiveOptionsDict[input.motive].usersSubtitle}` + '\n' +
-                        `${bulletedUserList}` +
-                        articleListIfEditWar +
-                        reasonTitle + '\n' +
-                        `${input.reason}` + '\n' +
-                        '; Usuario que lo solicita' + '\n' +
-                        '* ~~~~' + '\n' +
-                        '; Respuesta' + '\n' + 
-                        '(a rellenar por un bibliotecario)',
+                text: revision.content + '\n' + '\n' +
+                    `== ${title} ==` + '\n' +
+                    `; ${motiveOptionsDict[input.motive].usersSubtitle}` + '\n' +
+                    `${bulletedUserList}` +
+                    articleListIfEditWar +
+                    reasonTitle + '\n' +
+                    `${input.reason}` + '\n' +
+                    '; Usuario que lo solicita' + '\n' +
+                    '* ~~~~' + '\n' +
+                    '; Respuesta' + '\n' +
+                    '(a rellenar por un bibliotecario)',
                 summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
-                minor:  false
+                minor: false
             }
         }
     }
@@ -241,30 +247,30 @@ function buildEditOnNoticeboard (input, usernames, articles) {
 
 function postsMessage(input) {
     if (!input.notify) return;
-        new Morebits.status("Paso 3", `avisando al usuario reportado...`, "info");
-        return utils.isPageMissing(`Usuario_discusión:${input.usernamefield}`)
-            .then(function (mustCreateNewTalkPage) {
-                let title = input.motive == "Otro" ? input.otherreason : input.motive ;
-                if (mustCreateNewTalkPage) {
-                    return new mw.Api().create(
-                        `Usuario_discusión:${input.usernamefield}`,
-                        { summary: `Aviso al usuario de su denuncia por [[${motiveOptionsDict[input.motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`},
-                        `\n== ${title} ==\n` +
-                        `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`
-                    );
-                } else {
-                    return new mw.Api().edit(
-                        `Usuario_discusión:${input.usernamefield}`,
-                        function (revision) {
-                            return {
-                                text: revision.content + `\n== ${title} ==\n` + `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`,
-                                summary: `Aviso al usuario de su denuncia por [[${motiveOptionsDict[input.motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
-                                minor: false
-                            }
+    new Morebits.status("Paso 3", `avisando al usuario reportado...`, "info");
+    return utils.isPageMissing(`Usuario_discusión:${input.usernamefield}`)
+        .then(function (mustCreateNewTalkPage) {
+            let title = input.motive == "Otro" ? input.otherreason : input.motive;
+            if (mustCreateNewTalkPage) {
+                return new mw.Api().create(
+                    `Usuario_discusión:${input.usernamefield}`,
+                    { summary: `Aviso al usuario de su denuncia por [[${motiveOptionsDict[input.motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
+                    `\n== ${title} ==\n` +
+                    `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`
+                );
+            } else {
+                return new mw.Api().edit(
+                    `Usuario_discusión:${input.usernamefield}`,
+                    function (revision) {
+                        return {
+                            text: revision.content + `\n== ${title} ==\n` + `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`,
+                            summary: `Aviso al usuario de su denuncia por [[${motiveOptionsDict[input.motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                            minor: false
                         }
-                    )
-                }
-            })
+                    }
+                )
+            }
+        })
 }
 
 export { createFormWindow };

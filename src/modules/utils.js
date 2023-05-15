@@ -1,13 +1,13 @@
 const currentPageName = mw.config.get('wgPageName');
 const currentPageNameWithoutUnderscores = currentPageName.replaceAll('_', ' ');
-const currentUser = mw.config.get ('wgUserName');
+const currentUser = mw.config.get('wgUserName');
 
 //Creates the window that holds the status messages
 function createStatusWindow() {
     let Window = new Morebits.simpleWindow(400, 350);
     Window.setTitle('Procesando acciones');
     let statusdiv = document.createElement('div');
-    statusdiv.style.padding = '15px';  // just so it doesn't look broken
+    statusdiv.style.padding = '15px';
     Window.setContent(statusdiv);
     Morebits.status.init(statusdiv);
     Window.display();
@@ -25,7 +25,7 @@ function getCreator() {
         rvlimit: 1,
     }
     let apiPromise = new mw.Api().get(params);
-    let userPromise = apiPromise.then( function (data) {
+    let userPromise = apiPromise.then(function (data) {
         let pages = data.query.pages;
         for (let p in pages) {
             return pages[p].revisions[0].user;
@@ -49,4 +49,4 @@ function isPageMissing(title) {
     });
 }
 
-export {currentPageName, currentPageNameWithoutUnderscores, createStatusWindow, getCreator, isPageMissing, currentUser};
+export { currentPageName, currentPageNameWithoutUnderscores, createStatusWindow, getCreator, isPageMissing, currentUser };

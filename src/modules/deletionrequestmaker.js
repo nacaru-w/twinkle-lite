@@ -48,9 +48,9 @@ function createFormWindow() {
         label: 'Aceptar'
     });
 
-    let categoryField = form.append ({
+    let categoryField = form.append({
         type: 'field',
-		label: 'Categorías:',
+        label: 'Categorías:',
     })
 
     categoryField.append({
@@ -64,12 +64,12 @@ function createFormWindow() {
         type: 'checkbox',
         list:
             [{
-            name: "notify",
-            value: "notify", 
-            label: "Notificar al creador de la página", 
-            checked: true,
-            tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advirtiéndole del posible borrado de su artículo" 
-        }],
+                name: "notify",
+                value: "notify",
+                label: "Notificar al creador de la página",
+                checked: true,
+                tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advirtiéndole del posible borrado de su artículo"
+            }],
         style: "padding-left: 1em; padding-bottom:0.5em;"
     })
 
@@ -85,7 +85,6 @@ function submitMessage(e) {
         alert("No se ha establecido un motivo.");
     } else {
         if (window.confirm(`Esto creará una consulta de borrado para el artículo ${utils.currentPageNameWithoutUnderscores}, ¿estás seguro?`)) {
-            console.log('Making sure another DR is not ongoing...');
             canCreateDeletionRequestPage()
                 .then(function (canMakeNewDeletionRequest) {
                     if (!canMakeNewDeletionRequest) {
@@ -100,23 +99,19 @@ function submitMessage(e) {
                     }
                 })
                 .then(function () {
-                    console.log('Creating deletion request page...');
                     new Morebits.status("Paso 2", "creando la página de discusión de la consulta de borrado...", "info");
                     return createDeletionRequestPage(input.category, input.reason);
                 })
                 .then(function () {
                     if (!input.notify) return;
-                    console.log('Dropping a message on the creator\'s talk page...');
                     new Morebits.status("Paso 3", "publicando un mensaje en la página de discusión del creador...", "info");
                     return utils.getCreator().then(postsMessage);
                 })
                 .then(function () {
-                    console.log('Refreshing...');
                     new Morebits.status("Finalizado", "actualizando página...", "status");
                     setTimeout(() => { location.reload() }, 2000);
                 })
                 .catch(function (error) {
-                    console.log('Aborted: nomination page already exists');
                     alert(error.message);
                 })
         }

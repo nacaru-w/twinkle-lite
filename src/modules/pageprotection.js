@@ -67,7 +67,7 @@ function createFormWindow() {
 	Window.setTitle('Solicitar protección de la página');
 	Window.addFooterLink('Política de protección', 'Wikipedia:Política de protección');
 	let form = new Morebits.quickForm(submitMessage);
-	
+
 	let radioField = form.append({
 		type: 'field',
 		label: 'Tipo:',
@@ -135,7 +135,6 @@ function submitMessage(e) {
 		alert("No se ha establecido un motivo.");
 	} else {
 		if (window.confirm(`¿Quieres solicitar la ${input.protection} del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
-			console.log("Posting message on the noticeboard...");
 			utils.createStatusWindow();
 			new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
 			new mw.Api().edit(
@@ -143,7 +142,6 @@ function submitMessage(e) {
 				buildEditOnNoticeboard(input)
 			)
 				.then(function () {
-					console.log('Refreshing...');
 					new Morebits.status("Finalizado", "actualizando página...", "status");
 					setTimeout(() => { location.reload() }, 1500);
 				})
