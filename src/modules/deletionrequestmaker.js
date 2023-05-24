@@ -128,7 +128,7 @@ function buildDeletionTemplate(category, reason) {
 function buildEditOnNominatedPage(revision) {
     return {
         text: '{{sust:cdb}}\n' + revision.content,
-        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]].`,
+        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Twinke Lite|Twinke Lite]].`,
         minor: false
     };
 }
@@ -136,7 +136,7 @@ function buildEditOnNominatedPage(revision) {
 //function that creates the page hosting the deletion request
 function createDeletionRequestPage(category, reason) {
     return new mw.Api().create(`Wikipedia:Consultas de borrado/${utils.currentPageName}`,
-        { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Deletion Request Maker|Deletion Request Maker]]` },
+        { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinke Lite|Twinke Lite]]` },
         buildDeletionTemplate(category, reason)
     );
 }
@@ -148,7 +148,7 @@ function postsMessage(creator) {
             if (mustCreateNewTalkPage) {
                 return new mw.Api().create(
                     `Usuario_discusión:${creator}`,
-                    { summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]' },
+                    { summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinke Lite|Twinke Lite]]' },
                     `{{sust:Aviso cdb|${utils.currentPageNameWithoutUnderscores}}} ~~~~`
                 );
             } else {
@@ -157,7 +157,7 @@ function postsMessage(creator) {
                     function (revision) {
                         return {
                             text: revision.content + `\n{{sust:Aviso cdb|${utils.currentPageNameWithoutUnderscores}}} ~~~~`,
-                            summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Deletion Request Maker|Deletion Request Maker]]',
+                            summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinke Lite|Twinke Lite]]',
                             minor: false
                         }
                     }
