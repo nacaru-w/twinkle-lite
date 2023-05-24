@@ -192,7 +192,7 @@ function submitMessage(e) {
         utils.createStatusWindow();
         new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
         new mw.Api().edit(
-            utils.currentPageName, // a modificar por «currentPageName» tras tests
+            utils.currentPageName,
             speedyTemplateBuilder(input)
         )
             .then(function () {
