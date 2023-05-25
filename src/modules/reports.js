@@ -156,7 +156,22 @@ function createFormWindow() {
     Window.setContent(result);
     Window.display();
 
+    // Changes names of add/remove user buttons to Spanish
+    function changeButtonNames() {
+        let moreBox = document.querySelector('input[value="more"]')
+
+
+        console.log("test")
+        moreBox.value = "añadir"
+        moreBox.addEventListener("click", () => {
+            let removeBox = document.querySelector('input[value="remove"]')
+            removeBox.value = "eliminar"
+        })
+
+    }
+    // Automatically adds the name of the reported user to the form
     document.querySelector('input[name="usernamefield"]').value = reportedUser
+    changeButtonNames()
 }
 
 function submitMessage(e) {
