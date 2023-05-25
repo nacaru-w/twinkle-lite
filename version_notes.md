@@ -1,5 +1,6 @@
 Here's a list of enhancements for the new version:
 
+## Global enhancements
 * Removed testing comments
 
 ## Module: Deletion Request Maker
@@ -8,4 +9,4 @@ Here's a list of enhancements for the new version:
 
 ## Module: Reports
 
-* Changed the names of the add/remove labels into Spanish
+* Translated the names of the user add/remove labels into Spanish.
