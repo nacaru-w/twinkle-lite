@@ -60,12 +60,14 @@ function createFormWindow() {
 			const searchInput = document.getElementById("search");
 			const allCheckboxDivs = document.querySelectorAll("#checkboxContainer > div");
 			if (this.value) {
+				// Flushes the list before calling the search query function
 				function flushList() {
 					for (let i = 0; i < allCheckboxDivs.length; i++) {
 						const div = allCheckboxDivs[i];
 						div.style.display = 'none';
 					}
 				}
+				// Finds matches for the search query within the checkbox list
 				function updateList(searchString) {
 					for (let i = 0; i < allCheckboxDivs.length; i++) {
 						let checkboxText = allCheckboxDivs[i].childNodes[1].innerText
@@ -78,6 +80,7 @@ function createFormWindow() {
 				flushList();
 				updateList(searchInput.value);
 			}
+			// Retrieves the full list if nothing is on the search input box
 			if (this.value.length == 0) {
 				for (let i = 0; i < allCheckboxDivs.length; i++) {
 					const div = allCheckboxDivs[i];
