@@ -40,6 +40,8 @@ function protectionFromGetReply(data) {
 				return 'solo bibliotecarios';
 			case 'autoconfirmed':
 				return 'solo usuarios autoconfirmados';
+			case 'templateeditor':
+				return 'solo editores de plantillas'
 			default:
 				return 'sin protección';
 		}
