@@ -57,15 +57,32 @@ function createFormWindow() {
 		id: 'search',
 		size: '30',
 		event: function quickFilter() {
+			const searchInput = document.getElementById("search");
+			const allCheckboxDivs = document.querySelectorAll("#checkboxContainer > div");
 			if (this.value) {
-				const searchInput = document.getElementById("search");
 				function flushList() {
-					const tagWorkArea = document.getElementById("tagWorkArea");
-					tagWorkArea.innerHTML = '';
-
+					for (let i = 0; i < allCheckboxDivs.length; i++) {
+						const div = allCheckboxDivs[i];
+						div.style.display = 'none';
+					}
+				}
+				function updateList(searchString) {
+					for (let i = 0; i < allCheckboxDivs.length; i++) {
+						let checkboxText = allCheckboxDivs[i].childNodes[1].innerText
+						if (checkboxText.includes(searchString)) {
+							const div = allCheckboxDivs[i];
+							div.style.display = '';
+						}
+					}
 				}
 				flushList();
-				console.log(searchInput.value);
+				updateList(searchInput.value);
+			}
+			if (this.value.length == 0) {
+				for (let i = 0; i < allCheckboxDivs.length; i++) {
+					const div = allCheckboxDivs[i];
+					div.style.display = '';
+				}
 			}
 		}
 	})
@@ -79,6 +96,7 @@ function createFormWindow() {
 
 	optionBox.append({
 		type: 'checkbox',
+		id: 'checkboxContainer',
 		list: listBuilder(templateDict),
 		label: 'checkOption'
 	})
