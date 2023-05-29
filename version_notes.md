@@ -10,3 +10,7 @@ Here's a list of enhancements for the new version:
 ## Module: Reports
 
 * Translated the names of the user add/remove labels into Spanish.
+
+## Module: Page protection
+
+* The script will now recognize pages that have "template editor" protection level.
