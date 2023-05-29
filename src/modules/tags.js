@@ -2,25 +2,43 @@ import * as utils from "./utils";
 
 const templateDict = [
 	{
-		code: "{{example}}",
-		description: "This is just an example template"
+		code: "example",
+		description: "This is just an example template",
+		subgroup: [
+			{
+				type: 'input',
+				name: 'exampleInput',
+				parameter: '1',
+				label: 'Example label'
+			}
+		]
 	},
 	{
-		code: "{{example2}}",
-		description: "This is just another example"
+		code: "example2",
+		description: "This is just another example",
+	},
+	{
+		code: "example3",
+		description: "This is yet something else",
 	}
 ]
 
-function listBuilder(searchInput) {
-	let filteredList = templateDict.filter(template => {
-		const { code, description } = template;
-		return code.includes(searchInput) || description.includes(searchInput);
-	});
+function linkBuilder(link) {
+	let fullLink = `https://es.wikipedia.org/wiki/Plantilla:${link}`
+	return `<a href="${fullLink}" target="_blank">(+)</a>`
+}
+
+function listBuilder(list) {
+	// let filteredList = templateDict.filter(template => {
+	// 	const { code, description } = template;
+	// 	return code.includes(searchInput) || description.includes(searchInput);
+	// });
 	let finalList = [];
-	for (let item of filteredList) {
+	for (let item of list) {
 		let template = {};
-		template.label = `${item.code} · ${item.description}`
+		template.label = `{{${item.code}}} · ${item.description} ${linkBuilder(item.code)}`
 		template.value = item.code
+		template.subgroup = "subgroup" in item ? item.subgroup : '';
 		finalList.push(template)
 	}
 	return finalList;
@@ -61,8 +79,8 @@ function createFormWindow() {
 
 	optionBox.append({
 		type: 'checkbox',
-		list: listBuilder("other"),
-		label: 'jgvjh'
+		list: listBuilder(templateDict),
+		label: 'checkOption'
 	})
 
 	let result = form.render();
