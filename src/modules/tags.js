@@ -29,10 +29,6 @@ function linkBuilder(link) {
 }
 
 function listBuilder(list) {
-	// let filteredList = templateDict.filter(template => {
-	// 	const { code, description } = template;
-	// 	return code.includes(searchInput) || description.includes(searchInput);
-	// });
 	let finalList = [];
 	for (let item of list) {
 		let template = {};
