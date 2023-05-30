@@ -14,3 +14,4 @@ Here's a list of enhancements for the new version:
 ## Module: Page protection
 
 * The script will now recognize pages that have "template editor" protection level.
+* The "request protection removal" radio button will now be disabled in unprotected pages.
