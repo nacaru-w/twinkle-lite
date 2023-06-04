@@ -194,6 +194,13 @@ const PDDict = [
 
 ]
 
+const userWarnDict = [
+	{
+		code: "planvad",
+		description: "contribuciones vandálicas o altamente perjudiciales",
+	}
+]
+
 function linkBuilder(link) {
 	let fullLink = `https://es.wikipedia.org/wiki/Plantilla:${link}`
 	return `<a href="${fullLink}" target="_blank">(+)</a>`
