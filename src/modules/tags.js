@@ -2,29 +2,6 @@ import * as utils from "./utils";
 
 const templateDict = [
 	{
-		code: "example",
-		description: "This is just an example template",
-		subgroup: [
-			{
-				type: 'input',
-				name: 'exampleInput',
-				parameter: '1',
-				label: 'Example label'
-			}
-		]
-	},
-	{
-		code: "example2",
-		description: "This is just another example",
-	},
-	{
-		code: "example3",
-		description: "This is yet something else",
-	}
-]
-
-const articleDict = [
-	{
 		code: "autotrad",
 		description: "Uso de automatismo en traducciones de nula calidad"
 	},
@@ -176,29 +153,6 @@ const articleDict = [
 		code: "wikificar",
 		description: "Textos con mal formato o que no cumplen el manual de estilo"
 	},
-]
-
-const PDDict = [
-	{
-		code: "discusión protegida",
-		description: "PDs protegidas ante edición"
-	},
-	{
-		code: "no es un foro",
-		description: "Discusiones con muchas conversaciones irrelevantes"
-	},
-	{
-		code: "página usuario",
-		description: "Para páginas de usuario"
-	}
-
-]
-
-const userWarnDict = [
-	{
-		code: "planvad",
-		description: "contribuciones vandálicas o altamente perjudiciales",
-	}
 ]
 
 function linkBuilder(link) {
