@@ -43,7 +43,7 @@ const templateDict = [
 	},
 	{
 		code: "fuente primaria",
-		description: "Información no verificable"
+		description: "Información no verificable. Plantilla de 30 días."
 	},
 	{
 		code: "fusionar",
@@ -151,7 +151,7 @@ const templateDict = [
 	},
 	{
 		code: "sin relevancia",
-		description: "artículos que no superan umbral de relevancia: revisado por bibliotecario en 30 días"
+		description: "artículos que no superan umbral de relevancia. Plantilla de 30 días"
 	},
 	{
 		code: "wikificar",
