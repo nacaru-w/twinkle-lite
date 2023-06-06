@@ -65,7 +65,7 @@ const templateDict = [
 				type: 'input',
 				name: 'exampleInput',
 				parameter: '1',
-				label: 'Cultura o territorio'
+				label: 'Cultura o territorio del sesgo'
 			}
 		]
 	},
@@ -90,7 +90,7 @@ const templateDict = [
 				name: 'exampleInput',
 				parameter: '1',
 				label: 'Razón del sesgo',
-				tooltip: 'Desarrolla las razones del sesgo. Es importante, también, desarrollarlas exhaustivamente en la PD',
+				tooltip: 'Describe brevemente la razón del sesgo. Es importante, también, desarrollarlas más exhaustivamente en la PD',
 				required: true
 			}
 		]
@@ -148,6 +148,10 @@ const templateDict = [
 	{
 		code: "revisar traducción",
 		description: "texto traducido legible pero necesita un repaso lingüístico"
+	},
+	{
+		code: "sin relevancia",
+		description: "artículos que no superan umbral de relevancia: revisado por bibliotecario en 30 días"
 	},
 	{
 		code: "wikificar",
