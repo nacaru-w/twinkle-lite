@@ -103,7 +103,7 @@ const templateDict = [
 	},
 	{
 		code: "infraesbozo",
-		description: "Contenido insuficiente como para constituir un esbozo de artículo o anexo válido",
+		description: "Contenido insuficiente como para constituir un esbozo de artículo o anexo válido. Plantilla de 30 días",
 	},
 	{
 		code: "largo",
@@ -150,7 +150,7 @@ const templateDict = [
 	},
 	{
 		code: "promocional",
-		description: "Texto con marcado carácter publicitario, no neutral"
+		description: "Texto con marcado carácter publicitario, no neutral. Plantilla de 30 días"
 	},
 	{
 		code: "publicidad",
