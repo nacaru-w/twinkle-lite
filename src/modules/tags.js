@@ -10,12 +10,24 @@ const templateDict = [
 		description: "Artículos sin categorías"
 	},
 	{
+		code: "CDI",
+		description: "Escrita bajo conflicto de interés"
+	},
+	{
+		code: "categorizar",
+		description: "Artículos que no poseen categorías"
+	},
+	{
 		code: "contextualizar",
-		description: "El tema o ámbito no está claramente redactado"
+		description: "El tema o ámbito no está claramente redactado. Plantilla de 30 días."
 	},
 	{
 		code: "complejo",
 		description: "Textos difíciles de entender"
+	},
+	{
+		code: "copyedit",
+		description: "Necesita una revisión de ortografía y gramática"
 	},
 	{
 		code: "curiosidades",
@@ -27,11 +39,27 @@ const templateDict = [
 	},
 	{
 		code: "en desarrollo",
-		description: "Páginas en construcción o siendo editadas activamente"
+		description: "Páginas en construcción o siendo editadas activamente",
+		subgroup: [
+			{
+				type: 'input',
+				name: 'exampleInput',
+				parameter: '1',
+				label: 'Nombre del editor'
+			}
+		]
 	},
 	{
 		code: "evento actual",
-		description: ""
+		description: "Artículos de actualidad cuya información es susceptible a cambiar"
+	},
+	{
+		code: "excesivamente detallado",
+		description: "Demasiada información sobre temas triviales"
+	},
+	{
+		code: "experto",
+		description: "Artículos muy técnicos con deficiencias de contenido solo corregibles por un experto"
 	},
 	{
 		code: "ficticio",
@@ -44,6 +72,10 @@ const templateDict = [
 	{
 		code: "fuente primaria",
 		description: "Información no verificable. Plantilla de 30 días."
+	},
+	{
+		code: "fuentes no fiables",
+		description: "referencias que no siguen la política de fuentes fiables"
 	},
 	{
 		code: "fusionar",
@@ -72,6 +104,10 @@ const templateDict = [
 	{
 		code: "infraesbozo",
 		description: "Contenido insuficiente como para constituir un esbozo de artículo o anexo válido",
+	},
+	{
+		code: "largo",
+		description: "artículos excesivamente largos que deberían subdividirse en varios"
 	},
 	{
 		code: "mal traducido",
@@ -152,6 +188,10 @@ const templateDict = [
 	{
 		code: "sin relevancia",
 		description: "artículos que no superan umbral de relevancia. Plantilla de 30 días"
+	},
+	{
+		code: "traducción incompleta",
+		description: "artículos que han sido traducidos solo parcialmente"
 	},
 	{
 		code: "wikificar",
