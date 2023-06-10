@@ -123,10 +123,9 @@ const templateDict = [
 		subgroup: [
 			{
 				type: 'input',
-				name: 'exampleInput',
-				parameter: '1',
+				name: `_param-no neutralidad-motivo`,
 				label: 'Razón del sesgo',
-				tooltip: 'Describe brevemente la razón del sesgo. Es importante, también, desarrollarlas más exhaustivamente en la PD',
+				tooltip: 'Describe brevemente la razón del sesgo. Es importante, también, desarrollarla más exhaustivamente en la PD',
 				required: true
 			}
 		]
@@ -176,7 +175,7 @@ const templateDict = [
 				type: 'input',
 				name: 'exampleInput',
 				parameter: '1',
-				label: 'URL origen del plagio',
+				label: 'Nuevo nombre sugerido',
 				required: true
 			}
 		]
@@ -208,8 +207,9 @@ function listBuilder(list) {
 	let finalList = [];
 	for (let item of list) {
 		let template = {};
-		template.label = `{{${item.code}}} · ${item.description} ${linkBuilder(item.code)}`
+		template.name = item.code
 		template.value = item.code
+		template.label = `{{${item.code}}} · ${item.description} ${linkBuilder(item.code)}`
 		template.subgroup = "subgroup" in item ? item.subgroup : '';
 		finalList.push(template)
 	}
@@ -225,6 +225,7 @@ function createFormWindow() {
 
 	form.append({
 		type: 'input',
+		value: '',
 		label: 'Búsqueda:',
 		id: 'search',
 		size: '30',
@@ -276,6 +277,35 @@ function createFormWindow() {
 		label: 'checkOption'
 	})
 
+	let optionsField = form.append({
+		type: 'field',
+		label: 'Opciones:'
+	})
+
+	optionsField.append({
+		type: 'checkbox',
+		list:
+			[{
+				name: "notify",
+				value: "notify",
+				label: "Notificar al creador de la página si es posible",
+				checked: false,
+				tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advertiéndole de la colocación de la plantilla"
+			}],
+	})
+
+	optionsField.append({
+		type: 'input',
+		label: 'Razón:',
+		tooltip: '(Opcional) Escribe aquí el resumen de edición explicando la razón por la que se ha añadido la plantilla',
+		style: 'width: 80%; margin-top: 0.5em;'
+	})
+
+	form.append({
+		type: 'submit',
+		label: 'Aceptar'
+	});
+
 	let result = form.render();
 	Window.setContent(result);
 	Window.display();
@@ -284,6 +314,28 @@ function createFormWindow() {
 function submitMessage(e) {
 	let form = e.target;
 	let input = Morebits.quickForm.getInputData(form);
+	let templateList = [];
+	console.log(input)
+	for (const [key, value] of Object.entries(input)) {
+		if (value && !key.includes('_param')) {
+			templateList.push([key])
+		}
+	}
+	for (const element of templateList) {
+		for (const [key, value] of Object.entries(input)) {
+			if (key.includes('_param') && key.includes(element)) {
+				templateList[element] = {
+					"param": key.split('-').pop(),
+					"paramValue": value
+				}
+			}
+		}
+	}
+
+	for (const element of templateList) {
+		console.log(`{{${element}${templateList[element]?.param ? `|${templateList[element].param}=` : ''}${templateList[element]?.paramValue || ''}}}`);
+	}
+
 }
 
 export { createFormWindow };
