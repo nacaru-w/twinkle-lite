@@ -1,5 +1,8 @@
 import * as utils from "./utils";
 
+// Dictionary that stores the templates, the description, as well as the parameter and the name of the warning template if any of them is applicable
+// Template parameters are set in the subgroup, specifically in the 'name' key, their syntax is as follows:
+// `_param-parent template name-parameter identifier`
 const templateDict = {
 	"autotrad": {
 		warning: "aviso autotrad",
@@ -39,9 +42,9 @@ const templateDict = {
 		subgroup: [
 			{
 				type: 'input',
-				name: 'exampleInput',
-				parameter: '1',
-				label: 'Nombre del editor'
+				name: '_param-en desarrollo-1',
+				label: 'Nombre del editor',
+				tooltip: 'Escribe el nombre del usuario que está desarrollando el artículo, no utilices ningún tipo de Wikicódigo'
 			}
 		]
 	},
@@ -73,7 +76,7 @@ const templateDict = {
 		subgroup: [
 			{
 				type: 'input',
-				name: 'exampleInput',
+				name: '_param-fusionar-',
 				parameter: '1',
 				label: 'Artículo objetivo'
 			}
@@ -85,7 +88,7 @@ const templateDict = {
 		subgroup: [
 			{
 				type: 'input',
-				name: 'exampleInput',
+				name: '_param-globalizar-1',
 				parameter: '1',
 				label: 'Cultura o territorio del sesgo'
 			}
@@ -124,9 +127,9 @@ const templateDict = {
 		subgroup: [
 			{
 				type: 'input',
-				name: 'exampleInput',
-				parameter: '1',
+				name: '_param-plagio-1',
 				label: 'URL origen del plagio',
+				tooltip: 'Copia y pega aquí la URL de la página externa en la que se halla el texto original',
 				required: true
 			}
 		]
@@ -158,7 +161,7 @@ const templateDict = {
 		subgroup: [
 			{
 				type: 'input',
-				name: 'exampleInput',
+				name: '_param-renombrar-1',
 				parameter: '1',
 				label: 'Nuevo nombre sugerido',
 				required: true
@@ -299,13 +302,12 @@ function submitMessage(e) {
 	let form = e.target;
 	let input = Morebits.quickForm.getInputData(form);
 	let templateList = [];
-	console.log(input)
 	for (const [key, value] of Object.entries(input)) {
 		if (value && !key.includes('_param')) {
 			templateList.push([key])
 		}
 	}
-	console.log(templateList)
+
 	for (const element of templateList) {
 		for (const [key, value] of Object.entries(input)) {
 			if (key.includes('_param') && key.includes(element)) {
