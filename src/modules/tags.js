@@ -1,44 +1,40 @@
 import * as utils from "./utils";
 
-const templateDict = [
-	{
-		code: "autotrad",
+const templateDict = {
+	"autotrad": {
+		warning: "aviso autotrad",
 		description: "Uso de automatismo en traducciones de nula calidad"
 	},
-	{
-		code: "categorizar",
+	"categorizar": {
+		warning: "aviso categorizar",
 		description: "Artículos sin categorías"
 	},
-	{
-		code: "CDI",
+	"CDI": {
+		warning: "aviso conflicto de interés",
 		description: "Escrita bajo conflicto de interés"
 	},
-	{
-		code: "categorizar",
+	"categorizar": {
+		warning: "aviso categorizar",
 		description: "Artículos que no poseen categorías"
 	},
-	{
-		code: "contextualizar",
+	"contextualizar": {
+		warning: "aviso contextualizar",
 		description: "El tema o ámbito no está claramente redactado. Plantilla de 30 días."
 	},
-	{
-		code: "complejo",
+	"complejo": {
 		description: "Textos difíciles de entender"
 	},
-	{
-		code: "copyedit",
+	"copyedit": {
+		warning: "aviso copyedit",
 		description: "Necesita una revisión de ortografía y gramática"
 	},
-	{
-		code: "curiosidades",
+	"curiosidades": {
 		description: "Textos con sección de curiosidades"
 	},
-	{
-		code: "desactualizado",
+	"desactualizado": {
 		description: "página con información obsoleta"
 	},
-	{
-		code: "en desarrollo",
+	"en desarrollo": {
 		description: "Páginas en construcción o siendo editadas activamente",
 		subgroup: [
 			{
@@ -49,36 +45,30 @@ const templateDict = [
 			}
 		]
 	},
-	{
-		code: "evento actual",
+	"evento actual": {
 		description: "Artículos de actualidad cuya información es susceptible a cambiar"
 	},
-	{
-		code: "excesivamente detallado",
+	"excesivamente detallado": {
 		description: "Demasiada información sobre temas triviales"
 	},
-	{
-		code: "experto",
+	"experto": {
 		description: "Artículos muy técnicos con deficiencias de contenido solo corregibles por un experto"
 	},
-	{
-		code: "ficticio",
+	"ficticio": {
 		description: "Sin enfoque desde un punto de vista real"
 	},
-	{
-		code: "formato de referencias",
+	"formato de referencias": {
+		warning: "aviso formato de referencias",
 		description: "Referencias incorrectas o mal construidas"
 	},
-	{
-		code: "fuente primaria",
+	"fuente primaria": {
+		warning: "aviso fuente primaria",
 		description: "Información no verificable. Plantilla de 30 días."
 	},
-	{
-		code: "fuentes no fiables",
+	"fuentes no fiables": {
 		description: "referencias que no siguen la política de fuentes fiables"
 	},
-	{
-		code: "fusionar",
+	"fusionar": {
 		descripción: "Sugerir una fusión",
 		subgroup: [
 			{
@@ -89,8 +79,8 @@ const templateDict = [
 			}
 		]
 	},
-	{
-		code: "globalizar",
+	"globalizar": {
+		warning: "aviso globalizar",
 		description: "Existe sesgo territorial",
 		subgroup: [
 			{
@@ -101,24 +91,22 @@ const templateDict = [
 			}
 		]
 	},
-	{
-		code: "infraesbozo",
+	"infraesbozo": {
+		warning: "aviso infraesbozo",
 		description: "Contenido insuficiente como para constituir un esbozo de artículo o anexo válido. Plantilla de 30 días",
 	},
-	{
-		code: "largo",
+	"largo": {
 		description: "artículos excesivamente largos que deberían subdividirse en varios"
 	},
-	{
-		code: "mal traducido",
+	"mal traducido": {
+		warning: "aviso mal traducido",
 		description: "Escasa calidad de una traducción de otro idioma"
 	},
-	{
-		code: "mejorar redacción",
+	"mejorar redacción": {
 		description: "Redacciones que no siguen el manual de estilo"
 	},
-	{
-		code: "no neutralidad",
+	"no neutralidad": {
+		warning: "aviso no neutralidad",
 		description: "Artículos sesgados o claramente decantados en una dirección",
 		subgroup: [
 			{
@@ -130,8 +118,8 @@ const templateDict = [
 			}
 		]
 	},
-	{
-		code: "plagio",
+	"plagio": {
+		warning: "aviso destruir|2=plagio",
 		description: "artículos copiados, que violan derechos de autor",
 		subgroup: [
 			{
@@ -143,32 +131,29 @@ const templateDict = [
 			}
 		]
 	},
-	{
-		code: "polémico",
+	"polémico": {
 		description: "Temas susceptibles a guerras de edición o vandalismo"
 	},
-	{
+	"promocional": {
 		code: "promocional",
 		description: "Texto con marcado carácter publicitario, no neutral. Plantilla de 30 días"
 	},
-	{
-		code: "publicidad",
+	"publicidad": {
 		description: "Contenido comercial que defiende proselitismos o propaganda"
 	},
-	{
-		code: "PVfan",
+	"PVfan": {
+		warning: "aviso no neutralidad|2=PVfan",
 		description: "Escritos poco neutrales, con punto de vista fanático"
 	},
-	{
-		code: "referencias",
+	"referencias": {
+		warning: "aviso referencias",
 		description: "Artículos sin una sola referencia"
 	},
-	{
-		code: "referencias adicionales",
+	"referencias adicionales": {
+		code: "aviso referencias",
 		description: "Artículos con falta de referencias"
 	},
-	{
-		code: "renombrar",
+	"renombrar": {
 		description: "Para proponer un renombrado de una página",
 		subgroup: [
 			{
@@ -180,23 +165,22 @@ const templateDict = [
 			}
 		]
 	},
-	{
-		code: "revisar traducción",
+	"revisar traducción": {
 		description: "texto traducido legible pero necesita un repaso lingüístico"
 	},
-	{
-		code: "sin relevancia",
+	"sin relevancia": {
+		warning: "aviso sin relevancia",
 		description: "artículos que no superan umbral de relevancia. Plantilla de 30 días"
 	},
-	{
-		code: "traducción incompleta",
+	"traducción incompleta": {
+		warning: "aviso traducción incompleta",
 		description: "artículos que han sido traducidos solo parcialmente"
 	},
-	{
-		code: "wikificar",
+	"wikificar": {
+		warning: "aviso wikificar",
 		description: "Textos con mal formato o que no cumplen el manual de estilo"
-	},
-]
+	}
+}
 
 function linkBuilder(link) {
 	let fullLink = `https://es.wikipedia.org/wiki/Plantilla:${link}`
@@ -321,6 +305,7 @@ function submitMessage(e) {
 			templateList.push([key])
 		}
 	}
+	console.log(templateList)
 	for (const element of templateList) {
 		for (const [key, value] of Object.entries(input)) {
 			if (key.includes('_param') && key.includes(element)) {
@@ -333,7 +318,9 @@ function submitMessage(e) {
 	}
 
 	for (const element of templateList) {
-		console.log(`{{${element}${templateList[element]?.param ? `|${templateList[element].param}=` : ''}${templateList[element]?.paramValue || ''}}}`);
+		let parameter = templateList[element]?.param ? `|${templateList[element].param}=` : '';
+		let parameterValue = templateList[element]?.paramValue || '';
+		console.log(`{{${element}${parameter}${parameterValue}}}`);
 	}
 
 }
