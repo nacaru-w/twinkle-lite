@@ -3,7 +3,7 @@ import * as utils from "./utils";
 const templateDict = {
 	"autotrad": {
 		warning: "aviso autotrad",
-		description: "Uso de automatismo en traducciones de nula calidad"
+		description: "uso de automatismo en traducciones de nula calidad"
 	},
 	"categorizar": {
 		warning: "aviso categorizar",
@@ -11,31 +11,31 @@ const templateDict = {
 	},
 	"CDI": {
 		warning: "aviso conflicto de interés",
-		description: "Escrita bajo conflicto de interés"
+		description: "escrita bajo conflicto de interés"
 	},
 	"categorizar": {
 		warning: "aviso categorizar",
-		description: "Artículos que no poseen categorías"
+		description: "artículos que no poseen categorías"
 	},
 	"contextualizar": {
 		warning: "aviso contextualizar",
-		description: "El tema o ámbito no está claramente redactado. Plantilla de 30 días."
+		description: "el tema o ámbito no está claramente redactado. Plantilla de 30 días."
 	},
 	"complejo": {
-		description: "Textos difíciles de entender"
+		description: "textos difíciles de entender"
 	},
 	"copyedit": {
 		warning: "aviso copyedit",
-		description: "Necesita una revisión de ortografía y gramática"
+		description: "necesita una revisión de ortografía y gramática"
 	},
 	"curiosidades": {
-		description: "Textos con sección de curiosidades"
+		description: "textos con sección de curiosidades"
 	},
 	"desactualizado": {
 		description: "página con información obsoleta"
 	},
 	"en desarrollo": {
-		description: "Páginas en construcción o siendo editadas activamente",
+		description: "páginas en construcción o siendo editadas activamente",
 		subgroup: [
 			{
 				type: 'input',
@@ -46,30 +46,30 @@ const templateDict = {
 		]
 	},
 	"evento actual": {
-		description: "Artículos de actualidad cuya información es susceptible a cambiar"
+		description: "artículos de actualidad cuya información es susceptible a cambiar"
 	},
 	"excesivamente detallado": {
-		description: "Demasiada información sobre temas triviales"
+		description: "demasiada información sobre temas triviales"
 	},
 	"experto": {
-		description: "Artículos muy técnicos con deficiencias de contenido solo corregibles por un experto"
+		description: "artículos muy técnicos con deficiencias de contenido solo corregibles por un experto"
 	},
 	"ficticio": {
-		description: "Sin enfoque desde un punto de vista real"
+		description: "sin enfoque desde un punto de vista real"
 	},
 	"formato de referencias": {
 		warning: "aviso formato de referencias",
-		description: "Referencias incorrectas o mal construidas"
+		description: "referencias incorrectas o mal construidas"
 	},
 	"fuente primaria": {
 		warning: "aviso fuente primaria",
-		description: "Información no verificable. Plantilla de 30 días."
+		description: "información no verificable. Plantilla de 30 días."
 	},
 	"fuentes no fiables": {
 		description: "referencias que no siguen la política de fuentes fiables"
 	},
 	"fusionar": {
-		descripción: "Sugerir una fusión",
+		description: "sugerir una fusión",
 		subgroup: [
 			{
 				type: 'input',
@@ -81,7 +81,7 @@ const templateDict = {
 	},
 	"globalizar": {
 		warning: "aviso globalizar",
-		description: "Existe sesgo territorial",
+		description: "existe sesgo territorial",
 		subgroup: [
 			{
 				type: 'input',
@@ -93,21 +93,21 @@ const templateDict = {
 	},
 	"infraesbozo": {
 		warning: "aviso infraesbozo",
-		description: "Contenido insuficiente como para constituir un esbozo de artículo o anexo válido. Plantilla de 30 días",
+		description: "contenido insuficiente como para constituir un esbozo de artículo o anexo válido. Plantilla de 30 días",
 	},
 	"largo": {
 		description: "artículos excesivamente largos que deberían subdividirse en varios"
 	},
 	"mal traducido": {
 		warning: "aviso mal traducido",
-		description: "Escasa calidad de una traducción de otro idioma"
+		description: "escasa calidad de una traducción de otro idioma"
 	},
 	"mejorar redacción": {
-		description: "Redacciones que no siguen el manual de estilo"
+		description: "redacciones que no siguen el manual de estilo"
 	},
 	"no neutralidad": {
 		warning: "aviso no neutralidad",
-		description: "Artículos sesgados o claramente decantados en una dirección",
+		description: "artículos sesgados o claramente decantados en una dirección",
 		subgroup: [
 			{
 				type: 'input',
@@ -132,26 +132,26 @@ const templateDict = {
 		]
 	},
 	"polémico": {
-		description: "Temas susceptibles a guerras de edición o vandalismo"
+		description: "temas susceptibles a guerras de edición o vandalismo"
 	},
 	"promocional": {
 		code: "promocional",
-		description: "Texto con marcado carácter publicitario, no neutral. Plantilla de 30 días"
+		description: "texto con marcado carácter publicitario, no neutral. Plantilla de 30 días"
 	},
 	"publicidad": {
-		description: "Contenido comercial que defiende proselitismos o propaganda"
+		description: "contenido comercial que defiende proselitismos o propaganda"
 	},
 	"PVfan": {
 		warning: "aviso no neutralidad|2=PVfan",
-		description: "Escritos poco neutrales, con punto de vista fanático"
+		description: "escritos poco neutrales, con punto de vista fanático"
 	},
 	"referencias": {
 		warning: "aviso referencias",
-		description: "Artículos sin una sola referencia"
+		description: "artículos sin una sola referencia"
 	},
 	"referencias adicionales": {
 		code: "aviso referencias",
-		description: "Artículos con falta de referencias"
+		description: "artículos con falta de referencias"
 	},
 	"renombrar": {
 		description: "Para proponer un renombrado de una página",
@@ -178,7 +178,7 @@ const templateDict = {
 	},
 	"wikificar": {
 		warning: "aviso wikificar",
-		description: "Textos con mal formato o que no cumplen el manual de estilo"
+		description: "textos con mal formato o que no cumplen el manual de estilo"
 	}
 }
 
@@ -189,12 +189,12 @@ function linkBuilder(link) {
 
 function listBuilder(list) {
 	let finalList = [];
-	for (let item of list) {
+	for (let item in list) {
 		let template = {};
-		template.name = item.code
-		template.value = item.code
-		template.label = `{{${item.code}}} · ${item.description} ${linkBuilder(item.code)}`
-		template.subgroup = "subgroup" in item ? item.subgroup : '';
+		template.name = item
+		template.value = item
+		template.label = `{{${item}}} · ${list[item].description} ${linkBuilder(item)}`
+		template.subgroup = list[item]?.subgroup ? list[item].subgroup : '';
 		finalList.push(template)
 	}
 	return finalList;
