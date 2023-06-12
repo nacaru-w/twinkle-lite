@@ -3,6 +3,8 @@ import * as utils from "./utils";
 // Dictionary that stores the templates, the description, as well as the parameter and the name of the warning template if any of them is applicable
 // Template parameters are set in the subgroup, specifically in the 'name' key, their syntax is as follows:
 // `_param-parent template name-parameter identifier`
+// If the parameter doesn't have an identifier, then just type a «1»
+
 const templateDict = {
 	"autotrad": {
 		warning: "aviso autotrad",
@@ -76,9 +78,9 @@ const templateDict = {
 		subgroup: [
 			{
 				type: 'input',
-				name: '_param-fusionar-',
-				parameter: '1',
-				label: 'Artículo objetivo'
+				name: '_param-fusionar-1',
+				label: 'Artículo objetivo',
+				tooltip: 'Escribe el nombre del artículo con el que quieres fusionar esta página. No uses Wikicódigo.'
 			}
 		]
 	},
@@ -89,7 +91,6 @@ const templateDict = {
 			{
 				type: 'input',
 				name: '_param-globalizar-1',
-				parameter: '1',
 				label: 'Cultura o territorio del sesgo'
 			}
 		]
@@ -277,7 +278,7 @@ function createFormWindow() {
 				value: "notify",
 				label: "Notificar al creador de la página si es posible",
 				checked: false,
-				tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advertiéndole de la colocación de la plantilla"
+				tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador del artículo advertiéndole de la colocación de la plantilla"
 			}],
 	})
 
@@ -322,7 +323,7 @@ function submitMessage(e) {
 	for (const element of templateList) {
 		let parameter = templateList[element]?.param ? `|${templateList[element].param}=` : '';
 		let parameterValue = templateList[element]?.paramValue || '';
-		console.log(`{{${element}${parameter}${parameterValue}}}`);
+		console.log(`{{sust:${element}${parameter}${parameterValue}}}`);
 	}
 
 }
