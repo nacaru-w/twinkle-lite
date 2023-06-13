@@ -1,6 +1,7 @@
 Here's a list of enhancements for the new version:
 
 ## Global enhancements
+
 * Removed testing comments
 
 ## Module: Deletion Request Maker
@@ -9,6 +10,7 @@ Here's a list of enhancements for the new version:
 
 ## Module: Reports
 
+* The option that allows TL to notify the reported user will now be unchecked by default.
 * Translated the names of the user add/remove labels into Spanish.
 
 ## Module: Page protection
