@@ -139,6 +139,7 @@ const templateDict = {
 		description: "temas susceptibles a guerras de edición o vandalismo"
 	},
 	"promocional": {
+		warning: "aviso promocional",
 		code: "promocional",
 		description: "texto con marcado carácter publicitario, no neutral. Plantilla de 30 días"
 	},
@@ -163,7 +164,6 @@ const templateDict = {
 			{
 				type: 'input',
 				name: '_param-renombrar-1',
-				parameter: '1',
 				label: 'Nuevo nombre sugerido',
 				required: true
 			}
@@ -214,6 +214,7 @@ function createFormWindow() {
 	form.append({
 		type: 'input',
 		value: '',
+		name: 'search',
 		label: 'Búsqueda:',
 		id: 'search',
 		size: '30',
@@ -284,6 +285,7 @@ function createFormWindow() {
 
 	optionsField.append({
 		type: 'input',
+		name: 'reason',
 		label: 'Razón:',
 		tooltip: '(Opcional) Escribe aquí el resumen de edición explicando la razón por la que se ha añadido la plantilla',
 		style: 'width: 80%; margin-top: 0.5em;'
@@ -303,12 +305,16 @@ function submitMessage(e) {
 	let form = e.target;
 	let input = Morebits.quickForm.getInputData(form);
 	let templateList = [];
+	console.log(input)
+
+	// First let's tidy up Morebit's array
 	for (const [key, value] of Object.entries(input)) {
-		if (value && !key.includes('_param')) {
+		if (value && !key.includes('_param') && key != 'notify' && key != 'reason' && key != 'search') {
 			templateList.push([key])
 		}
 	}
 
+	// Then we will assign each parameter to their corresponding value and make it accessible
 	for (const element of templateList) {
 		for (const [key, value] of Object.entries(input)) {
 			if (key.includes('_param') && key.includes(element)) {
@@ -320,12 +326,85 @@ function submitMessage(e) {
 		}
 	}
 
-	for (const element of templateList) {
-		let parameter = templateList[element]?.param ? `|${templateList[element].param}=` : '';
-		let parameterValue = templateList[element]?.paramValue || '';
-		console.log(`{{sust:${element}${parameter}${parameterValue}}}`);
-	}
+	console.log(templateList)
 
+	utils.createStatusWindow();
+	new Morebits.status("Paso 1", `generando plantilla...`, "info");
+	new mw.Api().edit(
+		utils.currentPageName,
+		function (revision) {
+			return {
+				text: templateBuilder(templateList) + revision.content,
+				summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]. ` + `${input.reason ? input.reason : ''}`,
+				minor: false
+			}
+		})
+		.then(function () {
+			if (!input.notify) return;
+			return utils.getCreator().then(postsMessage(templateList));
+		})
+		.then(function () {
+			new Morebits.status("Finalizado", "actualizando página...", "status");
+			setTimeout(() => { location.reload() }, 2000);
+		})
+		.catch(function () {
+			new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+			setTimeout(() => { location.reload() }, 4000);
+		})
+
+
+
+}
+
+function templateBuilder(list) {
+	let finalString = '';
+	for (const element of list) {
+		let parameter = list[element]?.param ? `|${list[element].param}=` : '';
+		let parameterValue = list[element]?.paramValue || '';
+		finalString += `{{sust:${element}${parameter}${parameterValue}}}\n`;
+	}
+	return finalString;
+}
+
+function allWarnings(list) {
+	let finalString = ''
+	for (let template of list) {
+		if (templateDict[template]?.warning) {
+			finalString += `{{${templateDict[template].warning}|${utils.currentPageName}}} ~~~~\n`
+		}
+	}
+	return finalString
+}
+
+function postsMessage(templateList) {
+	return (creator) => {
+		if (creator == utils.currentUser) {
+			return;
+		} else {
+			new Morebits.status("Paso 2", "publicando un mensaje de aviso en la página de discusión del creador (si es posible)...", "info");
+			return utils.isPageMissing(`Usuario_discusión:${creator}`)
+				.then(function (mustCreateNewTalkPage) {
+					if (mustCreateNewTalkPage) {
+						return new mw.Api().create(
+							`Usuario_discusión:${creator}`,
+							{ summary: `Aviso al usuario de la colocación de una plantilla en [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
+							`${allWarnings(templateList)}`
+						);
+					} else {
+						return new mw.Api().edit(
+							`Usuario_discusión:${creator}`,
+							function (revision) {
+								return {
+									text: revision.content + `\n${allWarnings(templateList)}`,
+									summary: `Aviso al usuario de la colocación de una plantilla en [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+									minor: false
+								}
+							}
+						)
+					}
+				})
+		}
+	}
 }
 
 export { createFormWindow };
