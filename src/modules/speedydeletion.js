@@ -202,7 +202,10 @@ function submitMessage(e) {
                 new Morebits.status("Finalizado", "actualizando página...", "status");
                 setTimeout(() => { location.reload() }, 2000);
             })
-        // Plantilla {{subst:Aviso destruir|Nombre del artículo|criterio A|criterio B|criterio C}} ~~~~
+            .catch(function () {
+                new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+                setTimeout(() => { location.reload() }, 4000);
+            })
     }
 }
 
