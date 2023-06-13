@@ -186,11 +186,14 @@ const templateDict = {
 	}
 }
 
+// Builds the link to be displayed in each checkbox description
 function linkBuilder(link) {
 	let fullLink = `https://es.wikipedia.org/wiki/Plantilla:${link}`
 	return `<a href="${fullLink}" target="_blank">(+)</a>`
 }
 
+// Builds the list to be passed as parameter to the Morebits function that creates the box holding all the options
+// The data is gathered from the dictionary
 function listBuilder(list) {
 	let finalList = [];
 	for (let item in list) {
@@ -204,6 +207,7 @@ function listBuilder(list) {
 	return finalList;
 }
 
+// Creates the Morebits window holding the form
 function createFormWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
 	Window.setScriptName('Twinkle Lite');
@@ -370,7 +374,7 @@ function allWarnings(list) {
 	let finalString = ''
 	for (let template of list) {
 		if (templateDict[template]?.warning) {
-			finalString += `{{${templateDict[template].warning}|${utils.currentPageName}}} ~~~~\n`
+			finalString += `{{sust:${templateDict[template].warning}|${utils.currentPageNameWithoutUnderscores}}} ~~~~\n`
 		}
 	}
 	return finalString
