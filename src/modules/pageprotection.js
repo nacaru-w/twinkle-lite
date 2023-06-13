@@ -40,6 +40,8 @@ function protectionFromGetReply(data) {
 				return 'solo bibliotecarios';
 			case 'autoconfirmed':
 				return 'solo usuarios autoconfirmados';
+			case 'templateeditor':
+				return 'solo editores de plantillas'
 			default:
 				return 'sin protección';
 		}
@@ -76,6 +78,7 @@ function createFormWindow() {
 	radioField.append({
 		type: 'radio',
 		name: 'protection',
+		id: 'protect',
 		event:
 			function (e) {
 				let nameToModify = document.querySelector("select[name='motive']")
@@ -123,8 +126,15 @@ function createFormWindow() {
 	Window.display();
 
 	getProtectionStatus().then(function (protectionLevel) {
-		document.querySelector("div[name='currentProtection'] > span.quickformDescription")
-			.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protectionLevel} <span>`
+		// Displays protection level on page
+		let showProtection = document.querySelector("div[name='currentProtection'] > span.quickformDescription");
+		showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protectionLevel} <span>`
+		// Disables "unprotect" option if not applicable
+		if (protectionLevel == 'sin protección') {
+			let unprotectDiv = document.getElementById('protect').childNodes[1]
+			unprotectDiv.firstChild.setAttribute('disabled', '');
+		}
+
 	})
 }
 

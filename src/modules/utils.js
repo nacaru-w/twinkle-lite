@@ -35,6 +35,7 @@ function getCreator() {
     return userPromise;
 }
 
+// Returns a boolean stating whether there's a spot available to create the page (true) or whether it already exists (false)
 function isPageMissing(title) {
     let params = {
         action: 'query',

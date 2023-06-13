@@ -104,7 +104,7 @@ function createFormWindow() {
             name: "notify",
             value: "notify",
             label: "Notificar al usuario denunciado",
-            checked: true,
+            checked: false,
             tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del usuario reportado avisándole de la denuncia"
         }],
         style: "padding-left: 1em;"
@@ -156,7 +156,20 @@ function createFormWindow() {
     Window.setContent(result);
     Window.display();
 
+    // Changes names of add/remove user buttons to Spanish
+    function changeButtonNames() {
+        let moreBox = document.querySelector('input[value="more"]')
+        moreBox.value = "añadir"
+        moreBox.style.marginTop = '0.3em' // To separate it slightly from the rest of the elements
+        moreBox.addEventListener("click", () => {
+            let removeBox = document.querySelector('input[value="remove"]')
+            removeBox.value = "eliminar"
+            removeBox.style.marginLeft = '0.3em' // Idem as four code lines above
+        })
+    }
+    // Automatically adds the name of the reported user to the form
     document.querySelector('input[name="usernamefield"]').value = reportedUser
+    changeButtonNames()
 }
 
 function submitMessage(e) {
