@@ -140,7 +140,6 @@ const templateDict = {
 	},
 	"promocional": {
 		warning: "aviso promocional",
-		code: "promocional",
 		description: "texto con marcado carácter publicitario, no neutral. Plantilla de 30 días"
 	},
 	"publicidad": {
@@ -155,7 +154,7 @@ const templateDict = {
 		description: "artículos sin una sola referencia"
 	},
 	"referencias adicionales": {
-		code: "aviso referencias",
+		warning: "aviso referencias",
 		description: "artículos con falta de referencias"
 	},
 	"renombrar": {
