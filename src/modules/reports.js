@@ -104,7 +104,7 @@ function createFormWindow() {
             name: "notify",
             value: "notify",
             label: "Notificar al usuario denunciado",
-            checked: true,
+            checked: false,
             tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del usuario reportado avisándole de la denuncia"
         }],
         style: "padding-left: 1em;"
