@@ -254,7 +254,7 @@ function postsMessage(input) {
                             `Usuario_discusión:${creator}`,
                             function (revision) {
                                 return {
-                                    text: revision.content + `\n{{subst:Aviso destruir|${utils.currentPageName}|${allCriteria(input)}}} ~~~~`,
+                                    text: revision.content + `\n{{subst:Aviso destruir|${utils.currentPageNameWithoutUnderscores}|${allCriteria(input)}}} ~~~~`,
                                     summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                                     minor: false
                                 }
