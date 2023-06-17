@@ -3,6 +3,7 @@ Here's a list of enhancements for the new version:
 ## Global enhancements
 
 * Removed testing comments
+* The tool will now load the dependencies as part of a series of callbacks to ensure it happens in the right order
 
 ## Module: Deletion Request Maker
 
