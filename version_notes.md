@@ -5,6 +5,10 @@ Here's a list of enhancements for the new version:
 * Removed testing comments
 * The tool will now load the dependencies as part of a series of callbacks to ensure it happens in the right order
 
+## Module: Tags
+
+* __The article tagging module has been implemented in Twinkle Lite__
+
 ## Module: Deletion Request Maker
 
 * Fixed summary edits that incorrectly attributed the name «Deletion Request Maker» to the script.
