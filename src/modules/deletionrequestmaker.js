@@ -129,7 +129,7 @@ function buildDeletionTemplate(category, reason) {
 function buildEditOnNominatedPage(revision) {
     return {
         text: '{{sust:cdb}}\n' + revision.content,
-        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Twinke Lite|Twinke Lite]].`,
+        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]].`,
         minor: false
     };
 }
@@ -137,7 +137,7 @@ function buildEditOnNominatedPage(revision) {
 //function that creates the page hosting the deletion request
 function createDeletionRequestPage(category, reason) {
     return new mw.Api().create(`Wikipedia:Consultas de borrado/${utils.currentPageName}`,
-        { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinke Lite|Twinke Lite]]` },
+        { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
         buildDeletionTemplate(category, reason)
     );
 }
