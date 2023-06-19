@@ -149,7 +149,7 @@ function postsMessage(creator) {
             if (mustCreateNewTalkPage) {
                 return new mw.Api().create(
                     `Usuario_discusión:${creator}`,
-                    { summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinke Lite|Twinke Lite]]' },
+                    { summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinkle Lite|Twinkle Lite]]' },
                     `{{sust:Aviso cdb|${utils.currentPageNameWithoutUnderscores}}} ~~~~`
                 );
             } else {
@@ -158,7 +158,7 @@ function postsMessage(creator) {
                     function (revision) {
                         return {
                             text: revision.content + `\n{{sust:Aviso cdb|${utils.currentPageNameWithoutUnderscores}}} ~~~~`,
-                            summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinke Lite|Twinke Lite]]',
+                            summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinkle Lite|Twinkle Lite]]',
                             minor: false
                         }
                     }
