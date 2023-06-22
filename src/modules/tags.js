@@ -145,7 +145,7 @@ const templateDict = {
 	"publicidad": {
 		description: "contenido comercial que defiende proselitismos o propaganda"
 	},
-	"PVfan": {
+	"pvfan": {
 		warning: "aviso no neutralidad|2=PVfan",
 		description: "escritos poco neutrales, con punto de vista fanático"
 	},
@@ -236,7 +236,7 @@ function createFormWindow() {
 				function updateList(searchString) {
 					for (let i = 0; i < allCheckboxDivs.length; i++) {
 						let checkboxText = allCheckboxDivs[i].childNodes[1].innerText
-						if (checkboxText.includes(searchString)) {
+						if (checkboxText.includes(searchString.toLowerCase()) || checkboxText.includes(searchString.toUpperCase())) {
 							const div = allCheckboxDivs[i];
 							div.style.display = '';
 						}
