@@ -29,7 +29,7 @@ const initializeTwinkleLite = () => {
 		PPportletLink.onclick = PageProtection.createFormWindow;
 		let SDportletLink = mw.util.addPortletLink('p-cactions', '#', 'Borrado rápido', 'example-button', 'Solicita el borrado rápido de la página');
 		SDportletLink.onclick = SpeedyDeletion.createFormWindow;
-		if (mw.config.get('wgNamespaceNumber') === 0) {
+		if (mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 104) {
 			let TportleltLink = mw.util.addPortletLink('p-cactions', '#', 'Añadir plantilla', 'example-button', 'Añade una plantilla a la página');
 			TportleltLink.onclick = Tags.createFormWindow;
 		}
