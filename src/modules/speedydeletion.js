@@ -213,7 +213,7 @@ function speedyTemplateBuilder(data) {
     return (revision) => {
         return {
             text: `{{destruir|${allCriteria(data)}}} \n` + revision.content,
-            summary: 'Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]].',
+            summary: `Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]]${data?.originalArticleName ? `. Artículo existente de mayor calidad: [[${data.originalArticleName}]]` : ''}`,
             minor: false
         }
     }

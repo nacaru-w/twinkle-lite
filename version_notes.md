@@ -1,15 +1,18 @@
-Here's a list of enhancements for the new version:
+# v.2.0.1
+## Module: Speedy deletion
+* The speedy deleletion module will now specify the original, better-quality article in the edit summary when selecting the A5 criteria.
+# v.2.0.0
 
 ## Global enhancements
 
-* Removed testing comments
-* The tool will now load the dependencies as part of a series of callbacks to ensure it happens in the right order
+* Removed testing comments.
+* The tool will now load the dependencies as part of a series of callbacks to ensure it happens in the right order.
 
 ## Module: Tags
 
 * __The article tagging module has been implemented in Twinkle Lite__
 
-## Module: Deletion Request Maker
+## Module: Deletion request maker
 
 * Fixed summary edits that incorrectly attributed the name «Deletion Request Maker» to the script.
 
