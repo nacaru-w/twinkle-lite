@@ -225,12 +225,13 @@ function createFormWindow() {
 			const searchInput = document.getElementById("search");
 			const allCheckboxDivs = document.querySelectorAll("#checkboxContainer > div");
 			if (this.value) {
-				// Flushes the list before calling the search query function
-				function flushList() {
+				// Flushes the list before calling the search query function, then does it as a callback so that it happens in the right order
+				function flushList(callback) {
 					for (let i = 0; i < allCheckboxDivs.length; i++) {
 						const div = allCheckboxDivs[i];
 						div.style.display = 'none';
 					}
+					callback();
 				}
 				// Finds matches for the search query within the checkbox list
 				function updateList(searchString) {
@@ -242,8 +243,7 @@ function createFormWindow() {
 						}
 					}
 				}
-				flushList();
-				updateList(searchInput.value);
+				flushList(() => updateList(searchInput.value));
 			}
 			// Retrieves the full list if nothing is on the search input box
 			if (this.value.length == 0) {
