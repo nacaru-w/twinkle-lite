@@ -1,6 +1,7 @@
 const currentPageName = mw.config.get('wgPageName');
 const currentPageNameWithoutUnderscores = currentPageName.replaceAll('_', ' ');
 const currentUser = mw.config.get('wgUserName');
+const currentNamespace = mw.config.get('wgNamespaceNumber');
 
 //Creates the window that holds the status messages
 function createStatusWindow() {
@@ -50,4 +51,4 @@ function isPageMissing(title) {
     });
 }
 
-export { currentPageName, currentPageNameWithoutUnderscores, createStatusWindow, getCreator, isPageMissing, currentUser };
+export { currentPageName, currentPageNameWithoutUnderscores, createStatusWindow, getCreator, isPageMissing, currentUser, currentNamespace };

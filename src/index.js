@@ -3,6 +3,7 @@ import * as PageProtection from "./modules/pageprotection";
 import * as SpeedyDeletion from "./modules/speedydeletion";
 import * as Reports from "./modules/reports";
 import * as Tags from "./modules/tags";
+import { currentNamespace } from "./modules/utils";
 
 const loadDependencies = (callback) => {
 	mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.ui', 'mediawiki.api', 'mediawiki.ForeignApi']);
@@ -18,7 +19,7 @@ const loadMorebits = (callback) => {
 const initializeTwinkleLite = () => {
 	console.log("Loading Twinkle Lite...");
 
-	if (mw.config.get('wgNamespaceNumber') < 0 || !mw.config.get('wgArticleId')) {
+	if (currentNamespace < 0 || !mw.config.get('wgArticleId')) {
 		console.log("Special or non-existent page: PP will therefore not be loaded.");
 		console.log("Special or non-existent page: DRM will therefore not be loaded.");
 		console.log("Special or non-existent page: Speedy deletion will therefore not be loaded.");
@@ -31,12 +32,12 @@ const initializeTwinkleLite = () => {
 		SDportletLink.onclick = SpeedyDeletion.createFormWindow;
 	}
 
-	if (mw.config.get('wgNamespaceNumber') === 0 || mw.config.get('wgNamespaceNumber') === 104) {
+	if (currentNamespace === 0 || currentNamespace === 104) {
 		let TportleltLink = mw.util.addPortletLink('p-cactions', '#', 'Añadir plantilla', 'example-button', 'Añade una plantilla a la página');
 		TportleltLink.onclick = Tags.createFormWindow;
 	}
 
-	if (mw.config.get('wgNamespaceNumber') === 2 || mw.config.get('wgNamespaceNumber') === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
+	if (currentNamespace === 2 || currentNamespace === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
 		let RportletLink = mw.util.addPortletLink('p-cactions', '#', 'Denunciar usuario', 'example-button', 'Informa de un problema en relación con el usuario');
 		RportletLink.onclick = Reports.createFormWindow;
 	} else {

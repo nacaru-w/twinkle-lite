@@ -107,7 +107,7 @@ function createFormWindow() {
         list: getOptions("general")
     })
 
-    if (mw.config.get('wgNamespaceNumber') == 0 && !mw.config.get('wgIsRedirect')) {
+    if (utils.currentNamespace == 0 && !mw.config.get('wgIsRedirect')) {
         let aField = form.append({
             type: 'field',
             label: 'Criterios para artículos:',
@@ -132,7 +132,7 @@ function createFormWindow() {
         })
     }
 
-    if (mw.config.get('wgNamespaceNumber') == 14) {
+    if (utils.currentNamespace == 14) {
         let cField = form.append({
             type: 'field',
             label: 'Criterios para categorías:',
@@ -144,7 +144,7 @@ function createFormWindow() {
         })
     }
 
-    if (mw.config.get('wgNamespaceNumber') == 2) {
+    if (utils.currentNamespace == 2) {
         let uField = form.append({
             type: 'field',
             label: 'Criterios para páginas de usuario:',
@@ -156,7 +156,7 @@ function createFormWindow() {
         })
     }
 
-    if (mw.config.get('wgNamespaceNumber') == 10) {
+    if (utils.currentNamespace == 10) {
         let tField = form.append({
             type: 'field',
             label: 'Criterios para plantillas:',
