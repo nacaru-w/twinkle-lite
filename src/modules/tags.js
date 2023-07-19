@@ -1,3 +1,6 @@
+// ** Tags module **
+// Allows users to add a tag in articles. The tag can be selected as part of a series of options of a checkbox list
+
 import * as utils from "./utils";
 
 // Dictionary that stores the templates, the description, as well as the parameter and the name of the warning template if any of them is applicable
