@@ -122,3 +122,5 @@ function createFormWindow() {
     Window.display();
 
 }
+
+export { createFormWindow };
