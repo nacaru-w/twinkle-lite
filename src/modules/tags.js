@@ -311,7 +311,6 @@ function submitMessage(e) {
 	let form = e.target;
 	let input = Morebits.quickForm.getInputData(form);
 	let templateList = [];
-	console.log(input)
 
 	// First let's tidy up Morebit's array
 	for (const [key, value] of Object.entries(input)) {
@@ -331,8 +330,6 @@ function submitMessage(e) {
 			}
 		}
 	}
-
-	console.log(templateList)
 
 	utils.createStatusWindow();
 	new Morebits.status("Paso 1", `generando plantilla...`, "info");
