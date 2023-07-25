@@ -25,7 +25,18 @@ const templateDict = {
                 tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
             }
         ]
+    },
+    "aviso prueba3": {
+        description: "asdlasdjkna"
+    },
+    "aviso prueba4": {
+        description: "asdlasdjkna"
     }
+}
+
+function linkBuilder(link) {
+    let fullLink = `https://es.wikipedia.org/wiki/Plantilla:${link}`
+    return `<a href="${fullLink}" target="_blank">(+)</a>`
 }
 
 function listBuilder(list) {
@@ -58,22 +69,22 @@ function createFormWindow() {
         size: '30',
         event: function quickFilter() {
             const searchInput = document.getElementById("search");
-            const allRadioDivs = document.querySelectorAll("#radioContainer > div");
+            const allCheckboxDivs = document.querySelectorAll("#checkboxContainer > div");
             if (this.value) {
                 // Flushes the list before calling the search query function, then does it as a callback so that it happens in the right order
                 function flushList(callback) {
-                    for (let i = 0; i < allRadioDivs.length; i++) {
-                        const div = allRadioDivs[i];
+                    for (let i = 0; i < allCheckboxDivs.length; i++) {
+                        const div = allCheckboxDivs[i];
                         div.style.display = 'none';
                     }
                     callback();
                 }
                 // Finds matches for the search query within the checkbox list
                 function updateList(searchString) {
-                    for (let i = 0; i < allRadioDivs.length; i++) {
-                        let checkboxText = allRadioDivs[i].childNodes[1].innerText
+                    for (let i = 0; i < allCheckboxDivs.length; i++) {
+                        let checkboxText = allCheckboxDivs[i].childNodes[1].innerText
                         if (checkboxText.includes(searchString.toLowerCase()) || checkboxText.includes(searchString.toUpperCase())) {
-                            const div = allRadioDivs[i];
+                            const div = allCheckboxDivs[i];
                             div.style.display = '';
                         }
                     }
@@ -82,8 +93,8 @@ function createFormWindow() {
             }
             // Retrieves the full list if nothing is on the search input box
             if (this.value.length == 0) {
-                for (let i = 0; i < allRadioDivs.length; i++) {
-                    const div = allRadioDivs[i];
+                for (let i = 0; i < allCheckboxDivs.length; i++) {
+                    const div = allCheckboxDivs[i];
                     div.style.display = '';
                 }
             }
@@ -98,10 +109,14 @@ function createFormWindow() {
     })
 
     optionBox.append({
-        type: 'radio',
-        id: 'radioContainer',
-        list: listBuilder(templateDict),
-        label: 'radioOption'
+        type: 'checkbox',
+        id: 'checkboxContainer',
+        list: listBuilder(templateDict)
+    })
+
+    let optionsField = form.append({
+        type: 'field',
+        label: 'Opciones:'
     })
 
     optionsField.append({
@@ -121,6 +136,11 @@ function createFormWindow() {
     Window.setContent(result);
     Window.display();
 
+}
+
+function submitMessage(e) {
+    let form = e.target;
+    let input = Morebits.quickForm.getInputData(form);
 }
 
 export { createFormWindow };
