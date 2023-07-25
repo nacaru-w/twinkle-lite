@@ -3,6 +3,8 @@
 
 import * as utils from "./utils";
 
+const warnedUser = mw.config.get('wgRelevantUserName');
+
 const templateDict = {
     "aviso prueba1": {
         description: "Usuarios que han realizado ediciones no apropiadas",
@@ -141,6 +143,41 @@ function createFormWindow() {
 function submitMessage(e) {
     let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
+    let templateList = [];
+
+    // First let's tidy up Morebit's array
+    for (const [key, value] of Object.entries(input)) {
+        if (value && !key.includes('_param') && key != 'notify' && key != 'reason' && key != 'search') {
+            templateList.push([key])
+        }
+    }
+
+    // Then we will assign each parameter to their corresponding value and make it accessible
+    for (const element of templateList) {
+        for (const [key, value] of Object.entries(input)) {
+            if (key.includes('_param') && key.includes(element)) {
+                templateList[element] = {
+                    "param": key.split('-').pop(),
+                    "paramValue": value
+                }
+            }
+        }
+    }
+
+    utils.createStatusWindow();
+    new Morebits.status("Paso 1", 'generando plantilla...', 'info');
+    new mw.Api().edit(
+        `Usuario_discusión:${warnedUser}`,
+        function (revision) {
+            return {
+                text: revision.content + templateBuilder(templateList),
+                summary: `Añadiendo aviso de usuario mediante [[WP:TL|Twinkle Lite]]. ` + `${input.reason ? input.reason : ''}`,
+                minor: false
+            }
+        }
+
+    )
+
 }
 
 export { createFormWindow };
