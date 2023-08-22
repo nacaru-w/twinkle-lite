@@ -61,7 +61,6 @@ function templateBuilder(list) {
         let parameterValue = list[element]?.paramValue || '';
         finalString += `{{sust:${element}${parameter}${parameterValue}}}\n`;
     }
-    console.log(finalString);
     return finalString;
 }
 
@@ -189,7 +188,7 @@ function submitMessage(e) {
         })
         .then(function () {
             new Morebits.status("Finalizado", "actualizando página...", "status");
-            // setTimeout(() => { location.reload() }, 2000);
+            setTimeout(() => { location.reload() }, 2000);
         })
         .catch(function () {
             new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
