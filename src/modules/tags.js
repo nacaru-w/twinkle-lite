@@ -148,7 +148,8 @@ const templateDict = {
 	// 			type: 'input',
 	// 			name: '_param-pr-1',
 	// 			label: 'Nombre del wikiproyecto',
-	// 			tooltip: 'Escribe aquí el nombre del Wikiproyecto (esta plantilla se coloca en la PD automáticamente)'
+	// 			tooltip: 'Escribe aquí el nombre del Wikiproyecto (esta plantilla se coloca en la PD automáticamente)',
+	//			required: true
 	// 		}
 	// 	]
 	// },
