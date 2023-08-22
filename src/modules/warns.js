@@ -11,7 +11,7 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_param-aviso prueba 1-1',
+                name: '_param-aviso prueba1-1',
                 label: 'Artículo en el que se realizó la edición',
                 tooltip: 'Escribe el nombre del artículo en el que se cometió la prueba de edición. No uses corchetes'
             }
@@ -22,7 +22,7 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_param-aviso prueba 2-1',
+                name: '_param-aviso prueba2-1',
                 label: 'Artículo en el que se realizó el vandalismo',
                 tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
             }
@@ -52,6 +52,17 @@ function listBuilder(list) {
         finalList.push(template)
     }
     return finalList;
+}
+
+function templateBuilder(list) {
+    let finalString = '';
+    for (const element of list) {
+        let parameter = list[element]?.param ? `|${list[element].param}=` : '';
+        let parameterValue = list[element]?.paramValue || '';
+        finalString += `{{sust:${element}${parameter}${parameterValue}}}\n`;
+    }
+    console.log(finalString);
+    return finalString;
 }
 
 // Creates the Morebits window holding the form
@@ -167,16 +178,23 @@ function submitMessage(e) {
     utils.createStatusWindow();
     new Morebits.status("Paso 1", 'generando plantilla...', 'info');
     new mw.Api().edit(
-        `Usuario_discusión:${warnedUser}`,
+        `Usuario:Nacaru/Taller/Tests`,
+        // `Usuario_discusión:${warnedUser}`,
         function (revision) {
             return {
-                text: revision.content + templateBuilder(templateList),
+                text: revision.content + `\n${templateBuilder(templateList)}`,
                 summary: `Añadiendo aviso de usuario mediante [[WP:TL|Twinkle Lite]]. ` + `${input.reason ? input.reason : ''}`,
                 minor: false
             }
-        }
-
-    )
+        })
+        .then(function () {
+            new Morebits.status("Finalizado", "actualizando página...", "status");
+            // setTimeout(() => { location.reload() }, 2000);
+        })
+        .catch(function () {
+            new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+            setTimeout(() => { location.reload() }, 4000);
+        })
 
 }
 
