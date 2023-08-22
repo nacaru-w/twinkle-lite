@@ -141,6 +141,17 @@ const templateDict = {
 	"polémico": {
 		description: "temas susceptibles a guerras de edición o vandalismo"
 	},
+	// "pr": {
+	// 	description: "para atribuir el artículo a un wikiproyecto",
+	// 	subgroup: [
+	// 		{
+	// 			type: 'input',
+	// 			name: '_param-pr-1',
+	// 			label: 'Nombre del wikiproyecto',
+	// 			tooltip: 'Escribe aquí el nombre del Wikiproyecto (esta plantilla se coloca en la PD automáticamente)'
+	// 		}
+	// 	]
+	// },
 	"promocional": {
 		warning: "aviso promocional",
 		description: "texto con marcado carácter publicitario, no neutral. Plantilla de 30 días"
