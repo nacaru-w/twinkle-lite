@@ -17,6 +17,31 @@ const templateDict = {
             }
         ]
     },
+    "aviso copyvio": {
+        description: "usuarios que han creado artículos que vulneran derechos de autor",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_aviso copyvio-1',
+                label: 'Artículo en el que hay copyvio',
+                tooltip: 'Escribe el nombre del artículo en el que se han vulnerado derechos de autor. No uses corchetes'
+            }
+        ]
+    },
+    "aviso imagen": {
+        description: "autores que han subido imágenes que no deberían estar en Commons",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_aviso imagen-1',
+                label: 'Nombre del archivo en Commons',
+                tooltip: 'Escribe el nombre del archivo en Commons, incluyendo su extensión. No uses corchetes'
+            }
+        ]
+    },
+    "aviso nombre inapropiado": {
+        description: "nombres de usuario que van contra la política de nombres de usuario"
+    },
     "aviso prueba1": {
         description: "usuarios que han realizado ediciones no apropiadas",
         subgroup: [
