@@ -6,8 +6,19 @@ import * as utils from "./utils";
 const warnedUser = mw.config.get('wgRelevantUserName');
 
 const templateDict = {
+    "aviso blanqueo": {
+        description: "usuarios que han blanqueado total o parcialmente páginas en general o de discusión asociada",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso blanqueo-1',
+                label: 'Artículo en el que se realizó el blanqueo',
+                tooltip: 'Escribe el nombre del artículo en el que se realizó el blanqueo parcial o total. No uses corchetes'
+            }
+        ]
+    },
     "aviso prueba1": {
-        description: "Usuarios que han realizado ediciones no apropiadas",
+        description: "usuarios que han realizado ediciones no apropiadas",
         subgroup: [
             {
                 type: 'input',
@@ -18,7 +29,7 @@ const templateDict = {
         ]
     },
     "aviso prueba2": {
-        description: "Usuarios que han realizado ediciones vandálicas",
+        description: "usuarios que han realizado ediciones vandálicas",
         subgroup: [
             {
                 type: 'input',
@@ -29,11 +40,61 @@ const templateDict = {
         ]
     },
     "aviso prueba3": {
-        description: "asdlasdjkna"
+        description: "usuarios que han realizado más de una edición vandálica",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso prueba3-1',
+                label: 'Artículo en el que se llevó a cabo el vandalismo',
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+            }
+        ]
     },
     "aviso prueba4": {
-        description: "asdlasdjkna"
+        description: "ultimo aviso a usuarios vandálicos antes de reportar",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso prueba4-1',
+                label: 'Artículo en el que se llevó a cabo el vandalismo',
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+            }
+        ]
+    },
+    "no retires plantillas de mantenimiento crítico": {
+        description: "usuarios que han realizado ediciones perjudiciales o van más allá del vandalismo",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_no retires plantillas de mantenimiento crítico-1',
+                label: 'Artículo en el que se retiró la plantilla',
+                tooltip: 'Escribe el nombre del artículo en el que se encontraba la plantilla retirada. No uses corchetes'
+            }
+        ]
+    },
+    "planvand": {
+        description: "usuarios que han realizado ediciones perjudiciales o van más allá del vandalismo",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_planvand-1',
+                label: 'Artículo en el que se llevó a cabo el vandalismo',
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+            }
+        ]
+    },
+    "ten precaución en la retirada de plantillas de mantenimiento no crítico": {
+        description: "usuarios que han retirado plantillas de mantenimiento no crítico sin explicaciones",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_ten precaución en la retirada de plantillas de mantenimiento no crítico-nombre del artículo',
+                label: 'Artículo en el que se llevó a cabo el vandalismo',
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+            }
+        ]
     }
+
 }
 
 function linkBuilder(link) {
@@ -178,7 +239,7 @@ function submitMessage(e) {
     new Morebits.status("Paso 1", 'generando plantilla...', 'info');
     new mw.Api().edit(
         `Usuario:Nacaru/Taller/Tests`,
-        // `Usuario_discusión:${warnedUser}`,
+        // `Usuario_discusión:${warnedUser}`, to use after tests
         function (revision) {
             return {
                 text: revision.content + `\n${templateBuilder(templateList)}`,
