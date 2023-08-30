@@ -13,7 +13,21 @@ const templateDict = {
                 type: 'input',
                 name: '_param-aviso blanqueo-1',
                 label: 'Artículo en el que se realizó el blanqueo',
-                tooltip: 'Escribe el nombre del artículo en el que se realizó el blanqueo parcial o total. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se realizó el blanqueo parcial o total. No uses corchetes, el enlace se añadirá automáticamente'
+            }
+        ]
+    },
+    "aviso blanqueo discusión": {
+        description: "usuarios que han blanqueado total o parcialmente su página de discusión o la de otros usuarios",
+    },
+    "aviso categorizar": {
+        description: "usuarios que han olvidado categorizar artículos",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_aviso categorizar-1',
+                label: 'Artículo en cuestión',
+                tooltip: 'Escribe el nombre del artículo que no ha sido categorizado por el usuario. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -24,7 +38,29 @@ const templateDict = {
                 type: 'input',
                 name: '_aviso copyvio-1',
                 label: 'Artículo en el que hay copyvio',
-                tooltip: 'Escribe el nombre del artículo en el que se han vulnerado derechos de autor. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se han vulnerado derechos de autor. No uses corchetes, el enlace se añadirá automáticamente'
+            }
+        ]
+    },
+    "aviso etiqueta": {
+        description: "usuarios que han faltado a la etiqueta, realizando ediciones o creando comentarios o páginas que pueden resultar ofensivas",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_aviso etiqueta-1',
+                label: 'Nombre del artículo donde se ha producido la falta de etiqueta',
+                tooltip: 'Escribe donde se ha producido la falta de etiqueta. No uses corchetes, el enlace se añadirá automáticamente'
+            }
+        ]
+    },
+    "aviso de guerra de ediciones": {
+        description: "autores que han subido imágenes que no deberían estar en Commons",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_aviso de guerra de ediciones-1',
+                label: 'Nombre de la página en la que se ha dado la guerra de ediciones',
+                tooltip: 'Escribe el nombre de la página en la que el usuario avisado ha participado en una guerra de ediciones. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -35,7 +71,18 @@ const templateDict = {
                 type: 'input',
                 name: '_aviso imagen-1',
                 label: 'Nombre del archivo en Commons',
-                tooltip: 'Escribe el nombre del archivo en Commons, incluyendo su extensión. No uses corchetes'
+                tooltip: 'Escribe el nombre del archivo en Commons, incluyendo su extensión. No uses corchetes, el enlace se añadirá automáticamente'
+            }
+        ]
+    },
+    "aviso noesunforo2": {
+        description: "usuarios que forean en páginas de discusión",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso noesunforo2-1',
+                label: 'Artículo en el que se realizó la edición',
+                tooltip: 'Escribe el nombre del artículo en el que se cometió la prueba de edición. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -49,7 +96,7 @@ const templateDict = {
                 type: 'input',
                 name: '_param-aviso prueba1-1',
                 label: 'Artículo en el que se realizó la edición',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió la prueba de edición. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se cometió la prueba de edición. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -60,7 +107,7 @@ const templateDict = {
                 type: 'input',
                 name: '_param-aviso prueba2-1',
                 label: 'Artículo en el que se realizó el vandalismo',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -71,7 +118,7 @@ const templateDict = {
                 type: 'input',
                 name: '_param-aviso prueba3-1',
                 label: 'Artículo en el que se llevó a cabo el vandalismo',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -82,18 +129,33 @@ const templateDict = {
                 type: 'input',
                 name: '_param-aviso prueba4-1',
                 label: 'Artículo en el que se llevó a cabo el vandalismo',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
+    },
+    "aviso sin sentido": {
+        description: "usuarios que crean páginas sin sentido o bulos",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso prueba4-1',
+                label: 'Artículo en el que se llevó a cabo el vandalismo',
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente',
+                required: true
+            }
+        ]
+    },
+    "aviso votonulo": {
+        description: "usuarios que han intentado votar sin cumplir los requisitos"
     },
     "no retires plantillas de mantenimiento crítico": {
         description: "usuarios que han realizado ediciones perjudiciales o van más allá del vandalismo",
         subgroup: [
             {
                 type: 'input',
-                name: '_no retires plantillas de mantenimiento crítico-1',
+                name: '_param-no retires plantillas de mantenimiento crítico-1',
                 label: 'Artículo en el que se retiró la plantilla',
-                tooltip: 'Escribe el nombre del artículo en el que se encontraba la plantilla retirada. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se encontraba la plantilla retirada. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -102,9 +164,9 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_planvand-1',
+                name: '_param-planvand-1',
                 label: 'Artículo en el que se llevó a cabo el vandalismo',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -113,9 +175,9 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_ten precaución en la retirada de plantillas de mantenimiento no crítico-nombre del artículo',
+                name: '_param-ten precaución en la retirada de plantillas de mantenimiento no crítico-nombre del artículo',
                 label: 'Artículo en el que se llevó a cabo el vandalismo',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes'
+                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     }
