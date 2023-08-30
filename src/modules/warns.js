@@ -333,7 +333,7 @@ function submitMessage(e) {
         function (revision) {
             return {
                 text: revision.content + `\n${templateBuilder(templateList)}`,
-                summary: `Añadiendo aviso de usuario mediante [[WP:TL|Twinkle Lite]]. ` + `${input.reason ? input.reason : ''}`,
+                summary: `Añadiendo aviso de usuario mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}`,
                 minor: false
             }
         })
