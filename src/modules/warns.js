@@ -31,6 +31,9 @@ const templateDict = {
             }
         ]
     },
+    "aviso conflicto de interés": {
+        description: "usuarios que editan bajo conflicto de interés o que constituyen CPP y no respetan PVN"
+    },
     "aviso copyvio": {
         description: "usuarios que han creado artículos que vulneran derechos de autor",
         subgroup: [
@@ -53,12 +56,12 @@ const templateDict = {
             }
         ]
     },
-    "aviso de guerra de ediciones": {
+    "aviso guerra de ediciones": {
         description: "autores que han subido imágenes que no deberían estar en Commons",
         subgroup: [
             {
                 type: 'input',
-                name: '_aviso de guerra de ediciones-1',
+                name: '_aviso guerra de ediciones-1',
                 label: 'Nombre de la página en la que se ha dado la guerra de ediciones',
                 tooltip: 'Escribe el nombre de la página en la que el usuario avisado ha participado en una guerra de ediciones. No uses corchetes, el enlace se añadirá automáticamente'
             }
@@ -175,9 +178,9 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_param-ten precaución en la retirada de plantillas de mantenimiento no crítico-nombre del artículo',
-                label: 'Artículo en el que se llevó a cabo el vandalismo',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente'
+                name: '_param-ten precaución en la retirada de plantillas de mantenimiento no crítico-1',
+                label: 'Artículo del que se retiró la plantilla',
+                tooltip: 'Escribe el nombre del artículo en el que se produjo la retirada indebida de la plantilla de mantenimiento no crítico. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     }
