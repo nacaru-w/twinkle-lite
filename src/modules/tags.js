@@ -350,7 +350,7 @@ function submitMessage(e) {
 		function (revision) {
 			return {
 				text: templateBuilder(templateList) + revision.content,
-				summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]. ` + `${input.reason ? input.reason : ''}`,
+				summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}`,
 				minor: false
 			}
 		})
