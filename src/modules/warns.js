@@ -253,7 +253,7 @@ function createFormWindow() {
     let Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Avisar al usuario');
-    Window.addFooterLink('Políticas y convenciones', 'Wikipedia:Políticas y convenciones');
+    Window.addFooterLink('Plantillas de aviso a usuario', 'Wikipedia:Plantillas de aviso a usuario');
     let form = new Morebits.quickForm(submitMessage);
 
     form.append({
