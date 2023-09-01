@@ -6,6 +6,17 @@ import * as utils from "./utils";
 const warnedUser = mw.config.get('wgRelevantUserName');
 
 const templateDict = {
+    "aviso autopromoción": {
+        description: "usuarios creadores de páginas promocionales o de publicidad",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso autopromoción-1',
+                label: 'Artículo promocional en cuestión',
+                tooltip: 'Escribe el nombre del artículo considerado promocional o publicitario. No uses corchetes, el enlace se añadirá automáticamente'
+            }
+        ]
+    },
     "aviso blanqueo": {
         description: "usuarios que han blanqueado total o parcialmente páginas en general o de discusión asociada",
         subgroup: [
@@ -156,6 +167,17 @@ const templateDict = {
                 label: 'Artículo en el que se llevó a cabo el vandalismo',
                 tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente',
                 required: true
+            }
+        ]
+    },
+    "aviso topónimos de España": {
+        description: "usuarios que no han tenido en cuenta WP:TOES",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso topónimos de España-1',
+                label: 'Artículo en cuestión',
+                tooltip: 'Escribe el nombre de la página en la que se ha violado la política de WP:TOES. No uses corchetes, el enlace se añadirá automáticamente',
             }
         ]
     },
