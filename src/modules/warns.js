@@ -25,7 +25,7 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_aviso categorizar-1',
+                name: '_param-aviso categorizar-1',
                 label: 'Artículo en cuestión',
                 tooltip: 'Escribe el nombre del artículo que no ha sido categorizado por el usuario. No uses corchetes, el enlace se añadirá automáticamente'
             }
@@ -39,7 +39,7 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_aviso copyvio-1',
+                name: '_param-aviso copyvio-1',
                 label: 'Artículo en el que hay copyvio',
                 tooltip: 'Escribe el nombre del artículo en el que se han vulnerado derechos de autor. No uses corchetes, el enlace se añadirá automáticamente'
             }
@@ -50,9 +50,20 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_aviso etiqueta-1',
+                name: '_param-aviso etiqueta-1',
                 label: 'Nombre del artículo donde se ha producido la falta de etiqueta',
-                tooltip: 'Escribe donde se ha producido la falta de etiqueta. No uses corchetes, el enlace se añadirá automáticamente'
+                tooltip: 'Escribe el nombre de la página donde se ha producido la falta de etiqueta. No uses corchetes, el enlace se añadirá automáticamente'
+            }
+        ]
+    },
+    "aviso firma": {
+        description: "usuarios que han firmado artículos",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso firma-1',
+                label: 'Nombre del artículo donde se ha firmado erróneamente',
+                tooltip: 'Escribe el nombre del artículo donde se ha añadido una firma. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -61,7 +72,7 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_aviso guerra de ediciones-1',
+                name: '_param-aviso guerra de ediciones-1',
                 label: 'Nombre de la página en la que se ha dado la guerra de ediciones',
                 tooltip: 'Escribe el nombre de la página en la que el usuario avisado ha participado en una guerra de ediciones. No uses corchetes, el enlace se añadirá automáticamente'
             }
@@ -72,7 +83,7 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_aviso imagen-1',
+                name: '_param-aviso imagen-1',
                 label: 'Nombre del archivo en Commons',
                 tooltip: 'Escribe el nombre del archivo en Commons, incluyendo su extensión. No uses corchetes, el enlace se añadirá automáticamente'
             }
@@ -121,7 +132,7 @@ const templateDict = {
                 type: 'input',
                 name: '_param-aviso prueba3-1',
                 label: 'Artículo en el que se llevó a cabo el vandalismo',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente'
+                tooltip: 'Escribe el nombre del artículo en elviso noesunforo1 que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente'
             }
         ]
     },
@@ -148,8 +159,30 @@ const templateDict = {
             }
         ]
     },
+    "aviso traslado al taller": {
+        description: "usuarios que han creado una página no apta para el espacio principal",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso traslado al taller-1',
+                label: 'Página (del taller) en la que se encuentra el artículo trasladado',
+                tooltip: 'Escribe el nombre de la página en la que se encuentra ahora el artículo (Ej.: «Usuario:Ejemplo/Taller/EjemploDePágina»). No uses corchetes, el enlace se añadirá automáticamente',
+            }
+        ]
+    },
     "aviso votonulo": {
         description: "usuarios que han intentado votar sin cumplir los requisitos"
+    },
+    "no amenaces con acciones legales": {
+        description: "usuarios que han amenazado con denunciar o llevar a juicio a Wikipedia/otros usuarios",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-no amenaces con acciones legales-1',
+                label: 'Página en la que se llevó a cabo la amenaza',
+                tooltip: '(Opcional) Escribe el nombre de la página en la que se llevó a cabo la amenaza. No uses corchetes, el enlace se añadirá automáticamente'
+            }
+        ]
     },
     "no retires plantillas de mantenimiento crítico": {
         description: "usuarios que han realizado ediciones perjudiciales o van más allá del vandalismo",
