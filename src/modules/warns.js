@@ -380,18 +380,14 @@ function submitMessage(e) {
         }
     }
 
+
+    // if (warnedUser == utils.currentUser) {
+    //     alert("No puedes dejarte un aviso a ti mismo");
+    //     return;
+    // } else {
     utils.createStatusWindow();
     new Morebits.status("Paso 1", 'generando plantilla...', 'info');
-    new mw.Api().edit(
-        `Usuario:Nacaru/Taller/Tests`,
-        // `Usuario_discusión:${warnedUser}`, to use after tests
-        function (revision) {
-            return {
-                text: revision.content + `\n${templateBuilder(templateList)}`,
-                summary: `Añadiendo aviso de usuario mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}`,
-                minor: false
-            }
-        })
+    postsMessage(templateList, input)
         .then(function () {
             new Morebits.status("Finalizado", "actualizando página...", "status");
             setTimeout(() => { location.reload() }, 2000);
@@ -400,7 +396,35 @@ function submitMessage(e) {
             new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
             setTimeout(() => { location.reload() }, 4000);
         })
+    // }
 
 }
+
+function postsMessage(templateList, input) {
+    new Morebits.status("Paso 2", "publicando aviso en la página de discusión del usuario", "info");
+    return utils.isPageMissing(`Usuario:Nacaru/Taller/Tests/5`)
+        .then(function (mustCreateNewTalkPage) {
+            if (mustCreateNewTalkPage) {
+                return new mw.Api().create(
+                    `Usuario:Nacaru/Taller/Tests/5`,
+                    { summary: `Añadiendo aviso de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
+                    templateBuilder(templateList)
+                );
+            } else {
+                return new mw.Api().edit(
+                    `Usuario:Nacaru/Taller/Tests/5`,
+                    // `Usuario_discusión:${warnedUser}`,
+                    function (revision) {
+                        return {
+                            text: revision.content + `\n${templateBuilder(templateList)}`,
+                            summary: `Añadiendo aviso de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}`,
+                            minor: false
+                        }
+                    }
+                )
+            }
+        })
+}
+
 
 export { createFormWindow };
