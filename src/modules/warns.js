@@ -402,18 +402,17 @@ function submitMessage(e) {
 
 function postsMessage(templateList, input) {
     new Morebits.status("Paso 2", "publicando aviso en la página de discusión del usuario", "info");
-    return utils.isPageMissing(`Usuario:Nacaru/Taller/Tests/5`)
+    return utils.isPageMissing(`Usuario_discusión:${warnedUser}`)
         .then(function (mustCreateNewTalkPage) {
             if (mustCreateNewTalkPage) {
                 return new mw.Api().create(
-                    `Usuario:Nacaru/Taller/Tests/5`,
+                    `Usuario_discusión:${warnedUser}`,
                     { summary: `Añadiendo aviso de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
                     templateBuilder(templateList)
                 );
             } else {
                 return new mw.Api().edit(
-                    `Usuario:Nacaru/Taller/Tests/5`,
-                    // `Usuario_discusión:${warnedUser}`,
+                    `Usuario_discusión:${warnedUser}`,
                     function (revision) {
                         return {
                             text: revision.content + `\n${templateBuilder(templateList)}`,
