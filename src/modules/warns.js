@@ -381,22 +381,22 @@ function submitMessage(e) {
     }
 
 
-    // if (warnedUser == utils.currentUser) {
-    //     alert("No puedes dejarte un aviso a ti mismo");
-    //     return;
-    // } else {
-    utils.createStatusWindow();
-    new Morebits.status("Paso 1", 'generando plantilla...', 'info');
-    postsMessage(templateList, input)
-        .then(function () {
-            new Morebits.status("Finalizado", "actualizando página...", "status");
-            setTimeout(() => { location.reload() }, 2000);
-        })
-        .catch(function () {
-            new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-            setTimeout(() => { location.reload() }, 4000);
-        })
-    // }
+    if (warnedUser == utils.currentUser) {
+        alert("No puedes dejarte un aviso a ti mismo");
+        return;
+    } else {
+        utils.createStatusWindow();
+        new Morebits.status("Paso 1", 'generando plantilla...', 'info');
+        postsMessage(templateList, input)
+            .then(function () {
+                new Morebits.status("Finalizado", "actualizando página...", "status");
+                setTimeout(() => { location.reload() }, 2000);
+            })
+            .catch(function () {
+                new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+                setTimeout(() => { location.reload() }, 4000);
+            })
+    }
 
 }
 
