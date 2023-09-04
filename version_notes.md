@@ -1,4 +1,4 @@
-# v.2.0.1
+# v.2.1.0
 
 ## Global enhancements
 * Edit summaries have now been given the right punctuation
