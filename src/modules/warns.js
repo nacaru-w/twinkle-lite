@@ -148,7 +148,7 @@ const templateDict = {
         ]
     },
     "aviso prueba4": {
-        description: "ultimo aviso a usuarios vandálicos antes de reportar",
+        description: "ultimo aviso a usuarios vandálicos antes de denunciarlo en TAB",
         subgroup: [
             {
                 type: 'input',
@@ -163,9 +163,9 @@ const templateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_param-aviso prueba4-1',
-                label: 'Artículo en el que se llevó a cabo el vandalismo',
-                tooltip: 'Escribe el nombre del artículo en el que se cometió el vandalismo. No uses corchetes, el enlace se añadirá automáticamente',
+                name: '_param-aviso sin sentido-1',
+                label: 'Artículo en el que se llevó a cabo la edición',
+                tooltip: 'Escribe el nombre del artículo en el que se llevó a cabo la edición sin sentido o bulo. No uses corchetes, el enlace se añadirá automáticamente',
                 required: true
             }
         ]
@@ -188,7 +188,7 @@ const templateDict = {
                 type: 'input',
                 name: '_param-aviso traslado al taller-1',
                 label: 'Página (del taller) en la que se encuentra el artículo trasladado',
-                tooltip: 'Escribe el nombre de la página en la que se encuentra ahora el artículo (Ej.: «Usuario:Ejemplo/Taller/EjemploDePágina»). No uses corchetes, el enlace se añadirá automáticamente',
+                tooltip: 'Escribe el nombre de la página en la que se encuentra ahora el artículo (Ej.: si pones «EjemploDePágina», el enlace llevará a «Usuario:Ejemplo/Taller/EjemploDePágina»). No uses corchetes, el enlace se añadirá automáticamente',
             }
         ]
     },
@@ -207,7 +207,7 @@ const templateDict = {
         ]
     },
     "no retires plantillas de mantenimiento crítico": {
-        description: "usuarios que han realizado ediciones perjudiciales o van más allá del vandalismo",
+        description: "usuarios que han retirado plantillas de mantenimiento crítico sin consenso en PD",
         subgroup: [
             {
                 type: 'input',
@@ -218,7 +218,7 @@ const templateDict = {
         ]
     },
     "planvand": {
-        description: "usuarios que han realizado ediciones perjudiciales o van más allá del vandalismo",
+        description: "usuarios que han realizado ediciones perjudiciales o que van más allá del vandalismo",
         subgroup: [
             {
                 type: 'input',
