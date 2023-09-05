@@ -3,7 +3,7 @@ import * as PageProtection from "./modules/pageprotection";
 import * as SpeedyDeletion from "./modules/speedydeletion";
 import * as Reports from "./modules/reports";
 import * as Tags from "./modules/tags";
-import * as Warns from "./modules/warns"
+import * as Warns from "./modules/warnings"
 import { currentNamespace } from "./modules/utils";
 
 const loadDependencies = (callback) => {
