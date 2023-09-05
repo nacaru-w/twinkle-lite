@@ -3,7 +3,7 @@
 ## Global enhancements
 * Edit summaries have now been given the right punctuation
 
-## Module: Warns
+## Module: Warnings
 
 * __The warning module has been implemented__
 
