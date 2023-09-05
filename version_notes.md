@@ -8,7 +8,7 @@
 * __The warning module has been implemented__
 
 ## Module: Speedy deletion
-* The speedy deleletion module will now specify the original, better-quality article in the edit summary when selecting the A5 criteria.
+* The speedy deletion module will now specify the original, better-quality article in the edit summary when selecting the A5 criteria.
 # v.2.0.0
 
 ## Global enhancements
