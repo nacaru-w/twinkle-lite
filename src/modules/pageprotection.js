@@ -183,7 +183,7 @@ ${input.reason}
 * ~~~~ 
 ;Respuesta
 (a rellenar por un bibliotecario)`,
-			summary: `Solicitando ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]].`,
+			summary: `Solicitando ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
 			minor: false
 		}
 	}
