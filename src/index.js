@@ -26,11 +26,17 @@ const initializeTwinkleLite = () => {
 		console.log("Special or non-existent page: Speedy deletion will therefore not be loaded.");
 	} else {
 		const DRMportletLink = mw.util.addPortletLink('p-cactions', '#', 'Abrir CDB', 'example-button', 'Abre una consulta de borrado para esta página');
-		DRMportletLink.onclick = DeletionRequestMaker.createFormWindow;
+		if (DRMportletLink) {
+			DRMportletLink.onclick = DeletionRequestMaker.createFormWindow;
+		}
 		const PPportletLink = mw.util.addPortletLink('p-cactions', '#', 'Pedir protección', 'example-button', 'Solicita que esta página sea protegida');
-		PPportletLink.onclick = PageProtection.createFormWindow;
+		if (PPportletLink) {
+			PPportletLink.onclick = PageProtection.createFormWindow;
+		}
 		const SDportletLink = mw.util.addPortletLink('p-cactions', '#', 'Borrado rápido', 'example-button', 'Solicita el borrado rápido de la página');
-		SDportletLink.onclick = SpeedyDeletion.createFormWindow;
+		if (SDportletLink) {
+			SDportletLink.onclick = SpeedyDeletion.createFormWindow;
+		}
 	}
 
 	if (currentNamespace === 0 || currentNamespace === 104) {
