@@ -408,14 +408,14 @@ function postsMessage(templateList, input) {
                 return new mw.Api().create(
                     `Usuario_discusión:${warnedUser}`,
                     { summary: `Añadiendo aviso de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
-                    `${templateBuilder(templateList)} ~~~~`
+                    `${templateBuilder(templateList)}~~~~`
                 );
             } else {
                 return new mw.Api().edit(
                     `Usuario_discusión:${warnedUser}`,
                     function (revision) {
                         return {
-                            text: revision.content + `\n${templateBuilder(templateList)} ~~~~`,
+                            text: revision.content + `\n${templateBuilder(templateList)}~~~~`,
                             summary: `Añadiendo aviso de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}`,
                             minor: false
                         }
