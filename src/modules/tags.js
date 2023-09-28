@@ -399,18 +399,22 @@ function postsMessage(templateList) {
 			new Morebits.status("Paso 2", "publicando un mensaje de aviso en la página de discusión del creador (si es posible)...", "info");
 			return utils.isPageMissing(`Usuario_discusión:${creator}`)
 				.then(function (mustCreateNewTalkPage) {
+					const templates = allWarnings(templateList);
+					if (!templates) {
+						return;
+					}
 					if (mustCreateNewTalkPage) {
 						return new mw.Api().create(
 							`Usuario_discusión:${creator}`,
 							{ summary: `Aviso al usuario de la colocación de una plantilla en [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
-							`${allWarnings(templateList)}`
+							`${templates}`
 						);
 					} else {
 						return new mw.Api().edit(
 							`Usuario_discusión:${creator}`,
 							function (revision) {
 								return {
-									text: revision.content + `\n${allWarnings(templateList)}`,
+									text: revision.content + `\n${templates}`,
 									summary: `Aviso al usuario de la colocación de una plantilla en [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
 									minor: false
 								}
