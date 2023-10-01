@@ -13,9 +13,13 @@ const templateDict = {
 		warning: "aviso autotrad",
 		description: "uso de automatismo en traducciones de nula calidad"
 	},
+	"bulo": {
+		warning: "aviso destruir|2=bulo",
+		description: "páginas falsas que constituyen bulos o hoax"
+	},
 	"categorizar": {
 		warning: "aviso categorizar",
-		description: "Artículos sin categorías"
+		description: "artículos sin categorías"
 	},
 	"CDI": {
 		warning: "aviso conflicto de interés",
