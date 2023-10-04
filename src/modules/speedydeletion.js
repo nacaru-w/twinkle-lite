@@ -107,10 +107,10 @@ function createFormWindow() {
         list: getOptions("general")
     })
 
-    if (utils.currentNamespace == 0 && !mw.config.get('wgIsRedirect')) {
+    if (utils.currentNamespace == 0 || utils.currentNamespace == 104 && !mw.config.get('wgIsRedirect')) {
         let aField = form.append({
             type: 'field',
-            label: 'Criterios para artículos:',
+            label: 'Criterios para artículos y anexos:',
         })
 
         aField.append({
