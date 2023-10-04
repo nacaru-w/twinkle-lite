@@ -6,6 +6,7 @@
 
 ## Module: Speedy deletion
 * The speedy deletion A1 criterion will not be included as part of the deletion template if any of its subcriteria have been selected.
+* Article criteria will now work for Anexos as well.
 
 # v.2.1.0
 
