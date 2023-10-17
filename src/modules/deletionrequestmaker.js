@@ -129,7 +129,7 @@ function buildDeletionTemplate(category, reason) {
 function buildEditOnNominatedPage(revision) {
     return {
         text: '{{sust:cdb}}\n' + revision.content,
-        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]].`,
+        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
         minor: false
     };
 }
