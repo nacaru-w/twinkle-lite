@@ -1,5 +1,8 @@
 # v.2.2.0
 
+## Global enhacements
+* Punctuation in edit summaries has been standardized.
+
 ## Module: Tags
 * Fixed a bug where TL would create a blank talk page if the option to notify users was selected but no warning templates were associated to the chosen template(s) and the warned author's TP had not been previously created.
 * Added the `{{bulo}}` template to the dictionary. 
