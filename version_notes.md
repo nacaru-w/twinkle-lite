@@ -4,9 +4,13 @@
 * Fixed a bug where TL would create a blank talk page if the option to notify users was selected but no warning templates were associated to the chosen template(s) and the warned author's TP had not been previously created.
 * Added the `{{bulo}}` template to the dictionary. 
 
+## Module: Reports
+* There's now an option to report SPAs (In Spanish: CPPs) through the reports module.
+
 ## Module: Speedy deletion
 * The speedy deletion A1 criterion will not be included as part of the deletion template if any of its subcriteria have been selected.
 * Article criteria will now work for Anexos as well.
+
 
 # v.2.1.0
 
