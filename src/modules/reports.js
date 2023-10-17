@@ -4,6 +4,7 @@ let reportedUser = mw.config.get("wgRelevantUserName")
 
 let listMotiveOptions = [
     { value: "Cuenta creada para vandalizar" },
+    { value: "CPP" },
     { value: "Evasión de bloqueo" },
     { value: "Guerra de ediciones" },
     { value: "Nombre inapropiado" },
