@@ -19,6 +19,11 @@ let motiveOptionsDict = {
         "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
         "usersSubtitle": 'Lista de usuarios'
     },
+    "CPP":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+        "usersSubtitle": 'Lista de usuarios'
+    },
     "Evasión de bloqueo":
     {
         "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
