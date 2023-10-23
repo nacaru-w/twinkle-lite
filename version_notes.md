@@ -9,6 +9,7 @@
 
 ## Module: Reports
 * There's now an option to report SPAs (In Spanish: CPPs) through the reports module.
+* The notification message after reporting a user will now include a link that takes to the right post within the noticeboard when reporting "Vandalismo en curso".
 
 ## Module: Speedy deletion
 * The speedy deletion A1 criterion will not be included as part of the deletion template if any of its subcriteria have been selected.
