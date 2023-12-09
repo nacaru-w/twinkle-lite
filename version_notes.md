@@ -5,7 +5,8 @@
 
 ## Module: Tags
 * Fixed a bug where TL would create a blank talk page if the option to notify users was selected but no warning templates were associated to the chosen template(s) and the warned author's TP had not been previously created.
-* Added the `{{bulo}}` template to the dictionary. 
+* Added the `{{bulo}}` template to the dictionary.
+* Introduced input boxes for «sin relevancia» and «promocional» templates that allow the parameter «motivo» of the template to be filled in with relevant information.
 
 ## Module: Reports
 * There's now an option to report SPAs (In Spanish: CPPs) through the reports module.
