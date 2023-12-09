@@ -159,7 +159,16 @@ const templateDict = {
 	// },
 	"promocional": {
 		warning: "aviso promocional",
-		description: "texto con marcado carácter publicitario, no neutral. Plantilla de 30 días"
+		description: "texto con marcado carácter publicitario, no neutral. Plantilla de 30 días",
+		subgroup: [
+			{
+				type: 'input',
+				name: '_param-promocional-motivo',
+				label: 'Motivo (opcional)',
+				tooltip: 'Rellena este campo para especificar el motivo por el que se ha colocado la plantilla',
+				required: false
+			}
+		]
 	},
 	"publicidad": {
 		description: "contenido comercial que defiende proselitismos o propaganda"
@@ -192,7 +201,16 @@ const templateDict = {
 	},
 	"sin relevancia": {
 		warning: "aviso sin relevancia",
-		description: "artículos que no superan umbral de relevancia. Plantilla de 30 días"
+		description: "artículos que no superan umbral de relevancia. Plantilla de 30 días",
+		subgroup: [
+			{
+				type: 'input',
+				name: '_param-sin relevancia-motivo',
+				label: 'Motivo (opcional)',
+				tooltip: 'Rellena este campo para especificar el motivo por el que se ha colocado la plantilla',
+				required: false
+			}
+		]
 	},
 	"traducción incompleta": {
 		warning: "aviso traducción incompleta",
