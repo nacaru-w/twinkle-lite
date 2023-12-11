@@ -136,10 +136,33 @@ function buildEditOnNominatedPage(revision) {
 
 //function that creates the page hosting the deletion request
 function createDeletionRequestPage(category, reason) {
-    return new mw.Api().create(`Wikipedia:Consultas de borrado/${utils.currentPageName}`,
-        { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
-        buildDeletionTemplate(category, reason)
-    );
+    return utils.isPageMissing(`Wikipedia:Consultas de borrado/${utils.currentPageName}`)
+        .then((isPageMissing) => {
+            if (isPageMissing) {
+                return new mw.Api().create(`Wikipedia:Consultas de borrado/${utils.currentPageName}`,
+                    { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
+                    buildDeletionTemplate(category, reason)
+                );
+            } else {
+                utils.getContent(`Wikipedia:Consultas de borrado/${utils.currentPageName}`).then((content) => {
+                    if (content.includes('{{archivo borrar cabecera') || content.includes('{{cierracdb-arr}}')) {
+                        if (prompt(`Parece que ya se había creado una consulta de borrado para ${utils.currentPageName} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`)) {
+                            return new mw.Api().create(`Wikipedia:Consultas de borrado/${utils.currentPageName}_(segunda_consulta)`,
+                                { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
+                                buildDeletionTemplate(category, reason))
+                        } else {
+                            new Morebits.status("Proceso interrumpido", "acción abortada por el usuario... actualizando página", "error")
+                            setTimeout(() => { location.reload() }, 4000);
+                        }
+                    } else {
+                        alert('Parece que ya existe una consulta en curso')
+                        new Morebits.status("Proceso interrumpido", "ya existe una consulta en curso", "error");
+                        setTimeout(() => { location.reload() }, 3000);
+                    }
+                })
+            }
+        })
+
 }
 
 // Leaves a message on the creator's talk page
