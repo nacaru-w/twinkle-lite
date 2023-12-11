@@ -51,6 +51,7 @@ export function isPageMissing(title) {
     });
 }
 
+// Returns the protection status of the page as a string through a query to the mw API
 export function getProtectionStatus(pageName) {
     let params = {
         action: 'query',
