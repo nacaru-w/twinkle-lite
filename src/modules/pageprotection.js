@@ -31,38 +31,6 @@ function getMotiveOptions() {
 	return dropDownOptions
 }
 
-function protectionFromGetReply(data) {
-	let pages = data.query.pages;
-	for (let p in pages) {
-		let protectionLevel = pages[p].protection[0]?.level
-		switch (protectionLevel) {
-			case 'sysop':
-				return 'solo bibliotecarios';
-			case 'autoconfirmed':
-				return 'solo usuarios autoconfirmados';
-			case 'templateeditor':
-				return 'solo editores de plantillas'
-			default:
-				return 'sin protección';
-		}
-	}
-}
-
-// Returns the protection status of the page as a string through a query to the mw API
-function getProtectionStatus() {
-	let params = {
-		action: 'query',
-		prop: 'info',
-		inprop: 'protection',
-		titles: utils.currentPageName,
-		format: 'json',
-	}
-	let apiPromise = new mw.Api().get(params);
-	let protectionPromise = apiPromise.then(protectionFromGetReply);
-
-	return protectionPromise;
-}
-
 function createFormWindow() {
 	let Window = new Morebits.simpleWindow(620, 530);
 	Window.setScriptName('Twinkle Lite');
@@ -125,7 +93,7 @@ function createFormWindow() {
 	Window.setContent(result);
 	Window.display();
 
-	getProtectionStatus().then(function (protectionLevel) {
+	utils.getProtectionStatus(utils.currentPageName).then(function (protectionLevel) {
 		// Displays protection level on page
 		let showProtection = document.querySelector("div[name='currentProtection'] > span.quickformDescription");
 		showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protectionLevel} <span>`
