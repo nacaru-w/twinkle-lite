@@ -95,7 +95,7 @@ export function getContent(pageName) {
 
     let apiPromise = new mw.Api().get(params).then(
         ((data) => {
-            data.query.pages[0].revisions[0].slots?.main?.content
+            return data.query.pages[0].revisions[0].slots?.main?.content
         })
     );
 
