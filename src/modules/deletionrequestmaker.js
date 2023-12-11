@@ -17,9 +17,9 @@ let listOptions = [
 ];
 
 //Returns a boolean that states whether a spot for the creation of the DR page is available
-function canCreateDeletionRequestPage() {
-    return utils.isPageMissing(`Wikipedia:Consultas_de_borrado/${utils.currentPageName}`)
-}
+// function canCreateDeletionRequestPage() {
+//     return utils.isPageMissing(`Wikipedia:Consultas_de_borrado/${utils.currentPageName}`)
+// }
 
 function getCategoryOptions() {
     let categoryOptions = [];
@@ -85,22 +85,20 @@ function submitMessage(e) {
         alert("No se ha establecido un motivo.");
     } else {
         if (window.confirm(`Esto creará una consulta de borrado para el artículo ${utils.currentPageNameWithoutUnderscores}, ¿estás seguro?`)) {
-            canCreateDeletionRequestPage()
-                .then(function (canMakeNewDeletionRequest) {
-                    if (!canMakeNewDeletionRequest) {
-                        throw new Error('La página no puede crearse. Ya existe una candidatura en curso o esta se cerró en el pasado.')
-                    } else {
-                        utils.createStatusWindow()
-                        new Morebits.status("Paso 1", "colocando plantilla en la página nominada...", "info");
-                        return new mw.Api().edit(
-                            utils.currentPageName,
-                            buildEditOnNominatedPage
-                        );
-                    }
-                })
+            // canCreateDeletionRequestPage()
+            //     .then(function (canMakeNewDeletionRequest) {
+            //         if (!canMakeNewDeletionRequest) {
+            //             throw new Error('La página no puede crearse. Ya existe una candidatura en curso o esta se cerró en el pasado.')
+            // } else {
+            utils.createStatusWindow()
+            new Morebits.status("Paso 1", "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
+            createDeletionRequestPage(input.category, input.reason)
                 .then(function () {
-                    new Morebits.status("Paso 2", "creando la página de discusión de la consulta de borrado...", "info");
-                    return createDeletionRequestPage(input.category, input.reason);
+                    new Morebits.status("Paso 2", "colocando plantilla en la página nominada...", "info");
+                    return new mw.Api().edit(
+                        utils.currentPageName,
+                        buildEditOnNominatedPage
+                    )
                 })
                 .then(function () {
                     if (!input.notify) return;
@@ -116,7 +114,6 @@ function submitMessage(e) {
                     setTimeout(() => { location.reload() }, 4000);
                 })
         }
-
     }
 }
 
@@ -127,6 +124,7 @@ function buildDeletionTemplate(category, reason) {
 
 //function that fetches the two functions above and actually adds the text to the article to be submitted to DR.
 function buildEditOnNominatedPage(revision) {
+    console.log('debugging')
     return {
         text: '{{sust:cdb}}\n' + revision.content,
         summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
@@ -146,8 +144,9 @@ function createDeletionRequestPage(category, reason) {
             } else {
                 utils.getContent(`Wikipedia:Consultas de borrado/${utils.currentPageName}`).then((content) => {
                     if (content.includes('{{archivo borrar cabecera') || content.includes('{{cierracdb-arr}}')) {
-                        if (prompt(`Parece que ya se había creado una consulta de borrado para ${utils.currentPageName} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`)) {
-                            return new mw.Api().create(`Wikipedia:Consultas de borrado/${utils.currentPageName}_(segunda_consulta)`,
+                        if (confirm(`Parece que ya se había creado una consulta de borrado para ${utils.currentPageNameWithoutUnderscores} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`)) {
+                            return new mw.Api().create(
+                                `Wikipedia:Consultas de borrado/${utils.currentPageName}_(segunda_consulta)`,
                                 { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                                 buildDeletionTemplate(category, reason))
                         } else {
@@ -157,7 +156,7 @@ function createDeletionRequestPage(category, reason) {
                     } else {
                         alert('Parece que ya existe una consulta en curso')
                         new Morebits.status("Proceso interrumpido", "ya existe una consulta en curso", "error");
-                        setTimeout(() => { location.reload() }, 3000);
+                        setTimeout(() => { location.reload() }, 4000);
                     }
                 })
             }
