@@ -80,3 +80,25 @@ export function getProtectionStatus(pageName) {
 
     return protectionPromise;
 }
+
+// Get the text content of a page as a string
+export function getContent(pageName) {
+    let params = {
+        action: 'query',
+        prop: 'revisions',
+        titles: pageName,
+        rvprop: 'content',
+        rvslots: 'main',
+        formatversion: '2',
+        format: 'json'
+    }
+
+    let apiPromise = new mw.Api().get(params).then(
+        ((data) => {
+            data.query.pages[0].revisions[0].slots?.main?.content
+        })
+    );
+
+    return apiPromise
+
+}
