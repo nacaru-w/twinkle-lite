@@ -17,7 +17,7 @@
 * Article criteria will now work for Anexos as well.
 
 ## Module: Deletion request maker
-* The script will now identify if an old or current deletion discussion exists and, if it's the case of the former, the user will be asked to confirm the opening of a second deletion request. When agreed upon, the script will create a new deletion request in a new page with `(segunda consulta)` appended to the title.
+* The script will now identify if an old or current deletion discussion page exists and, if it's the case of the former, the user will be asked to confirm the opening of a second deletion request. When agreed upon, the script will create a new deletion request in a new page with `(segunda consulta)` appended to the title.
 
 # v.2.1.0
 
