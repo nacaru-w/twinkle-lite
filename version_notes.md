@@ -2,6 +2,7 @@
 
 ## Global enhacements
 * Punctuation in edit summaries has been standardized.
+* Added a check to prevent double loading of the script.
 
 ## Module: Tags
 * Fixed a bug where TL would create a blank talk page if the option to notify users was selected but no warning templates were associated to the chosen template(s) and the warned author's TP had not been previously created.
