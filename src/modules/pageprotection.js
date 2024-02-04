@@ -112,22 +112,20 @@ function submitMessage(e) {
 	if (input.reason === ``) {
 		alert("No se ha establecido un motivo.");
 	} else {
-		if (window.confirm(`¿Quieres solicitar la ${input.protection} del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
-			utils.createStatusWindow();
-			new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
-			new mw.Api().edit(
-				"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
-				buildEditOnNoticeboard(input)
-			)
-				.then(function () {
-					new Morebits.status("Finalizado", "actualizando página...", "status");
-					setTimeout(() => { location.reload() }, 1500);
-				})
-				.catch(function () {
-					new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-					setTimeout(() => { location.reload() }, 4000);
-				})
-		}
+		utils.createStatusWindow();
+		new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
+		new mw.Api().edit(
+			"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
+			buildEditOnNoticeboard(input)
+		)
+			.then(function () {
+				new Morebits.status("Finalizado", "actualizando página...", "status");
+				setTimeout(() => { location.reload() }, 1500);
+			})
+			.catch(function () {
+				new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+				setTimeout(() => { location.reload() }, 4000);
+			})
 
 	}
 }
