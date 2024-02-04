@@ -192,25 +192,23 @@ function submitMessage(e) {
     if (input?.subA) {
         input.article.shift()
     }
-    if (window.confirm(`¿Quieres solicitar el borrado del artículo ${utils.currentPageNameWithoutUnderscores}?`)) {
-        utils.createStatusWindow();
-        new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
-        new mw.Api().edit(
-            utils.currentPageName,
-            speedyTemplateBuilder(input)
-        )
-            .then(function () {
-                return utils.getCreator().then(postsMessage(input));
-            })
-            .then(function () {
-                new Morebits.status("Finalizado", "actualizando página...", "status");
-                setTimeout(() => { location.reload() }, 2000);
-            })
-            .catch(function () {
-                new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-                setTimeout(() => { location.reload() }, 4000);
-            })
-    }
+    utils.createStatusWindow();
+    new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
+    new mw.Api().edit(
+        utils.currentPageName,
+        speedyTemplateBuilder(input)
+    )
+        .then(function () {
+            return utils.getCreator().then(postsMessage(input));
+        })
+        .then(function () {
+            new Morebits.status("Finalizado", "actualizando página...", "status");
+            setTimeout(() => { location.reload() }, 2000);
+        })
+        .catch(function () {
+            new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+            setTimeout(() => { location.reload() }, 4000);
+        })
 }
 
 function speedyTemplateBuilder(data) {
