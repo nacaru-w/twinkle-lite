@@ -82,7 +82,7 @@ function createFormWindow() {
 		type: 'textarea',
 		name: 'reason',
 		label: 'Desarrolla la razón:',
-		tooltip: 'Puedes usar wikicódigo en tu descripción, tu firma se añadirá automáticamente.'
+		tooltip: 'Si no se rellena este campo, se utilizará como razón la seleccionada en la lista de motivos (si no se ha seleccionado «otro»). Puedes usar wikicódigo en tu descripción, tu firma se añadirá automáticamente.'
 	});
 	form.append({
 		type: 'submit',
@@ -109,13 +109,13 @@ function createFormWindow() {
 function submitMessage(e) {
 	let form = e.target;
 	let input = Morebits.quickForm.getInputData(form);
-	if (input.reason === ``) {
-		alert("No se ha establecido un motivo.");
+	if (input.motive == 'Otro' && !input.reason) {
+		alert("Se ha seleccionado «Otro» como motivo pero no se ha establecido un motivo.");
 	} else {
 		utils.createStatusWindow();
 		new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
 		new mw.Api().edit(
-			"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
+			"Usuario:Nacaru/Taller/1",
 			buildEditOnNoticeboard(input)
 		)
 			.then(function () {
@@ -131,12 +131,12 @@ function submitMessage(e) {
 }
 
 function buildEditOnNoticeboard(input) {
-	let title = `== Solicitud de ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] ==`;
-	if (input.protection === 'protección') {
-		if (input.motive !== 'Otro') {
-			title = `== Solicitud de ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] por ${input.motive.toLowerCase()} ==`;
-		}
-	};
+	let title = `== ${input.protection == "desprotección" ? 'Solicitud de desprotección de ' : ''}[[${utils.currentPageNameWithoutUnderscores}]] ==`;
+	// if (input.protection === 'protección') {
+	// 	if (input.motive !== 'Otro') {
+	// 		title = `== Solicitud de ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] por ${input.motive.toLowerCase()} ==`;
+	// 	}
+	// };
 	return (revision) => {
 		return {
 			text: revision.content + `\n
@@ -144,7 +144,7 @@ ${title}
 ;Artículo(s) 
 * {{a|${utils.currentPageNameWithoutUnderscores}}}
 ;Causa 
-${input.reason}
+${input.reason ? input.reason : input.motive}
 ; Usuario que lo solicita
 * ~~~~ 
 ;Respuesta
