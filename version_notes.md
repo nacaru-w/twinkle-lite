@@ -1,3 +1,8 @@
+# v.2.3.0
+
+## Global enhacements
+* Confirmation messages have been removed to enhance quickness of the script.
+
 # v.2.2.0
 
 ## Global enhacements
