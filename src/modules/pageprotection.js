@@ -115,7 +115,7 @@ function submitMessage(e) {
 		utils.createStatusWindow();
 		new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
 		new mw.Api().edit(
-			"Usuario:Nacaru/Taller/1",
+			"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
 			buildEditOnNoticeboard(input)
 		)
 			.then(function () {
@@ -132,11 +132,6 @@ function submitMessage(e) {
 
 function buildEditOnNoticeboard(input) {
 	let title = `== ${input.protection == "desprotección" ? 'Solicitud de desprotección de ' : ''}[[${utils.currentPageNameWithoutUnderscores}]] ==`;
-	// if (input.protection === 'protección') {
-	// 	if (input.motive !== 'Otro') {
-	// 		title = `== Solicitud de ${input.protection} de [[${utils.currentPageNameWithoutUnderscores}]] por ${input.motive.toLowerCase()} ==`;
-	// 	}
-	// };
 	return (revision) => {
 		return {
 			text: revision.content + `\n
