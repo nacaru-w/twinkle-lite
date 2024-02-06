@@ -5,7 +5,7 @@
 
 ## Module: Reports
 * The default title of the protection request will now be the title of the protected article-to-be (as per current implicit consensus in this direction).
-* If no reason has been developed by the repoting user in the «Reason» field, the script will now use the selected motive in the drop-down list to fill the field except when the selected option is «Other».
+* If no reason has been developed by the repoting user in the «Reason» field, instead of preventing the form from being sent, the script will now use the selected motive in the drop-down list to fill the field except when the selected option is «Other».
 
 # v.2.2.0
 
