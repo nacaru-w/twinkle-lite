@@ -181,7 +181,7 @@ function createFormWindow() {
 function submitMessage(e) {
     let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
-    if (input.reason === `` && input.motive != 'NI') {
+    if (!input.reason && input.motive != 'Nombre inapropiado') {
         alert("No se ha establecido un motivo.");
     } else if (input.motive == 'Otro' && input.otherreason == '') {
         alert("No se ha establecido un título para la denuncia");
@@ -194,7 +194,8 @@ function submitMessage(e) {
         let articles = Array.from(document.querySelectorAll('input[name=articlefieldbox]')).map((o) => o.value)
         new Morebits.status("Paso 2", `creando denuncia en el tablón...`, "info");
         new mw.Api().edit(
-            motiveOptionsDict[input.motive].link,
+            // motiveOptionsDict[input.motive].link,
+            'Usuario:Nacaru/Taller/1',
             buildEditOnNoticeboard(input, usernames, articles)
         )
             .then(function () {
@@ -243,6 +244,7 @@ function buildEditOnNoticeboard(input, usernames, articles) {
             }
         }
     } else {
+        // input.motive == 'Nombre inapropiado' && !input.reason ? '' : `${reasonTitle}\n${input.reason}\n`
         let title = input.motive == "Otro" ? input.otherreason : input.motive;
         let bulletedUserList = listWords(usernames, 'u')
         let bulletedArticleList = listWords(articles, 'a')
@@ -255,8 +257,7 @@ function buildEditOnNoticeboard(input, usernames, articles) {
                     `; ${motiveOptionsDict[input.motive].usersSubtitle}` + '\n' +
                     `${bulletedUserList}` +
                     articleListIfEditWar +
-                    reasonTitle + '\n' +
-                    `${input.reason}` + '\n' +
+                    (input.motive == 'Nombre inapropiado' && !input.reason ? '' : `${reasonTitle}\n${input.reason}\n`) +
                     '; Usuario que lo solicita' + '\n' +
                     '* ~~~~' + '\n' +
                     '; Respuesta' + '\n' +
