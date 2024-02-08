@@ -9,6 +9,7 @@
 
 ## Module: Reports
 * If the chosen motive is «Nombre inapropiado», you will now be able to submit the report form without developing on the reason (since it's obvious).
+* The _add_ and _remove_ labels that list articles when choosing the _edit war_ report motive will now be correctly displayed in Spanish.
 
 # v.2.2.0
 
