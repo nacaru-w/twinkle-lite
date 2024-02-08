@@ -195,8 +195,7 @@ function submitMessage(e) {
         let articles = Array.from(document.querySelectorAll('input[name=articlefieldbox]')).map((o) => o.value)
         new Morebits.status("Paso 2", `creando denuncia en el tablón...`, "info");
         new mw.Api().edit(
-            // motiveOptionsDict[input.motive].link,
-            'Usuario:Nacaru/Taller/1',
+            motiveOptionsDict[input.motive].link,
             buildEditOnNoticeboard(input, usernames, articles)
         )
             .then(function () {
@@ -245,7 +244,6 @@ function buildEditOnNoticeboard(input, usernames, articles) {
             }
         }
     } else {
-        // input.motive == 'Nombre inapropiado' && !input.reason ? '' : `${reasonTitle}\n${input.reason}\n`
         let title = input.motive == "Otro" ? input.otherreason : input.motive;
         let bulletedUserList = listWords(usernames, 'u')
         let bulletedArticleList = listWords(articles, 'a')
