@@ -92,7 +92,8 @@ function createFormWindow() {
                 document.getElementById('otherreasonnode').setAttribute('style', 'display:none');
                 switch (selectedOption) {
                     case 'Guerra de ediciones':
-                        document.getElementById('articlefieldnode').removeAttribute('style')
+                        document.getElementById('articlefieldnode').removeAttribute('style');
+                        changeButtonNames();
                         break;
                     case 'Violación de etiqueta':
                         document.querySelector("label[for='reasontextareanode']").innerText = 'Ediciones que constituyen una violación de etiqueta:'
