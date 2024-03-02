@@ -98,7 +98,7 @@ function createFormWindow() {
         event:
             function (e) {
                 let selectedOption = e.target.value
-                document.querySelector("label[for='reasontextareanode']").innerText = 'Desarrolla la razón:'
+                document.querySelector("label[for='reasontextareanode']").innerText = `Desarrolla la razón${motiveOptionsDict[selectedOption].optionalReason ? ' (opcional)' : ''}:`
                 document.getElementById('articlefieldnode').setAttribute('style', 'display:none');
                 document.getElementById('otherreasonnode').setAttribute('style', 'display:none');
                 switch (selectedOption) {
