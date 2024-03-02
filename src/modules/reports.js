@@ -3,8 +3,8 @@ import * as utils from './utils';
 let reportedUser = mw.config.get("wgRelevantUserName")
 
 let listMotiveOptions = [
-    { value: "Cuenta creada para vandalizar" },
     { value: "CPP" },
+    { value: "Cuenta creada para vandalizar" },
     { value: "Evasión de bloqueo" },
     { value: "Guerra de ediciones" },
     { value: "Nombre inapropiado" },
@@ -15,17 +15,17 @@ let listMotiveOptions = [
 ]
 
 let motiveOptionsDict = {
-    "Cuenta creada para vandalizar":
-    {
-        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
-        "usersSubtitle": 'Lista de usuarios',
-        "optionalReason": true
-    },
     "CPP":
     {
         "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
         "usersSubtitle": 'Lista de usuarios',
         "optionalReason": false
+    },
+    "Cuenta creada para vandalizar":
+    {
+        "link": "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Nombres_inapropiados_y_vandalismo_persistente/Actual",
+        "usersSubtitle": 'Lista de usuarios',
+        "optionalReason": true
     },
     "Evasión de bloqueo":
     {
