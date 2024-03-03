@@ -212,10 +212,6 @@ const templateDict = {
 			}
 		]
 	},
-	"traducción incompleta": {
-		warning: "aviso traducción incompleta",
-		description: "artículos que han sido traducidos solo parcialmente"
-	},
 	"traducción": {
 		description: "artículos que se están traduciendo desde otro idioma",
 		subgroup: [
@@ -227,6 +223,10 @@ const templateDict = {
 				required: false
 			}
 		]
+	},
+	"traducción incompleta": {
+		warning: "aviso traducción incompleta",
+		description: "artículos que han sido traducidos solo parcialmente"
 	},
 	"wikificar": {
 		warning: "aviso wikificar",
