@@ -217,7 +217,16 @@ const templateDict = {
 		description: "artículos que han sido traducidos solo parcialmente"
 	},
 	"traducción": {
-		description: "artículos que se están traduciendo desde otro idioma"
+		description: "artículos que se están traduciendo desde otro idioma",
+		subgroup: [
+			{
+				type: 'input',
+				name: '_param-traducción-ci',
+				label: 'Código ISO del idioma (opcional)',
+				tooltip: 'Añade el código ISO del idioma del que procede la traducción. Ejemplo: «en» para artículos que proceden de la Wikipedia en inglés o «fr» si vienen de frwiki',
+				required: false
+			}
+		]
 	},
 	"wikificar": {
 		warning: "aviso wikificar",
