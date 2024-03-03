@@ -216,6 +216,9 @@ const templateDict = {
 		warning: "aviso traducción incompleta",
 		description: "artículos que han sido traducidos solo parcialmente"
 	},
+	"traducción": {
+		description: "artículos que se están traduciendo desde otro idioma"
+	},
 	"wikificar": {
 		warning: "aviso wikificar",
 		description: "textos con mal formato o que no cumplen el manual de estilo"
