@@ -70,7 +70,38 @@ function createFormWindow() {
                 checked: true,
                 tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advirtiéndole del posible borrado de su artículo"
             }],
-        style: "padding-left: 1em; padding-bottom:0.5em;"
+        style: "padding-left: 1em;"
+    })
+
+    form.append({
+        type: 'checkbox',
+        list:
+            [{
+                name: "otherArticles",
+                value: "otherArticles",
+                label: "Aplicar la CDB a más artículos",
+                checked: false,
+            }],
+        style: "padding-left: 1em; padding-bottom:0.5em;",
+        event: (e) => {
+            const checked = e.target.checked;
+            const box = document.getElementById('otherArticleFieldBox');
+            if (checked) {
+                box.style.display = '';
+            } else {
+                box.style.display = 'none';
+            }
+        }
+    })
+
+    form.append({
+        type: 'dyninput',
+        label: 'Otros artículos a los que aplicar la consulta:',
+        sublabel: 'Artículo:',
+        name: 'otherArticleFieldBox',
+        style: "display: none;",
+        id: 'otherArticleFieldBox',
+        tooltip: 'Escribe el nombre del artículo sin ningún tipo de wikicódigo'
     })
 
     let result = form.render();
