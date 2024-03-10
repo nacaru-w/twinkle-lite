@@ -14,6 +14,9 @@
 ## Module: Tags
 * Added `{{traducción}}` template to the list of available templates.
 
+## Module: Warnings
+* Fixed wrong description for the «Aviso guerra de ediciones» template.
+
 # v.2.2.0
 
 ## Global enhacements
