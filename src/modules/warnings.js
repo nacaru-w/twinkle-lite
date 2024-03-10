@@ -79,7 +79,7 @@ const templateDict = {
         ]
     },
     "aviso guerra de ediciones": {
-        description: "autores que han subido imágenes que no deberían estar en Commons",
+        description: "usuario que puede desconocer R3R y se encuentre en guerra o conflicto de ediciones",
         subgroup: [
             {
                 type: 'input',
