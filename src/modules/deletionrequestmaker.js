@@ -88,6 +88,18 @@ function createFormWindow() {
             const box = document.getElementById('otherArticleFieldBox');
             if (checked) {
                 box.style.display = '';
+                const boxAddButton = document.querySelector('input[value="more"]');
+                if (boxAddButton) {
+                    boxAddButton.value = "añadir";
+                    boxAddButton.style.marginTop = '0.3em';
+                    boxAddButton.addEventListener('click', () => {
+                        const boxRemoveButton = document.querySelector('input[value="remove"]');
+                        if (boxRemoveButton) {
+                            boxRemoveButton.value = "eliminar";
+                            boxRemoveButton.style.marginLeft = '0.3em';
+                        }
+                    })
+                }
             } else {
                 box.style.display = 'none';
             }
