@@ -132,11 +132,19 @@ function submitMessage(e) {
             new Morebits.status("Paso 1", "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
             createDeletionRequestPage(input.category, input.reason)
                 .then(function () {
-                    new Morebits.status("Paso 2", "colocando plantilla en la página nominada...", "info");
+                    new Morebits.status("Paso 2", "colocando plantilla en la(s) página(s) nominada(s)...", "info");
                     return new mw.Api().edit(
                         utils.currentPageName,
                         buildEditOnNominatedPage
                     )
+                })
+                .then(function () {
+                    if (input.otherArticleFieldBox) {
+                        const otherArticleArray = Array.from(document.querySelectorAll('input[name="otherArticleFieldBox"]')).map((o) => o.value);
+                        for (let article of otherArticleArray) {
+                            makeEditOnOtherNominatedPages(article);
+                        }
+                    }
                 })
                 .then(function () {
                     if (!input.notify) return;
@@ -155,6 +163,19 @@ function submitMessage(e) {
     }
 }
 
+async function makeEditOnOtherNominatedPages(article) {
+    await new mw.Api().edit(
+        article,
+        function (revision) {
+            return {
+                text: `{{sust:cdb|${utils.currentPageName}}}\n` + revision.content,
+                summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                minor: false
+            }
+        }
+    )
+}
+
 // function that builds the text to be inserted in the new DR page.
 function buildDeletionTemplate(category, reason) {
     return `{{sust:cdb2|pg={{sust:SUBPAGENAME}}|cat=${category}|texto=${reason}|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}}} ~~~~`
@@ -162,7 +183,6 @@ function buildDeletionTemplate(category, reason) {
 
 //function that fetches the two functions above and actually adds the text to the article to be submitted to DR.
 function buildEditOnNominatedPage(revision) {
-    console.log('debugging')
     return {
         text: '{{sust:cdb}}\n' + revision.content,
         summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${utils.currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
