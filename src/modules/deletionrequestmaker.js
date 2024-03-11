@@ -128,11 +128,6 @@ function submitMessage(e) {
         alert("No se ha establecido un motivo.");
     } else {
         if (window.confirm(`Esto creará una consulta de borrado para el artículo ${utils.currentPageNameWithoutUnderscores}, ¿estás seguro?`)) {
-            // canCreateDeletionRequestPage()
-            //     .then(function (canMakeNewDeletionRequest) {
-            //         if (!canMakeNewDeletionRequest) {
-            //             throw new Error('La página no puede crearse. Ya existe una candidatura en curso o esta se cerró en el pasado.')
-            // } else {
             utils.createStatusWindow()
             new Morebits.status("Paso 1", "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
             createDeletionRequestPage(input.category, input.reason)
