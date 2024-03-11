@@ -17,6 +17,9 @@
 ## Module: Warnings
 * Fixed wrong description for the «Aviso guerra de ediciones» template.
 
+## Module: Speedy deletion
+* Fixed a bug whereby the A1 criterion would not be included in the deletion template even when none of its subcriteria had been included.
+
 ## Module: Deletion Request Maker
 * A functionality that allows more than one article to be included in the same deletion request has been added.
 
