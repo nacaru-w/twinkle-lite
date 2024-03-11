@@ -1,7 +1,7 @@
 # v.2.3.0
 
 ## Global enhacements
-* Confirmation messages have been removed to enhance quickness of the script.
+* Most confirmation messages have been removed to enhance quickness of the script.
 
 ## Module: Page protection
 * The default title of the protection request will now be the title of the potentially protected article (as per current implicit consensus in this direction).
@@ -16,6 +16,9 @@
 
 ## Module: Warnings
 * Fixed wrong description for the «Aviso guerra de ediciones» template.
+
+## Module: Deletion Request Maker
+* A functionality that allows more than one article to be included in the same deletion request has been added.
 
 # v.2.2.0
 

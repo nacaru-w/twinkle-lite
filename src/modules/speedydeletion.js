@@ -190,7 +190,9 @@ function submitMessage(e) {
     let input = Morebits.quickForm.getInputData(form);
     //This little condition removes the A1 criterion if any of its subcriteria are included
     if (input?.subA) {
-        input.article.shift()
+        if (input.subA.length > 0) {
+            input.article.shift();
+        }
     }
     utils.createStatusWindow();
     new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
