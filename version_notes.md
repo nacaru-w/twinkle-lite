@@ -22,6 +22,7 @@
 
 ## Module: Deletion Request Maker
 * A functionality that allows more than one article to be included in the same deletion request has been added.
+* The bottom-right form link will now take the to deletion request policy instead of the deletion policy.
 
 # v.2.2.0
 
