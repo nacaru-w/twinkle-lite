@@ -35,7 +35,7 @@ function createFormWindow() {
     let Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Consulta de borrado');
-    Window.addFooterLink('Política de borrado', 'Wikipedia:Política de borrado');
+    Window.addFooterLink('Política de consultas de borrado', 'Wikipedia:Consultas de borrado mediante argumentación');
     let form = new Morebits.quickForm(submitMessage);
     form.append({
         type: 'textarea',
