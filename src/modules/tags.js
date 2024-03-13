@@ -394,8 +394,6 @@ function submitMessage(e) {
 			setTimeout(() => { location.reload() }, 4000);
 		})
 
-
-
 }
 
 async function makeEdit(templates, input, pagename) {
