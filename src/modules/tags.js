@@ -8,6 +8,9 @@ import * as utils from "./utils";
 // `_param-parent template name-parameter identifier`
 // If the parameter doesn't have an identifier, then just type a «1»
 
+const relevantPageName = utils.cleansePageName(utils.currentPageName);
+const relevantPageNameNoUnderscores = relevantPageName.replaceAll('_', ' ');
+
 const templateDict = {
 	"autotrad": {
 		warning: "aviso autotrad",
@@ -145,18 +148,19 @@ const templateDict = {
 	"polémico": {
 		description: "temas susceptibles a guerras de edición o vandalismo"
 	},
-	// "pr": {
-	// 	description: "para atribuir el artículo a un wikiproyecto",
-	// 	subgroup: [
-	// 		{
-	// 			type: 'input',
-	// 			name: '_param-pr-1',
-	// 			label: 'Nombre del wikiproyecto',
-	// 			tooltip: 'Escribe aquí el nombre del Wikiproyecto (esta plantilla se coloca en la PD automáticamente)',
-	//			required: true
-	// 		}
-	// 	]
-	// },
+	"pr": {
+		description: "para atribuir el artículo a un wikiproyecto",
+		subgroup: [
+			{
+				type: 'input',
+				name: '_param-pr-1',
+				label: 'Nombre del wikiproyecto',
+				tooltip: 'Escribe aquí el nombre del Wikiproyecto (esta plantilla se coloca en la PD automáticamente)',
+				required: true
+			}
+		],
+		talkPage: true
+	},
 	"promocional": {
 		warning: "aviso promocional",
 		description: "texto con marcado carácter publicitario, no neutral. Plantilla de 30 días",
@@ -357,37 +361,26 @@ function submitMessage(e) {
 	let form = e.target;
 	let input = Morebits.quickForm.getInputData(form);
 	let templateList = [];
+	let templateTalkPageList = [];
 
 	// First let's tidy up Morebit's array
 	for (const [key, value] of Object.entries(input)) {
 		if (value && !key.includes('_param') && key != 'notify' && key != 'reason' && key != 'search') {
-			templateList.push([key])
+			if (templateDict[key]?.talkPage) {
+				templateTalkPageList.push([key])
+			} else {
+				templateList.push([key])
+			}
 		}
 	}
 
-	// Then we will assign each parameter to their corresponding value and make it accessible
-	for (const element of templateList) {
-		for (const [key, value] of Object.entries(input)) {
-			if (key.includes('_param') && key.includes(element)) {
-				templateList[element] = {
-					"param": key.split('-').pop(),
-					"paramValue": value
-				}
-			}
-		}
+	if (templateList.length < 1 && templateTalkPageList.length < 1) {
+		return alert('No se ha seleccionado ninguna plantilla');
 	}
 
 	utils.createStatusWindow();
-	new Morebits.status("Paso 1", `generando plantilla...`, "info");
-	new mw.Api().edit(
-		utils.currentPageName,
-		function (revision) {
-			return {
-				text: templateBuilder(templateList) + revision.content,
-				summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}`,
-				minor: false
-			}
-		})
+	new Morebits.status("Paso 1", `generando plantilla(s)...`, "info");
+	makeAllEdits(templateList, templateTalkPageList, input)
 		.then(function () {
 			if (!input.notify) return;
 			return utils.getCreator().then(postsMessage(templateList));
@@ -405,6 +398,56 @@ function submitMessage(e) {
 
 }
 
+async function makeEdit(templates, input, pagename) {
+	await new mw.Api().edit(
+		pagename,
+		function (revision) {
+			return {
+				text: templateBuilder(templates) + revision.content,
+				summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}`,
+				minor: false
+			}
+		}
+	)
+}
+
+// This functions assigns each parameter to their corresponding value and makes it accessible
+function paramAssigner(list, input) {
+	for (const element of list) {
+		for (const [key, value] of Object.entries(input)) {
+			if (key.includes('_param') && key.includes(element)) {
+				list[element] = {
+					"param": key.split('-').pop(),
+					"paramValue": value
+				}
+			}
+		}
+	}
+	return list;
+}
+
+function makeAllEdits(templateList, templateTalkPageList, input) {
+	if (templateList.length > 0) {
+		templateList = paramAssigner(templateList, input);
+		makeEdit(templateList, input, relevantPageName);
+	}
+	if (templateTalkPageList.length > 0) {
+		templateTalkPageList = paramAssigner(templateTalkPageList, input);
+		return utils.isPageMissing(`Discusión:${relevantPageName}`)
+			.then(function (mustCreateNewTalkPage) {
+				if (mustCreateNewTalkPage) {
+					return new mw.Api().create(
+						`Discusión:${relevantPageName}`,
+						{ summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
+						templateBuilder(templateTalkPageList)
+					);
+				} else {
+					return makeEdit(templateTalkPageList, input, `Discusión:${relevantPageName}`);
+				}
+			})
+	}
+}
+
 function templateBuilder(list) {
 	let finalString = '';
 	for (const element of list) {
@@ -419,7 +462,7 @@ function allWarnings(list) {
 	let finalString = ''
 	for (let template of list) {
 		if (templateDict[template]?.warning) {
-			finalString += `{{sust:${templateDict[template].warning}|${utils.currentPageNameWithoutUnderscores}}} ~~~~\n`
+			finalString += `{{sust:${templateDict[template].warning}|${relevantPageNameNoUnderscores}}} ~~~~\n`
 		}
 	}
 	return finalString
@@ -440,7 +483,7 @@ function postsMessage(templateList) {
 					if (mustCreateNewTalkPage) {
 						return new mw.Api().create(
 							`Usuario_discusión:${creator}`,
-							{ summary: `Aviso al usuario de la colocación de una plantilla en [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
+							{ summary: `Aviso al usuario de la colocación de una plantilla en [[${relevantPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
 							`${templates}`
 						);
 					} else {
@@ -449,7 +492,7 @@ function postsMessage(templateList) {
 							function (revision) {
 								return {
 									text: revision.content + `\n${templates}`,
-									summary: `Aviso al usuario de la colocación de una plantilla en [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+									summary: `Aviso al usuario de la colocación de una plantilla en [[${relevantPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
 									minor: false
 								}
 							}
