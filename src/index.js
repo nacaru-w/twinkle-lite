@@ -43,7 +43,7 @@ if (!window.TwinkleLite) {
 			}
 		}
 
-		if (currentNamespace === 0 || currentNamespace === 104) {
+		if (currentNamespace === 0 || currentNamespace === 1 || currentNamespace === 104 || currentNamespace === 105) {
 			const TportleltLink = mw.util.addPortletLink('p-cactions', '#', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
 			TportleltLink.onclick = Tags.createFormWindow;
 		}
