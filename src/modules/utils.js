@@ -3,6 +3,13 @@ export const currentPageNameWithoutUnderscores = currentPageName.replaceAll('_',
 export const currentUser = mw.config.get('wgUserName');
 export const currentNamespace = mw.config.get('wgNamespaceNumber');
 
+export function cleansePageName(pageName) {
+    if (pageName.startsWith("Discusión:")) {
+        return pageName.substring("Discusión:".length);
+    }
+    return pageName
+}
+
 //Creates the window that holds the status messages
 export function createStatusWindow() {
     let Window = new Morebits.simpleWindow(400, 350);
