@@ -12,6 +12,7 @@
 * The _add_ and _remove_ labels that list articles when choosing the _edit war_ report motive will now be correctly displayed in Spanish.
 
 ## Module: Tags
+* The module will now allow users to tag templates that go in talk pages, such as the «pr» template.
 * Added `{{traducción}}` template to the list of available templates.
 
 ## Module: Warnings
