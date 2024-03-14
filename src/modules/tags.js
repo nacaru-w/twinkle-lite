@@ -397,7 +397,7 @@ function submitMessage(e) {
 }
 
 async function makeEdit(templates, input, pagename) {
-	await new mw.Api().edit(
+	return await new mw.Api().edit(
 		pagename,
 		function (revision) {
 			return {
@@ -424,10 +424,10 @@ function paramAssigner(list, input) {
 	return list;
 }
 
-function makeAllEdits(templateList, templateTalkPageList, input) {
+async function makeAllEdits(templateList, templateTalkPageList, input) {
 	if (templateList.length > 0) {
 		templateList = paramAssigner(templateList, input);
-		makeEdit(templateList, input, relevantPageName);
+		await makeEdit(templateList, input, relevantPageName);
 	}
 	if (templateTalkPageList.length > 0) {
 		templateTalkPageList = paramAssigner(templateTalkPageList, input);
@@ -440,7 +440,7 @@ function makeAllEdits(templateList, templateTalkPageList, input) {
 						templateBuilder(templateTalkPageList)
 					);
 				} else {
-					return makeEdit(templateTalkPageList, input, `Discusión:${relevantPageName}`);
+					makeEdit(templateTalkPageList, input, `Discusión:${relevantPageName}`);
 				}
 			})
 	}
