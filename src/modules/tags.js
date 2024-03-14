@@ -440,7 +440,7 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 						templateBuilder(templateTalkPageList)
 					);
 				} else {
-					makeEdit(templateTalkPageList, input, `Discusión:${relevantPageName}`);
+					return makeEdit(templateTalkPageList, input, `Discusión:${relevantPageName}`);
 				}
 			})
 	}
