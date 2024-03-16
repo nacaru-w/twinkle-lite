@@ -12,6 +12,9 @@ const relevantPageName = utils.cleansePageName(utils.currentPageName);
 const relevantPageNameNoUnderscores = relevantPageName.replaceAll('_', ' ');
 
 const templateDict = {
+	"artículo bueno": {
+		description: "para etiquetar artículos que han obtenido la calificación de AB"
+	},
 	"autotrad": {
 		warning: "aviso autotrad",
 		description: "uso de automatismo en traducciones de nula calidad"
@@ -118,6 +121,10 @@ const templateDict = {
 	},
 	"mejorar redacción": {
 		description: "redacciones que no siguen el manual de estilo"
+	},
+	"no es un foro": {
+		description: "páginas de discusión que han recibido grandes cantidades de conversación irrelevante",
+		talkPage: true
 	},
 	"no neutralidad": {
 		warning: "aviso no neutralidad",
