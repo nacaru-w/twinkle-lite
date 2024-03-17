@@ -153,7 +153,8 @@ const templateDict = {
 		]
 	},
 	"polémico": {
-		description: "temas susceptibles a guerras de edición o vandalismo"
+		description: "temas susceptibles a guerras de edición o vandalismo",
+		talkPage: true
 	},
 	"pr": {
 		description: "para atribuir el artículo a un wikiproyecto",
