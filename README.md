@@ -1,5 +1,5 @@
 # Twinkle Lite
-Twinkle Lite is a script written in Javascript that allows for the automatisation or semi-automatisation of different tasks for users on the Spanish wikipedia. Most of them are maintenance-related.
+[Twinkle Lite](https://es.wikipedia.org/wiki/WP:TL) is a script written in Javascript that allows for the automatisation or semi-automatisation of different tasks for users on the Spanish wikipedia. Most of them are maintenance-related.
 
 It mainly uses the [Morebits](https://github.com/wikimedia-gadgets/twinkle/wiki/morebits) library and [Mediawiki API](https://www.mediawiki.org/wiki/API:Main_page) functionalities. The code is organised in modules and then compiled into one file through [Webpack](https://webpack.js.org/), which is then copied onto a js page on the Spanish Wikipedia [here](https://es.wikipedia.org/wiki/Usuario:Nacaru/twinkle-lite.js).
 
