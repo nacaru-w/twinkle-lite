@@ -1,3 +1,7 @@
+# v.2.4.0
+## Module: Reports
+* An option to report users from their user link in watchlist and page history pages will now be avilable. Upon clicking, the form will complete the input name of the reported user with the corresponding one. It works in mobile view too.
+
 # v.2.3.0
 
 ## Global enhacements
