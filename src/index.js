@@ -67,14 +67,20 @@ if (!window.TwinkleLite) {
 
 		if (currentNamespace === 0 || currentNamespace === 1 || currentNamespace === 104 || currentNamespace === 105) {
 			const TportleltLink = mw.util.addPortletLink('p-cactions', '#', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
-			TportleltLink.onclick = Tags.createFormWindow;
+			if (TportleltLink) {
+				TportleltLink.onclick = Tags.createFormWindow;
+			}
 		}
 
 		if (currentNamespace === 2 || currentNamespace === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
 			const RportletLink = mw.util.addPortletLink('p-cactions', '#', 'Denunciar usuario', 'TL-button', 'Informa de un problema en relación con el usuario');
-			RportletLink.onclick = Reports.createFormWindow;
+			if (RportletLink) {
+				RportletLink.onclick = Reports.createFormWindow;
+			}
 			const WportletLink = mw.util.addPortletLink('p-cactions', '#', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
-			WportletLink.onclick = Warns.createFormWindow;
+			if (WportletLink) {
+				WportletLink.onclick = Warns.createFormWindow;
+			}
 		}
 
 		if (document.querySelectorAll('a.mw-userlink').length > 0) {
