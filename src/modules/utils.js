@@ -1,6 +1,7 @@
 export const currentPageName = mw.config.get('wgPageName');
 export const currentPageNameWithoutUnderscores = currentPageName.replaceAll('_', ' ');
 export const currentUser = mw.config.get('wgUserName');
+export const relevantUserName = mw.config.get("wgRelevantUserName");
 export const currentNamespace = mw.config.get('wgNamespaceNumber');
 
 export function cleansePageName(pageName) {

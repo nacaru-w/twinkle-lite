@@ -10,6 +10,25 @@ if (!window.TwinkleLite) {
 
 	window.TwinkleLite = true;
 
+	function createReportButton() {
+		console.log("hola")
+		const usersNodeList = document.querySelectorAll('span.mw-usertoollinks');
+		usersNodeList.forEach(
+			(element) => {
+				const newElement = document.createElement('span');
+				const elementChild = document.createElement('a')
+				elementChild.id = 'report-button';
+				elementChild.textContent = 'denunciar';
+				elementChild.addEventListener('click', () => {
+					let username = element.parentElement.querySelector('a.mw-userlink').innerText;
+					Reports.createFormWindow(username);
+				})
+				newElement.append(elementChild);
+				element.append(newElement);
+			}
+		)
+	}
+
 	const loadDependencies = (callback) => {
 		mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.ui', 'mediawiki.api', 'mediawiki.ForeignApi']);
 		callback();
@@ -33,13 +52,16 @@ if (!window.TwinkleLite) {
 			if (DRMportletLink) {
 				DRMportletLink.onclick = DeletionRequestMaker.createFormWindow;
 			}
-			const PPportletLink = mw.util.addPortletLink('p-cactions', '#', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
-			if (PPportletLink) {
-				PPportletLink.onclick = PageProtection.createFormWindow;
-			}
 			const SDportletLink = mw.util.addPortletLink('p-cactions', '#', 'Borrado rápido', 'TL-button', 'Solicita el borrado rápido de la página');
 			if (SDportletLink) {
 				SDportletLink.onclick = SpeedyDeletion.createFormWindow;
+			}
+		}
+
+		if (currentNamespace >= 0) {
+			const PPportletLink = mw.util.addPortletLink('p-cactions', '#', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
+			if (PPportletLink) {
+				PPportletLink.onclick = PageProtection.createFormWindow;
 			}
 		}
 
@@ -53,9 +75,12 @@ if (!window.TwinkleLite) {
 			RportletLink.onclick = Reports.createFormWindow;
 			const WportletLink = mw.util.addPortletLink('p-cactions', '#', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
 			WportletLink.onclick = Warns.createFormWindow;
-		} else {
-			console.log("Non-user page: Reports will therefore not be loaded.");
 		}
+
+		if (document.querySelectorAll('a.mw-userlink').length > 0) {
+			createReportButton();
+		}
+
 	};
 
 	const loadTwinkleLite = () => {

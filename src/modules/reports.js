@@ -1,6 +1,6 @@
 import * as utils from './utils';
 
-let reportedUser = mw.config.get("wgRelevantUserName")
+let reportedUser;
 
 let listMotiveOptions = [
     { value: "CPP" },
@@ -79,7 +79,15 @@ function getMotiveOptions() {
     return dropDownOptions;
 }
 
-function createFormWindow() {
+function createFormWindow(reportedUserFromDOM) {
+
+    // Something about the addPortletLink feature doesn't work well so this condition is unfortunately needed
+    if (typeof reportedUserFromDOM == 'string') {
+        reportedUser = reportedUserFromDOM;
+    } else {
+        reportedUser = utils.relevantUserName;
+    }
+
     let Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Denunciar usuario');
@@ -185,9 +193,15 @@ function createFormWindow() {
             removeBox.style.marginLeft = '0.3em' // Idem as four code lines above
         })
     }
+
     // Automatically adds the name of the reported user to the form
-    document.querySelector('input[name="usernamefield"]').value = reportedUser
-    changeButtonNames()
+    function setReportedUserName() {
+        console.log(reportedUser);
+        document.querySelector('input[name="usernamefield"]').value = reportedUser
+    }
+
+    setReportedUserName();
+    changeButtonNames();
 }
 
 function submitMessage(e) {
