@@ -19,6 +19,7 @@ if (!window.TwinkleLite) {
 				const elementChild = document.createElement('a')
 				elementChild.id = 'report-button';
 				elementChild.textContent = 'denunciar';
+				elementChild.style.color = 'teal';
 				elementChild.addEventListener('click', () => {
 					let username = element.parentElement.querySelector('a.mw-userlink').innerText;
 					Reports.createFormWindow(username);
