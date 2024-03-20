@@ -4,6 +4,7 @@
 
 ## Module: Warnings
 * An option to warn users from their user link in watchlist and page history pages will now be avilable, similar to the implementation in the reports module described above.
+* The `{{tradref}}` template has now been added to available templates catalogue.
 
 # v.2.3.0
 
