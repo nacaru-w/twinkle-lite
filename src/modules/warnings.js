@@ -181,6 +181,17 @@ const templateDict = {
             }
         ]
     },
+    "aviso tradref": {
+        description: "usuarios que han traducido un artículo pero no han agregado la atribución o referencias a copyright correspondientes",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso tradref-1',
+                label: 'Nombre del artículo',
+                tooltip: 'Escribe el nombre del artículo en el que no se ha añadido la atribución correcta, sin usar corchetes',
+            }
+        ]
+    },
     "aviso traslado al taller": {
         description: "usuarios que han creado una página no apta para el espacio principal",
         subgroup: [
