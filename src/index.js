@@ -15,6 +15,7 @@ if (!window.TwinkleLite) {
 		usersNodeList.forEach(
 			(element) => {
 				const newElement = document.createElement('span');
+				newElement.textContent = mw.config.get('wgDiffOldId') ? ' · ' : ''
 				const elementChild = document.createElement('a')
 				elementChild.id = 'report-button';
 				elementChild.textContent = 'denunciar';
@@ -34,6 +35,7 @@ if (!window.TwinkleLite) {
 		usersNodeList.forEach(
 			(element) => {
 				const newElement = document.createElement('span');
+				newElement.textContent = mw.config.get('wgDiffOldId') ? ' · ' : ''
 				const elementChild = document.createElement('a');
 				elementChild.id = 'warning-button';
 				elementChild.textContent = 'aviso';
