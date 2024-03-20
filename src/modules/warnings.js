@@ -3,7 +3,7 @@
 
 import * as utils from "./utils";
 
-const warnedUser = mw.config.get('wgRelevantUserName');
+let warnedUser;
 
 const templateDict = {
     "aviso autopromoción": {
@@ -271,7 +271,15 @@ function templateBuilder(list) {
 }
 
 // Creates the Morebits window holding the form
-function createFormWindow() {
+function createFormWindow(warnedUserFromDOM) {
+
+    // Something about the addPortletLink feature doesn't work well so this condition is unfortunately needed
+    if (typeof warnedUserFromDOM == 'string') {
+        warnedUser = warnedUserFromDOM;
+    } else {
+        warnedUser = utils.relevantUserName;
+    }
+
     let Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Avisar al usuario');

@@ -11,7 +11,6 @@ if (!window.TwinkleLite) {
 	window.TwinkleLite = true;
 
 	function createReportButton() {
-		console.log("hola")
 		const usersNodeList = document.querySelectorAll('span.mw-usertoollinks');
 		usersNodeList.forEach(
 			(element) => {
@@ -19,7 +18,7 @@ if (!window.TwinkleLite) {
 				const elementChild = document.createElement('a')
 				elementChild.id = 'report-button';
 				elementChild.textContent = 'denunciar';
-				elementChild.style.color = 'teal';
+				elementChild.style.color = '#924141';
 				elementChild.addEventListener('click', () => {
 					let username = element.parentElement.querySelector('a.mw-userlink').innerText;
 					Reports.createFormWindow(username);
@@ -28,6 +27,24 @@ if (!window.TwinkleLite) {
 				element.append(newElement);
 			}
 		)
+	}
+
+	function createWarningButton() {
+		const usersNodeList = document.querySelectorAll('span.mw-usertoollinks');
+		usersNodeList.forEach(
+			(element) => {
+				const newElement = document.createElement('span');
+				const elementChild = document.createElement('a');
+				elementChild.id = 'warning-button';
+				elementChild.textContent = 'aviso';
+				elementChild.style.color = 'teal';
+				elementChild.addEventListener('click', () => {
+					let username = element.parentElement.querySelector('a.mw-userlink').innerText;
+					Warns.createFormWindow(username);
+				})
+				newElement.append(elementChild);
+				element.append(newElement);
+			})
 	}
 
 	const loadDependencies = (callback) => {
@@ -84,9 +101,13 @@ if (!window.TwinkleLite) {
 			}
 		}
 
-		if (document.querySelectorAll('a.mw-userlink').length > 0) {
-			createReportButton();
-		}
+		mw.hook('wikipage.content').add(() => {
+			if (document.querySelectorAll('a.mw-userlink').length > 0 && !document.getElementById('report-button')) {
+				createWarningButton();
+				createReportButton();
+			}
+		})
+
 
 	};
 
