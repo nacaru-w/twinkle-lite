@@ -4,6 +4,7 @@ export const currentUser = mw.config.get('wgUserName');
 export const relevantUserName = mw.config.get("wgRelevantUserName");
 export const currentNamespace = mw.config.get('wgNamespaceNumber');
 
+// Returns the name of the main page from a string including the talk page in it
 export function cleansePageName(pageName) {
     if (pageName.startsWith("Discusión:")) {
         return pageName.substring("Discusión:".length);
@@ -11,15 +12,15 @@ export function cleansePageName(pageName) {
     return pageName
 }
 
-//Creates the window that holds the status messages
-export function createStatusWindow() {
-    let Window = new Morebits.simpleWindow(400, 350);
-    Window.setTitle('Procesando acciones');
+//Formats the window that holds the status messages
+// It must receive a Morebit's simplewindow as object
+export function createStatusWindow(window) {
+    window.setTitle('Procesando acciones');
     let statusdiv = document.createElement('div');
     statusdiv.style.padding = '15px';
-    Window.setContent(statusdiv);
+    window.setContent(statusdiv);
     Morebits.status.init(statusdiv);
-    Window.display();
+    window.display();
 }
 
 // Returns a promise with the name of the user who created the page

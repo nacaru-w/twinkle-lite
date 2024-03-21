@@ -3,6 +3,8 @@
 
 import * as utils from "./utils";
 
+let Window;
+
 // Dictionary that stores the templates, the description, as well as the parameter and the name of the warning template if any of them is applicable
 // Template parameters are set in the subgroup, specifically in the 'name' key, their syntax is as follows:
 // `_param-parent template name-parameter identifier`
@@ -269,7 +271,7 @@ function listBuilder(list) {
 
 // Creates the Morebits window holding the form
 function createFormWindow() {
-	let Window = new Morebits.simpleWindow(620, 530);
+	Window = new Morebits.simpleWindow(620, 530);
 	Window.setScriptName('Twinkle Lite');
 	Window.setTitle('Añadir plantilla');
 	Window.addFooterLink('Portal de mantenimiento', 'Portal:Mantenimiento');
@@ -386,7 +388,8 @@ function submitMessage(e) {
 		return alert('No se ha seleccionado ninguna plantilla');
 	}
 
-	utils.createStatusWindow();
+	let statusWindow = new Morebits.simpleWindow(400, 350);
+	utils.createStatusWindow(statusWindow);
 	new Morebits.status("Paso 1", `generando plantilla(s)...`, "info");
 	makeAllEdits(templateList, templateTalkPageList, input)
 		.then(function () {
@@ -394,11 +397,11 @@ function submitMessage(e) {
 			return utils.getCreator().then(postsMessage(templateList));
 		})
 		.then(function () {
-			new Morebits.status("Finalizado", "actualizando página...", "status");
+			new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
 			setTimeout(() => { location.reload() }, 2000);
 		})
 		.catch(function () {
-			new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+			new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
 			setTimeout(() => { location.reload() }, 4000);
 		})
 

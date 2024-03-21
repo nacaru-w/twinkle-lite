@@ -1,5 +1,7 @@
 import * as utils from "./utils";
 
+let Window;
+
 let criteriaLists = {
     general: [
         { code: "g1", name: "G1. Vandalismo" },
@@ -78,7 +80,7 @@ function getOptions(criteriaType) {
 }
 
 function createFormWindow() {
-    let Window = new Morebits.simpleWindow(620, 530);
+    Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Solicitar borrado rápido');
     Window.addFooterLink('Criterios para el borrado rápido', 'Wikipedia:Criterios para el borrado rápido');
@@ -194,7 +196,8 @@ function submitMessage(e) {
             input.article.shift();
         }
     }
-    utils.createStatusWindow();
+    let statusWindow = new Morebits.simpleWindow(400, 350);
+    utils.createStatusWindow(statusWindow);
     new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
     new mw.Api().edit(
         utils.currentPageName,
@@ -204,11 +207,11 @@ function submitMessage(e) {
             return utils.getCreator().then(postsMessage(input));
         })
         .then(function () {
-            new Morebits.status("Finalizado", "actualizando página...", "status");
+            new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
             setTimeout(() => { location.reload() }, 2000);
         })
         .catch(function () {
-            new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+            new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
             setTimeout(() => { location.reload() }, 4000);
         })
 }

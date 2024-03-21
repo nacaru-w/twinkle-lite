@@ -1,5 +1,7 @@
 import * as utils from "./utils";
 
+let Window;
+
 let listProtectionOptions = [
 	{ code: "protección", name: "Solicitar protección", default: true },
 	{ code: "desprotección", name: "Solicitar desprotección" }
@@ -32,7 +34,7 @@ function getMotiveOptions() {
 }
 
 function createFormWindow() {
-	let Window = new Morebits.simpleWindow(620, 530);
+	Window = new Morebits.simpleWindow(620, 530);
 	Window.setScriptName('Twinkle Lite');
 	Window.setTitle('Solicitar protección de la página');
 	Window.addFooterLink('Política de protección', 'Wikipedia:Política de protección');
@@ -112,18 +114,22 @@ function submitMessage(e) {
 	if (input.motive == 'Otro' && !input.reason) {
 		alert("Se ha seleccionado «Otro» como motivo pero no se ha establecido un motivo.");
 	} else {
-		utils.createStatusWindow();
+		let statusWindow = new Morebits.simpleWindow(400, 350);
+		utils.createStatusWindow(statusWindow);
 		new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
 		new mw.Api().edit(
 			"Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
 			buildEditOnNoticeboard(input)
 		)
 			.then(function () {
-				new Morebits.status("Finalizado", "actualizando página...", "status");
-				setTimeout(() => { location.reload() }, 1500);
+				new Morebits.status("✔️ Finalizado", "cerrando ventana...", "status");
+				setTimeout(() => {
+					statusWindow.close();
+					Window.close();
+				}, 2500);
 			})
 			.catch(function () {
-				new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+				new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
 				setTimeout(() => { location.reload() }, 4000);
 			})
 

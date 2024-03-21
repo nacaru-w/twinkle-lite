@@ -4,6 +4,7 @@
 import * as utils from "./utils";
 
 let warnedUser;
+let Window;
 
 const templateDict = {
     "aviso autopromoción": {
@@ -291,7 +292,7 @@ function createFormWindow(warnedUserFromDOM) {
         warnedUser = utils.relevantUserName;
     }
 
-    let Window = new Morebits.simpleWindow(620, 530);
+    Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Avisar al usuario');
     Window.addFooterLink('Plantillas de aviso a usuario', 'Wikipedia:Plantillas de aviso a usuario');
@@ -404,16 +405,30 @@ function submitMessage(e) {
         alert("No puedes dejarte un aviso a ti mismo");
         return;
     } else {
-        utils.createStatusWindow();
+        let statusWindow = new Morebits.simpleWindow(400, 350);
+        utils.createStatusWindow(statusWindow);
         new Morebits.status("Paso 1", 'generando plantilla...', 'info');
         postsMessage(templateList, input)
             .then(function () {
-                new Morebits.status("Finalizado", "actualizando página...", "status");
-                setTimeout(() => { location.reload() }, 2000);
+                if (utils.currentPageName.includes(`_discusión:${warnedUser}`)) {
+                    new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    new Morebits.status("✔️ Finalizado", "cerrando ventana...", "status");
+                    setTimeout(() => {
+                        statusWindow.close();
+                        Window.close();
+                    }, 2500);
+                }
             })
             .catch(function () {
-                new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-                setTimeout(() => { location.reload() }, 4000);
+                new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+                setTimeout(() => {
+                    statusWindow.close();
+                    Window.close();
+                }, 4000);
             })
     }
 

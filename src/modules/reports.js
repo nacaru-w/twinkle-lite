@@ -1,6 +1,7 @@
 import * as utils from './utils';
 
 let reportedUser;
+let Window;
 
 let listMotiveOptions = [
     { value: "CPP" },
@@ -88,7 +89,7 @@ function createFormWindow(reportedUserFromDOM) {
         reportedUser = utils.relevantUserName;
     }
 
-    let Window = new Morebits.simpleWindow(620, 530);
+    Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Denunciar usuario');
     Window.addFooterLink('Tablón de anuncios de los bibliotecarios', 'Wikipedia:Tablón de anuncios de los bibliotecarios');
@@ -214,7 +215,8 @@ function submitMessage(e) {
     } else if (input.usernamefield == '') {
         alert("No se ha establecido un usuario");
     } else {
-        utils.createStatusWindow()
+        let statusWindow = new Morebits.simpleWindow(400, 350);
+        utils.createStatusWindow(statusWindow);
         new Morebits.status("Paso 1", `obteniendo datos del formulario...`, "info");
         let usernames = Array.from(document.querySelectorAll('input[name=usernamefield]')).map((o) => o.value)
         let articles = Array.from(document.querySelectorAll('input[name=articlefieldbox]')).map((o) => o.value)
@@ -227,12 +229,25 @@ function submitMessage(e) {
                 return postsMessage(input)
             })
             .then(function () {
-                new Morebits.status("Finalizado", "actualizando página...", "status");
-                setTimeout(() => { location.reload() }, 1500);
+                if (utils.currentPageName.includes(`_discusión:${reportedUser}`)) {
+                    new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2500);
+                } else {
+                    new Morebits.status("✔️ Finalizado", "cerrando ventana...", "status");
+                    setTimeout(() => {
+                        statusWindow.close();
+                        Window.close();
+                    }, 2500);
+                }
             })
             .catch(function () {
-                new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-                setTimeout(() => { location.reload() }, 4000);
+                new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+                setTimeout(() => {
+                    statusWindow.close();
+                    Window.close();
+                }, 4000);
             })
 
     }

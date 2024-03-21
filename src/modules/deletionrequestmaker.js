@@ -1,5 +1,7 @@
 import * as utils from "./utils";
 
+let Window;
+
 let listOptions = [
     { code: 'B', name: 'Biografías' },
     { code: 'CAT', name: 'Categorías' },
@@ -32,7 +34,7 @@ function getCategoryOptions() {
 
 //Creates the window for the form that will later be filled with the pertinent info
 function createFormWindow() {
-    let Window = new Morebits.simpleWindow(620, 530);
+    Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Consulta de borrado');
     Window.addFooterLink('Política de consultas de borrado', 'Wikipedia:Consultas de borrado mediante argumentación');
@@ -128,7 +130,8 @@ function submitMessage(e) {
         alert("No se ha establecido un motivo.");
     } else {
         if (window.confirm(`Esto creará una consulta de borrado para el artículo ${utils.currentPageNameWithoutUnderscores}, ¿estás seguro?`)) {
-            utils.createStatusWindow()
+            let statusWindow = new Morebits.simpleWindow(400, 350);
+            utils.createStatusWindow(statusWindow);
             new Morebits.status("Paso 1", "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
             createDeletionRequestPage(input.category, input.reason)
                 .then(function () {
@@ -152,11 +155,11 @@ function submitMessage(e) {
                     return utils.getCreator().then(postsMessage);
                 })
                 .then(function () {
-                    new Morebits.status("Finalizado", "actualizando página...", "status");
+                    new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
                     setTimeout(() => { location.reload() }, 2000);
                 })
                 .catch(function () {
-                    new Morebits.status("Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+                    new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
                     setTimeout(() => { location.reload() }, 4000);
                 })
         }
