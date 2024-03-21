@@ -4,7 +4,7 @@ import * as SpeedyDeletion from "./modules/speedydeletion";
 import * as Reports from "./modules/reports";
 import * as Tags from "./modules/tags";
 import * as Warns from "./modules/warnings"
-import { currentNamespace } from "./modules/utils";
+import { currentNamespace, currentPageName } from "./modules/utils";
 
 if (!window.TwinkleLite) {
 
@@ -15,7 +15,7 @@ if (!window.TwinkleLite) {
 		usersNodeList.forEach(
 			(element) => {
 				const newElement = document.createElement('span');
-				newElement.textContent = mw.config.get('wgDiffOldId') ? ' · ' : ''
+				newElement.textContent = mw.config.get('wgDiffOldId') || currentPageName == "Especial:PáginasNuevas" ? ' · ' : '';
 				const elementChild = document.createElement('a')
 				elementChild.id = 'report-button';
 				elementChild.textContent = 'denunciar';
@@ -35,7 +35,7 @@ if (!window.TwinkleLite) {
 		usersNodeList.forEach(
 			(element) => {
 				const newElement = document.createElement('span');
-				newElement.textContent = mw.config.get('wgDiffOldId') ? ' · ' : ''
+				newElement.textContent = mw.config.get('wgDiffOldId') || currentPageName == "Especial:PáginasNuevas" ? ' · ' : '';
 				const elementChild = document.createElement('a');
 				elementChild.id = 'warning-button';
 				elementChild.textContent = 'aviso';
