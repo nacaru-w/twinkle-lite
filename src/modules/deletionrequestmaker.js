@@ -1,7 +1,9 @@
 import * as utils from "./utils";
 
+// Declaring the variable that will eventually hold the form window now will allow us to manipulate it more easily  later
 let Window;
 
+// This is the dictionary holding the options for the categories deletion requests can be classified as
 let listOptions = [
     { code: 'B', name: 'Biografías' },
     { code: 'CAT', name: 'Categorías' },
@@ -18,11 +20,7 @@ let listOptions = [
     { code: 'W', name: 'Web e internet' }
 ];
 
-//Returns a boolean that states whether a spot for the creation of the DR page is available
-// function canCreateDeletionRequestPage() {
-//     return utils.isPageMissing(`Wikipedia:Consultas_de_borrado/${utils.currentPageName}`)
-// }
-
+// This function will take the options from the options dictionary and assign them keys that morebits can recognise
 function getCategoryOptions() {
     let categoryOptions = [];
     for (let category of listOptions) {
@@ -86,6 +84,8 @@ function createFormWindow() {
             }],
         style: "padding-left: 1em; padding-bottom:0.5em;",
         event: (e) => {
+            // Morebits' buttons value is in English by default and there is no other way to translate the text that doesn't involve DOM manipulation
+            // This fuction will find those values and translate them into Spanish
             const checked = e.target.checked;
             const box = document.getElementById('otherArticleFieldBox');
             if (checked) {
@@ -225,7 +225,7 @@ function createDeletionRequestPage(category, reason) {
 
 }
 
-// Leaves a message on the creator's talk page
+// Leaves a message on the creator's talk page, if the page has not been created yet, it will do that
 function postsMessage(creator) {
     return utils.isPageMissing(`Usuario_discusión:${creator}`)
         .then(function (mustCreateNewTalkPage) {

@@ -13,7 +13,7 @@ export function cleansePageName(pageName) {
 }
 
 //Formats the window that holds the status messages
-// It must receive a Morebit's simplewindow object as argument
+// It must receive a Morebits' simplewindow object as argument
 export function createStatusWindow(window) {
     window.setTitle('Procesando acciones');
     let statusdiv = document.createElement('div');
