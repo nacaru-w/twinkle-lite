@@ -11,47 +11,47 @@ if (!window.TwinkleLite) {
 	window.TwinkleLite = true;
 
 	function createReportButton() {
-		const usersNodeList = document.querySelectorAll('span.mw-usertoollinks');
+		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-contribs');
 		usersNodeList.forEach(
 			(element) => {
 				if (element.parentElement.querySelector('a.extiw')) {
         				return;
         			}
 				const newElement = document.createElement('span');
-				newElement.textContent = mw.config.get('wgDiffOldId') || currentPageName == "Especial:PáginasNuevas" ? ' · ' : '';
+				newElement.textContent = ' · ';
 				const elementChild = document.createElement('a')
 				elementChild.id = 'report-button';
 				elementChild.textContent = 'denunciar';
 				elementChild.style.color = '#924141';
 				elementChild.addEventListener('click', () => {
-					let username = element.parentElement.querySelector('a.mw-userlink').innerText;
+					let username = element.title.substring(24); // remove "Especial:Contribuciones/" from title
 					Reports.createFormWindow(username);
 				})
 				newElement.append(elementChild);
-				element.append(newElement);
+				element.parentNode.insertBefore(newElement, element.nextSibling);
 			}
 		)
 	}
 
 	function createWarningButton() {
-		const usersNodeList = document.querySelectorAll('span.mw-usertoollinks');
+		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-contribs');
 		usersNodeList.forEach(
 			(element) => {
 				if (element.parentElement.querySelector('a.extiw')) {
         				return;
         			}
 				const newElement = document.createElement('span');
-				newElement.textContent = mw.config.get('wgDiffOldId') || currentPageName == "Especial:PáginasNuevas" ? ' · ' : '';
+				newElement.textContent = ' · ';
 				const elementChild = document.createElement('a');
 				elementChild.id = 'warning-button';
 				elementChild.textContent = 'aviso';
 				elementChild.style.color = 'teal';
 				elementChild.addEventListener('click', () => {
-					let username = element.parentElement.querySelector('a.mw-userlink').innerText;
+					let username = element.title.substring(24); // remove "Especial:Contribuciones/" from title
 					Warns.createFormWindow(username);
 				})
 				newElement.append(elementChild);
-				element.append(newElement);
+				element.parentNode.insertBefore(newElement, element.nextSibling);
 			})
 	}
 
