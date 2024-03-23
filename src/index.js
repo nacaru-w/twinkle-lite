@@ -14,6 +14,9 @@ if (!window.TwinkleLite) {
 		const usersNodeList = document.querySelectorAll('span.mw-usertoollinks');
 		usersNodeList.forEach(
 			(element) => {
+				if (element.parentElement.querySelector('a.extiw')) {
+        				return;
+        			}
 				const newElement = document.createElement('span');
 				newElement.textContent = mw.config.get('wgDiffOldId') || currentPageName == "Especial:PáginasNuevas" ? ' · ' : '';
 				const elementChild = document.createElement('a')
@@ -34,6 +37,9 @@ if (!window.TwinkleLite) {
 		const usersNodeList = document.querySelectorAll('span.mw-usertoollinks');
 		usersNodeList.forEach(
 			(element) => {
+				if (element.parentElement.querySelector('a.extiw')) {
+        				return;
+        			}
 				const newElement = document.createElement('span');
 				newElement.textContent = mw.config.get('wgDiffOldId') || currentPageName == "Especial:PáginasNuevas" ? ' · ' : '';
 				const elementChild = document.createElement('a');
