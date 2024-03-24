@@ -15,8 +15,8 @@ if (!window.TwinkleLite) {
 		usersNodeList.forEach(
 			(element) => {
 				if (element.parentElement.querySelector('a.extiw')) {
-        				return;
-        			}
+					return;
+				}
 				const newElement = document.createElement('span');
 				newElement.textContent = ' · ';
 				const elementChild = document.createElement('a')
@@ -24,7 +24,8 @@ if (!window.TwinkleLite) {
 				elementChild.textContent = 'denunciar';
 				elementChild.style.color = '#924141';
 				elementChild.addEventListener('click', () => {
-					let username = element.title.substring(24); // remove "Especial:Contribuciones/" from title
+					// This looks cumbersome but it's the only way to get the right username across all skins and instances
+					let username = element.parentElement.parentElement.parentElement.querySelector('bdi').innerText;
 					Reports.createFormWindow(username);
 				})
 				newElement.append(elementChild);
@@ -38,8 +39,8 @@ if (!window.TwinkleLite) {
 		usersNodeList.forEach(
 			(element) => {
 				if (element.parentElement.querySelector('a.extiw')) {
-        				return;
-        			}
+					return;
+				}
 				const newElement = document.createElement('span');
 				newElement.textContent = ' · ';
 				const elementChild = document.createElement('a');
@@ -47,7 +48,8 @@ if (!window.TwinkleLite) {
 				elementChild.textContent = 'aviso';
 				elementChild.style.color = 'teal';
 				elementChild.addEventListener('click', () => {
-					let username = element.title.substring(24); // remove "Especial:Contribuciones/" from title
+					// This looks cumbersome but it's the only way to get the right username across all skins and instances
+					let username = element.parentElement.parentElement.parentElement.querySelector('bdi').innerText;
 					Warns.createFormWindow(username);
 				})
 				newElement.append(elementChild);
