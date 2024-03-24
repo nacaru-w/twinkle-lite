@@ -11,7 +11,7 @@ if (!window.TwinkleLite) {
 	window.TwinkleLite = true;
 
 	function createReportButton() {
-		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-contribs');
+		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-talk');
 		usersNodeList.forEach(
 			(element) => {
 				if (element.parentElement.querySelector('a.extiw')) {
@@ -35,7 +35,7 @@ if (!window.TwinkleLite) {
 	}
 
 	function createWarningButton() {
-		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-contribs');
+		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-talk');
 		usersNodeList.forEach(
 			(element) => {
 				if (element.parentElement.querySelector('a.extiw')) {
