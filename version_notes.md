@@ -1,4 +1,8 @@
 # v.2.4.0
+
+## Global enhacements
+* Many of the modules will now simply close morebit's windows after submitting the form instead of refreshing the page every time. The latter will only happen if a change on the current page the user is in has been made.
+
 ## Module: Reports
 * An option to report users from their user link in watchlist, recent changes and page history pages will now be avilable. Upon clicking, the form will complete the input name of the reported user with the corresponding one. It works in mobile view too.
 
