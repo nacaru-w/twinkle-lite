@@ -72,18 +72,20 @@ export function getProtectionStatus(pageName) {
     let apiPromise = new mw.Api().get(params);
     let protectionPromise = apiPromise.then((data) => {
         let pages = data.query.pages;
+        let object = {}
         for (let p in pages) {
-            let protectionLevel = pages[p].protection[0]?.level
+            const protectionLevel = pages[p].protection[0]?.level
             switch (protectionLevel) {
                 case 'sysop':
-                    return 'solo bibliotecarios';
+                    object.level = 'solo bibliotecarios';
                 case 'autoconfirmed':
-                    return 'solo usuarios autoconfirmados';
+                    object.level = 'solo usuarios autoconfirmados';
                 case 'templateeditor':
-                    return 'solo editores de plantillas'
+                    object.level = 'solo editores de plantillas'
                 default:
-                    return 'sin protección';
+                    object.level = 'sin protección';
             }
+            const expiryTimeStamp = pages[p].protection[0]?.expiry;
         }
     });
 
@@ -110,4 +112,9 @@ export function getContent(pageName) {
 
     return apiPromise
 
+}
+
+export function parseTimeStamp(timeStamp) {
+    let date = new Date(timestamp);
+    return date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES');
 }
