@@ -70,26 +70,31 @@ export function getProtectionStatus(pageName) {
         format: 'json',
     }
     let apiPromise = new mw.Api().get(params);
-    let protectionPromise = apiPromise.then((data) => {
+    return apiPromise.then((data) => {
         let pages = data.query.pages;
-        let object = {}
+        let object = {};
         for (let p in pages) {
             const protectionLevel = pages[p].protection[0]?.level
             switch (protectionLevel) {
                 case 'sysop':
                     object.level = 'solo bibliotecarios';
+                    break;
                 case 'autoconfirmed':
                     object.level = 'solo usuarios autoconfirmados';
+                    break;
                 case 'templateeditor':
                     object.level = 'solo editores de plantillas'
+                    break;
                 default:
                     object.level = 'sin protección';
             }
-            const expiryTimeStamp = pages[p].protection[0]?.expiry;
+            if (pages[p].protection[0]?.expiry) {
+                const expiryTimeStamp = pages[p].protection[0]?.expiry;
+                object.expiry = expiryTimeStamp;
+            }
         }
+        return object;
     });
-
-    return protectionPromise;
 }
 
 // Get the text content of a page as a string
@@ -115,6 +120,11 @@ export function getContent(pageName) {
 }
 
 export function parseTimeStamp(timeStamp) {
-    let date = new Date(timestamp);
-    return date.toLocaleDateString('es-ES') + ' ' + date.toLocaleTimeString('es-ES');
+    const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    }
+    const date = new Date(timeStamp);
+    return date.toLocaleDateString('es-ES', options)
 }

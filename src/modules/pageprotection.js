@@ -33,6 +33,18 @@ function getMotiveOptions() {
 	return dropDownOptions
 }
 
+function protectionTextBuilder(protectionExpiry) {
+	switch (protectionExpiry) {
+		case undefined:
+			return null
+		case 'infinity':
+			return '(protegido para siempre)'
+		default:
+			return `(hasta el ${utils.parseTimeStamp(protectionExpiry)})`
+	}
+}
+
+
 function createFormWindow() {
 	Window = new Morebits.simpleWindow(620, 530);
 	Window.setScriptName('Twinkle Lite');
@@ -64,7 +76,7 @@ function createFormWindow() {
 	form.append({
 		type: 'div',
 		name: 'currentProtection',
-		label: `Nivel actual de protección: `
+		label: `Nivel actual de protección: `,
 	})
 
 	let textAreaAndReasonField = form.append({
@@ -95,12 +107,12 @@ function createFormWindow() {
 	Window.setContent(result);
 	Window.display();
 
-	utils.getProtectionStatus(utils.currentPageName).then(function (protectionLevel) {
+	utils.getProtectionStatus(utils.currentPageName).then(function (protection) {
 		// Displays protection level on page
-		let showProtection = document.querySelector("div[name='currentProtection'] > span.quickformDescription");
-		showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protectionLevel} <span>`
+		const showProtection = document.querySelector("div[name='currentProtection'] > span.quickformDescription");
+		showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protection.level} <span style="font-weight: normal;">${protectionTextBuilder(protection.expiry) || ''}</span>`;
 		// Disables "unprotect" option if not applicable
-		if (protectionLevel == 'sin protección') {
+		if (protection.level == 'sin protección') {
 			let unprotectDiv = document.getElementById('protect').childNodes[1]
 			unprotectDiv.firstChild.setAttribute('disabled', '');
 		}
