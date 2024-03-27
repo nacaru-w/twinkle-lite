@@ -36,7 +36,7 @@ function getMotiveOptions() {
 function protectionTextBuilder(protectionExpiry) {
 	switch (protectionExpiry) {
 		case undefined:
-			return null
+			return ''
 		case 'infinity':
 			return '(protegido para siempre)'
 		default:
@@ -110,7 +110,7 @@ function createFormWindow() {
 	utils.getProtectionStatus(utils.currentPageName).then(function (protection) {
 		// Displays protection level on page
 		const showProtection = document.querySelector("div[name='currentProtection'] > span.quickformDescription");
-		showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protection.level} <span style="font-weight: normal;">${protectionTextBuilder(protection.expiry) || ''}</span>`;
+		showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protection.level} <span style="font-weight: normal;">${protectionTextBuilder(protection.expiry)}</span>`;
 		// Disables "unprotect" option if not applicable
 		if (protection.level == 'sin protección') {
 			let unprotectDiv = document.getElementById('protect').childNodes[1]
