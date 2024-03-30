@@ -308,25 +308,47 @@ function buildEditOnNoticeboard(input, usernames, articles) {
     }
 }
 
+// Builds a regex to be used in the createHash function using the title of the report
+function buildRegex(reportTitle) {
+    const regExpString = String.raw`==\s*${reportTitle}\s*==`;
+    return new RegExp(regExpString, 'g');
+}
+
+// Creates the hash to be used in the link to the appropriate board on the notified user's talk page
+// Does so by examining the content of the board and counting the amount of similar titles
+// It then returns the appropriate hash number corresponding to the id of the report's title
+function createHash(board, reportTitle) {
+    return utils.getContent(board).then((boardContent) => {
+        const regex = buildRegex(reportTitle);
+        const otherOccurrences = boardContent.match(regex);
+        if (otherOccurrences) {
+            return `${reportTitle}_${otherOccurrences.length}`
+        }
+        return reportTitle
+    })
+}
+
 function postsMessage(input) {
     if (!input.notify) return;
     new Morebits.status("Paso 3", `avisando al usuario reportado...`, "info");
     return utils.isPageMissing(`Usuario_discusión:${input.usernamefield}`)
-        .then(function (mustCreateNewTalkPage) {
-            let title = input.motive == "Otro" ? input.otherreason : input.motive;
+        .then(async function (mustCreateNewTalkPage) {
+            const title = input.motive == "Otro" ? input.otherreason : input.motive;
+            const hash = await createHash(motiveOptionsDict[input.motive].link, title);
+            const notificationString = `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${input.motive == "Vandalismo en curso" ? reportedUser : hash}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`;
             if (mustCreateNewTalkPage) {
                 return new mw.Api().create(
                     `Usuario_discusión:${input.usernamefield}`,
                     { summary: `Aviso al usuario de su denuncia por [[${motiveOptionsDict[input.motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                     `\n== ${title} ==\n` +
-                    `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`
+                    notificationString
                 );
             } else {
                 return new mw.Api().edit(
                     `Usuario_discusión:${input.usernamefield}`,
                     function (revision) {
                         return {
-                            text: revision.content + `\n== ${title} ==\n` + `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${motiveOptionsDict[input.motive].link}#${input.motive == "Vandalismo en curso" ? reportedUser : title}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`,
+                            text: revision.content + `\n== ${title} ==\n` + notificationString,
                             summary: `Aviso al usuario de su denuncia por [[${motiveOptionsDict[input.motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                             minor: false
                         }
