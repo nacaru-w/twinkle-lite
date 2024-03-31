@@ -321,7 +321,7 @@ function createHash(board, reportTitle) {
     return utils.getContent(board).then((boardContent) => {
         const regex = buildRegex(reportTitle);
         const otherOccurrences = boardContent.match(regex);
-        if (otherOccurrences) {
+        if (otherOccurrences && otherOccurrences.length > 1) {
             return `${reportTitle}_${otherOccurrences.length}`
         }
         return reportTitle
