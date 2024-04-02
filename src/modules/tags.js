@@ -441,17 +441,22 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 		await makeEdit(templateList, input, relevantPageName);
 	}
 	if (templateTalkPageList.length > 0) {
+		const talkPage = utils.currentNamespace >= 104 ? `Anexo_discusión:${relevantPageName.substring(6)}` : `Discusión:${relevantPageName}`;
 		templateTalkPageList = paramAssigner(templateTalkPageList, input);
-		return utils.isPageMissing(`Discusión:${relevantPageName}`)
+		return utils.isPageMissing(`Discusión:${talkPage}`)
 			.then(function (mustCreateNewTalkPage) {
 				if (mustCreateNewTalkPage) {
 					return new mw.Api().create(
-						`Discusión:${relevantPageName}`,
+						`Discusión:${talkPage}`,
 						{ summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
 						templateBuilder(templateTalkPageList)
 					);
 				} else {
-					return makeEdit(templateTalkPageList, input, `Discusión:${relevantPageName}`);
+					return makeEdit(
+						templateTalkPageList,
+						input,
+						`Discusión:${talkPage}`
+					);
 				}
 			})
 	}
