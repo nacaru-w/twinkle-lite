@@ -73,24 +73,30 @@ export function getProtectionStatus(pageName) {
     return apiPromise.then((data) => {
         let pages = data.query.pages;
         let object = {};
+        object.level = 'sin protección'
         for (let p in pages) {
-            const protectionLevel = pages[p].protection[0]?.level
-            switch (protectionLevel) {
-                case 'sysop':
-                    object.level = 'solo bibliotecarios';
-                    break;
-                case 'autoconfirmed':
-                    object.level = 'solo usuarios autoconfirmados';
-                    break;
-                case 'templateeditor':
-                    object.level = 'solo editores de plantillas'
-                    break;
-                default:
-                    object.level = 'sin protección';
-            }
-            if (pages[p].protection[0]?.expiry) {
-                const expiryTimeStamp = pages[p].protection[0]?.expiry;
-                object.expiry = expiryTimeStamp;
+            for (let info of pages[p].protection) {
+                console.log(info.type);
+                if (info?.type == 'move') {
+                    continue;
+                } else {
+                    const protectionLevel = info?.level;
+                    switch (protectionLevel) {
+                        case 'sysop':
+                            object.level = 'solo bibliotecarios';
+                            break;
+                        case 'autoconfirmed':
+                            object.level = 'solo usuarios autoconfirmados';
+                            break;
+                        case 'templateeditor':
+                            object.level = 'solo editores de plantillas';
+                            break;
+                    }
+                    if (info?.expiry) {
+                        const expiryTimeStamp = pages[p].protection[0]?.expiry;
+                        object.expiry = expiryTimeStamp;
+                    }
+                }
             }
         }
         return object;
