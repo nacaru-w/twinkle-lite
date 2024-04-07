@@ -13,6 +13,7 @@
 
 ## Module: Protection
 * The expiry time of the protection will now be shown when opening the module window.
+* The window will now appropriately display edit protection (it used to not be able to distinguish between edit and move protection).
 
 # v.2.3.0
 
