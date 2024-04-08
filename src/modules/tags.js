@@ -400,9 +400,9 @@ function submitMessage(e) {
 			new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
 			setTimeout(() => { location.reload() }, 2000);
 		})
-		.catch(function () {
-			new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-			setTimeout(() => { location.reload() }, 4000);
+		.catch(function (error) {
+			new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
+			console.log(`Error: ${error}`);
 		})
 
 }
@@ -443,11 +443,11 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 	if (templateTalkPageList.length > 0) {
 		const talkPage = utils.currentNamespace >= 104 ? `Anexo_discusión:${relevantPageName.substring(6)}` : `Discusión:${relevantPageName}`;
 		templateTalkPageList = paramAssigner(templateTalkPageList, input);
-		return utils.isPageMissing(`Discusión:${talkPage}`)
+		return utils.isPageMissing(talkPage)
 			.then(function (mustCreateNewTalkPage) {
 				if (mustCreateNewTalkPage) {
 					return new mw.Api().create(
-						`Discusión:${talkPage}`,
+						talkPage,
 						{ summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
 						templateBuilder(templateTalkPageList)
 					);
@@ -455,7 +455,7 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 					return makeEdit(
 						templateTalkPageList,
 						input,
-						`Discusión:${talkPage}`
+						talkPage
 					);
 				}
 			})
