@@ -11,6 +11,9 @@
 * An option to warn users from their user link in watchlist, recent changes and page history pages will now be avilable, similar to the implementation in the reports module described above.
 * The `{{tradref}}` template has now been added to available templates catalogue.
 
+## Module: Speedy deletion
+* The script will now check whether a speedy deletion demplate already exists in the article and prompt the user to confirm the action before continuing.
+
 ## Module: Protection
 * The expiry time of the protection will now be shown when opening the module window.
 * The window will now appropriately display edit protection (it used to not be able to distinguish between edit and move protection).
