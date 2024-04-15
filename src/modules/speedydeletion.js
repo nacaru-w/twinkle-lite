@@ -1,6 +1,6 @@
 import * as utils from "./utils";
 
-let Window;
+let Window, deletionTemplateExists;
 
 let criteriaLists = {
     general: [
@@ -79,7 +79,7 @@ function getOptions(criteriaType) {
     return options;
 }
 
-function createFormWindow() {
+async function createFormWindow() {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Solicitar borrado rápido');
@@ -185,6 +185,10 @@ function createFormWindow() {
     let result = form.render();
     Window.setContent(result);
     Window.display();
+    // After the content has been displayed, we will call the api
+    // to check if a deletion template already exists and store
+    // the info in a global variable
+    deletionTemplateExists = await checkExistingDeletionTemplate();
 }
 
 function submitMessage(e) {
@@ -194,6 +198,13 @@ function submitMessage(e) {
     if (input?.subA) {
         if (input.subA.length > 0) {
             input.article.shift();
+        }
+    }
+    // This will ask the user to confirm the action if there's a deletion template
+    // in the article already, which is info we've previously stored as a global variable 
+    if (deletionTemplateExists) {
+        if (!confirm('Parece que ya existe una plantilla de borrado en el artículo, ¿deseas colocar la plantilla igualmente?')) {
+            return
         }
     }
     let statusWindow = new Morebits.simpleWindow(400, 350);
@@ -214,6 +225,15 @@ function submitMessage(e) {
             new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
             setTimeout(() => { location.reload() }, 4000);
         })
+}
+
+async function checkExistingDeletionTemplate() {
+    const regex = /{{(?:sust\:)?(?:destruir|d|db-ul|db-user|speedy|borrar|db|delete|eliminar|aviso\sborrar)\|.+?}}/i
+    const content = await utils.getContent(utils.currentPageName);
+    if (content.match(regex)) {
+        return true
+    }
+    return false
 }
 
 function speedyTemplateBuilder(data) {
