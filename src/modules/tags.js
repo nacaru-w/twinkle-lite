@@ -465,9 +465,10 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 function templateBuilder(list) {
 	let finalString = '';
 	for (const element of list) {
+		const noSust = templateDict[element]?.talkPage ? true : false; /* Check whether the template uses sust or not (TP templates don't) */
 		let parameter = list[element]?.param ? `|${list[element].param}=` : '';
 		let parameterValue = list[element]?.paramValue || '';
-		finalString += `{{sust:${element}${parameter}${parameterValue}}}\n`;
+		finalString += `{{${noSust ? '' : 'sust:'}${element}${parameter}${parameterValue}}}\n`;
 	}
 	return finalString;
 }
