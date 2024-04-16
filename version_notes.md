@@ -18,6 +18,9 @@
 * The expiry time of the protection will now be shown when opening the module window.
 * The window will now appropriately display edit protection (it used to not be able to distinguish between edit and move protection).
 
+## Module: Tags
+* Templates posted on talk pages will now not add «sust» at the beginning.
+
 # v.2.3.0
 
 ## Global enhacements
