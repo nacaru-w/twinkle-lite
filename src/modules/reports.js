@@ -197,7 +197,6 @@ function createFormWindow(reportedUserFromDOM) {
 
     // Automatically adds the name of the reported user to the form
     function setReportedUserName() {
-        console.log(reportedUser);
         document.querySelector('input[name="usernamefield"]').value = reportedUser
     }
 

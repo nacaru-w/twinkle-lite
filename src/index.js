@@ -4,7 +4,7 @@ import * as SpeedyDeletion from "./modules/speedydeletion";
 import * as Reports from "./modules/reports";
 import * as Tags from "./modules/tags";
 import * as Warns from "./modules/warnings"
-import { currentNamespace, currentPageName } from "./modules/utils";
+import { currentNamespace, currentPageName, currentAction, currentSkin } from "./modules/utils";
 
 if (!window.TwinkleLite) {
 
@@ -24,8 +24,13 @@ if (!window.TwinkleLite) {
 				elementChild.textContent = 'denunciar';
 				elementChild.style.color = '#924141';
 				elementChild.addEventListener('click', () => {
-					// This looks cumbersome but it's the only way to get the right username across all skins and instances
-					let username = element.parentElement.parentElement.parentElement.querySelector('bdi').innerText;
+					let username;
+					// This looks cumbersome but it's the only way to get the right username across both skins and instances
+					if (currentPageName == "Especial:PáginasNuevas") {
+						username = element.parentElement.parentElement.querySelector('bdi').innerText;
+					} else {
+						username = element.parentElement.parentElement.parentElement.querySelector('bdi').innerText;
+					}
 					Reports.createFormWindow(username);
 				})
 				newElement.append(elementChild);
@@ -111,13 +116,19 @@ if (!window.TwinkleLite) {
 			}
 		}
 
-		mw.hook('wikipage.content').add(() => {
-			if (document.querySelectorAll('a.mw-userlink').length > 0 && !document.getElementById('report-button')) {
-				createWarningButton();
-				createReportButton();
-			}
-		})
-
+		if (
+			currentAction == 'history' ||
+			currentPageName == "Especial:Seguimiento" ||
+			currentPageName == "Especial:CambiosRecientes" ||
+			currentPageName == "Especial:PáginasNuevas"
+		) {
+			mw.hook('wikipage.content').add(() => {
+				if (document.querySelectorAll('a.mw-userlink').length > 0 && !document.getElementById('report-button')) {
+					createWarningButton();
+					createReportButton();
+				}
+			})
+		}
 
 	};
 
