@@ -423,8 +423,9 @@ function submitMessage(e) {
                     }, 2500);
                 }
             })
-            .catch(function () {
-                new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
+            .catch(function (error) {
+                new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
+                console.log(`Error: ${error}`);
                 setTimeout(() => {
                     statusWindow.close();
                     Window.close();

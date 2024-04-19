@@ -221,9 +221,9 @@ function submitMessage(e) {
             new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
             setTimeout(() => { location.reload() }, 2000);
         })
-        .catch(function () {
+        .catch(function (error) {
             new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-            setTimeout(() => { location.reload() }, 4000);
+            console.log(`Error: ${error}`);
         })
 }
 
