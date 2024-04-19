@@ -86,7 +86,8 @@ const templateDict = {
 		description: "información no verificable. Plantilla de 30 días."
 	},
 	"fuentes no fiables": {
-		description: "referencias que no siguen la política de fuentes fiables"
+		description: "referencias que no siguen la política de fuentes fiables",
+		warning: "aviso fuentes no fiables"
 	},
 	"fusionar": {
 		description: "sugerir una fusión",
