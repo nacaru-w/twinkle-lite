@@ -5,11 +5,11 @@
 * Improved error management across all modules.
 
 ## Module: Reports
-* An option to report users from their user link in watchlist, recent changes and page history pages will now be avilable. Upon clicking, the form will complete the input name of the reported user with the corresponding one. It works in mobile view too.
+* An option to report users from their user link in watchlist, recent changes, diff and page history pages will now be avilable. Upon clicking, the form will complete the input name of the reported user with the corresponding one. It works in mobile view too.
 * Fixed a bug whereby the link that is part of the notification on the reported user's talk page would not take to the right report in the relevant board if other reports with the same name were already present.
 
 ## Module: Warnings
-* An option to warn users from their user link in watchlist, recent changes and page history pages will now be avilable, similar to the implementation in the reports module described above.
+* An option to warn users from their user link in watchlist, recent changes, diff and page history pages will now be avilable, similar to the implementation in the reports module described above.
 * The `{{tradref}}` template has now been added to available templates catalogue.
 
 ## Module: Speedy deletion
