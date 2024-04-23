@@ -5,6 +5,7 @@ export const relevantUserName = mw.config.get("wgRelevantUserName");
 export const currentNamespace = mw.config.get('wgNamespaceNumber');
 export const currentAction = mw.config.get('wgAction');
 export const currentSkin = mw.config.get('skin');
+export const diffNewId = mw.config.get('wgDiffNewId');
 
 // Returns the name of the main page from a string including the talk page in it
 export function cleansePageName(pageName) {

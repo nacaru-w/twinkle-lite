@@ -4,11 +4,24 @@ import * as SpeedyDeletion from "./modules/speedydeletion";
 import * as Reports from "./modules/reports";
 import * as Tags from "./modules/tags";
 import * as Warns from "./modules/warnings"
-import { currentNamespace, currentPageName, currentAction, currentSkin } from "./modules/utils";
+import * as Hide from "./modules/hide";
+import { currentNamespace, currentPageName, currentAction, diffNewId } from "./modules/utils";
 
 if (!window.TwinkleLite) {
 
 	window.TwinkleLite = true;
+
+	function createHideButton() {
+		const parentElement = document.querySelector('.mw-diff-undo').parentElement;
+		const hideButton = document.createElement('span');
+		const tooltip = "Solicita que esta edición sea ocultada en el TAB";
+		hideButton.innerHTML = ` (<a class="TL-hide-button" title="${tooltip}">ocultar</a>)`;
+		parentElement.appendChild(hideButton);
+		const hideLink = document.querySelector('.TL-hide-button');
+		hideLink.addEventListener('click', () => {
+			Hide.createFormWindow(diffNewId);
+		})
+	}
 
 	function createReportButton() {
 		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-talk');
@@ -120,13 +133,20 @@ if (!window.TwinkleLite) {
 			currentAction == 'history' ||
 			currentPageName == "Especial:Seguimiento" ||
 			currentPageName == "Especial:CambiosRecientes" ||
-			currentPageName == "Especial:PáginasNuevas"
+			currentPageName == "Especial:PáginasNuevas" ||
+			diffNewId !== null
 		) {
 			mw.hook('wikipage.content').add(() => {
 				if (document.querySelectorAll('a.mw-userlink').length > 0 && !document.getElementById('report-button')) {
 					createWarningButton();
 					createReportButton();
 				}
+			})
+		}
+
+		if (diffNewId) {
+			mw.hook('wikipage.content').add(() => {
+				createHideButton();
 			})
 		}
 
