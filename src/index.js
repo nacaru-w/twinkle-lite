@@ -13,14 +13,16 @@ if (!window.TwinkleLite) {
 
 	function createHideButton() {
 		const parentElement = document.querySelector('.mw-diff-undo').parentElement;
-		const hideButton = document.createElement('span');
-		const tooltip = "Solicita que esta edición sea ocultada en el TAB";
-		hideButton.innerHTML = ` (<a class="TL-hide-button" title="${tooltip}">ocultar</a>)`;
-		parentElement.appendChild(hideButton);
-		const hideLink = document.querySelector('.TL-hide-button');
-		hideLink.addEventListener('click', () => {
-			Hide.createFormWindow(diffNewId);
-		})
+		if (parentElement) {
+			const hideButton = document.createElement('span');
+			const tooltip = "Solicita que esta edición sea ocultada en el TAB";
+			hideButton.innerHTML = ` (<a class="TL-hide-button" title="${tooltip}">ocultar</a>)`;
+			parentElement.appendChild(hideButton);
+			const hideLink = document.querySelector('.TL-hide-button');
+			hideLink.addEventListener('click', () => {
+				Hide.createFormWindow(diffNewId);
+			});
+		};
 	}
 
 	function createReportButton() {
