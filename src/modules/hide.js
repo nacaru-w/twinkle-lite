@@ -6,7 +6,7 @@ function createFormWindow(diff) {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Solicitar ocultado de edición');
-    Window.addFooterLink('Tablón de anuncios de los bibliotecarios', 'Wikipedia:Tablón de anuncios de los bibliotecarios');
+    Window.addFooterLink('Política de supresores', 'Wikipedia:Supresores');
 
     let form = new Morebits.quickForm(submitMessage);
 
@@ -41,13 +41,14 @@ function createFormWindow(diff) {
             } else {
                 inputField.style.display = 'none';
             }
+            updateLabel(checked);
         }
     })
 
     optionsField.append({
         type: 'input',
-        label: 'Escribe el ID de otros diffs que quieras incluir, separados por comas. Ejemplo: «159710180, 159635315»:',
-        tooltip: 'El ID es el número de nueve cifras que aparece al final de la URL en una página de diff después de «oldid=»)',
+        label: 'Escribe el ID de otros diffs que quieras incluir, separados por comas:<br> <i>Ejemplo: «159710180, 159635315»</i><br>',
+        tooltip: 'El ID es el número de nueve cifras que aparece al final de la URL en una página de diff después de «oldid=»',
         style: "display: none;",
         id: 'moreDiffsInputField',
     })
@@ -62,6 +63,17 @@ function createFormWindow(diff) {
     Window.setContent(result);
     Window.display();
 
+    updateLabel();
+
+}
+
+function updateLabel(checkstatus = false) {
+    const label = document.querySelector('label[for=moreDiffsInputField]');
+    if (checkstatus) {
+        label.style.display = '';
+    } else {
+        label.style.display = 'none';
+    }
 }
 
 function submitMessage(e) {
