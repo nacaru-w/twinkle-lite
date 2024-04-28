@@ -59,7 +59,7 @@ export function isPageMissing(title) {
     let apiPromise = new mw.Api().get(params);
     return apiPromise.then(function (data) {
         let result = data.query.pages
-        return result.hasOwnProperty("-1")
+        return Object.prototype.hasOwnProperty.call(result, "-1");
     });
 }
 

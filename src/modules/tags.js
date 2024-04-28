@@ -33,10 +33,6 @@ const templateDict = {
 		warning: "aviso conflicto de interés",
 		description: "escrita bajo conflicto de interés"
 	},
-	"categorizar": {
-		warning: "aviso categorizar",
-		description: "artículos que no poseen categorías"
-	},
 	"contextualizar": {
 		warning: "aviso contextualizar",
 		description: "el tema o ámbito no está claramente redactado. Plantilla de 30 días."

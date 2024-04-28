@@ -228,7 +228,7 @@ function submitMessage(e) {
 }
 
 async function checkExistingDeletionTemplate() {
-    const regex = /{{(?:sust\:)?(?:destruir|d|db-ul|db-user|speedy|borrar|db|delete|eliminar|aviso\sborrar)\|.+?}}/i
+    const regex = /{{(?:sust:)?(?:destruir|d|db-ul|db-user|speedy|borrar|db|delete|eliminar|aviso\sborrar)\|.+?}}/i
     const content = await utils.getContent(utils.currentPageName);
     if (content.match(regex)) {
         return true
