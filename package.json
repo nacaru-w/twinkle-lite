@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nasch92/twinkle-lite",
   "private": true,
   "scripts": {
-    "build": "npx webpack --config webpack.config.js",
+    "build": "npx webpack --config webpack.config.js && npx eslint src/",
     "build:watch": "npx webpack --watch --config webpack.config.js",
     "deploy:test": "node ./scripts/deploy.js --sandbox",
     "deploy": "node ./scripts/deploy.js"
