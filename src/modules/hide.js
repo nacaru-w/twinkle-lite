@@ -1,4 +1,5 @@
 let diffID;
+const board = "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual";
 
 function createFormWindow(diff) {
     diffID = diff;
@@ -27,8 +28,7 @@ function createFormWindow(diff) {
         type: 'checkbox',
         list:
             [{
-                name: "otherArticles",
-                value: "otherArticles",
+                name: "moreDiffs",
                 label: 'Incluir más diffs en la solicitud',
                 checked: false,
             }],
@@ -49,6 +49,7 @@ function createFormWindow(diff) {
         type: 'input',
         label: 'Escribe el ID de otros diffs que quieras incluir, separados por comas:<br> <i>Ejemplo: «159710180, 159635315»</i><br>',
         tooltip: 'El ID es el número de nueve cifras que aparece al final de la URL en una página de diff después de «oldid=»',
+        name: 'moreDiffsString',
         style: "display: none;",
         id: 'moreDiffsInputField',
     })
@@ -76,10 +77,53 @@ function updateLabel(checkstatus = false) {
     }
 }
 
+function makeDiffList(input) {
+    // This first step makes sure no characters that are either
+    // numbers or commas are processed
+    let processedDiffList = input.replace(/[^0-9,]+/g, "");
+    processedDiffList = processedDiffList.split(',');
+    processedDiffList.unshift(diffID);
+    return processedDiffList;
+}
+
+function makeDiffMessage(inputList) {
+    let iterations = inputList.length;
+    let message = '';
+    for (let diff of inputList) {
+        iterations--;
+        message += `* [[Especial:Diff/${diff}]]${iterations ? '\n' : ''}`;
+    }
+    return message;
+}
+
+function buildMessage(moreDiffs, reason) {
+    let diffList = [];
+
+    if (moreDiffs) {
+        diffList = makeDiffList(moreDiffs);
+        console.log(diffList);
+    } else {
+        diffList.push(diffID);
+    }
+
+    const boardMessage =
+        `== Ocultar ${moreDiffs ? "ediciones" : "edición"} ==
+; Asunto
+${makeDiffMessage(diffList)}
+${reason ? `; Motivo\n${reason}` : ''}
+; Usuario que lo solicita
+* ~~~~
+; Respuesta
+(a rellenar por un bibliotecario)
+`;
+    return boardMessage
+}
+
 function submitMessage(e) {
     let form = e.target;
     let input = Morebits.quickForm.getInputData(form);
     console.log(input);
+    console.log(buildMessage(input.moreDiffsString, input.reason));
 }
 
 export { createFormWindow };
