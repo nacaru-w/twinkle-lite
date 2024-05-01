@@ -1,4 +1,6 @@
-let diffID;
+import { createStatusWindow } from "./utils";
+
+let diffID, Window;
 const board = "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual";
 
 function createFormWindow(diff) {
@@ -107,7 +109,7 @@ function buildMessage(moreDiffs, reason) {
     }
 
     const boardMessage =
-        `== Ocultar ${moreDiffs ? "ediciones" : "edición"} ==
+        `\n== Ocultar ${moreDiffs ? "ediciones" : "edición"} ==
 ; Asunto
 ${makeDiffMessage(diffList)}
 ${reason ? `; Motivo\n${reason}` : ''}
@@ -120,10 +122,34 @@ ${reason ? `; Motivo\n${reason}` : ''}
 }
 
 function submitMessage(e) {
-    let form = e.target;
-    let input = Morebits.quickForm.getInputData(form);
-    console.log(input);
-    console.log(buildMessage(input.moreDiffsString, input.reason));
+    const form = e.target;
+    const input = Morebits.quickForm.getInputData(form);
+
+    const statusWindow = new Morebits.simpleWindow(400, 350);
+    createStatusWindow(statusWindow);
+    new Morebits.status("Paso 1", `Solicitando el ocultado de ${input.moreDiffs ? 'las ediciones' : 'la edición'}...`, "info");
+
+    new mw.Api().edit(
+        board,
+        (revision) => {
+            return {
+                text: revision.content + buildMessage(input.moreDiffsString, input.reason),
+                summary: `Solicitando ocultado de ${input.moreDiffs ? 'ediciones' : 'una edición'} mediante [[WP:TL|Twinkle Lite]]`,
+                minor: false
+            }
+        }
+    ).then(() => {
+        new Morebits.status("✔️ Finalizado", "cerrando ventana...", "status");
+        setTimeout(() => {
+            statusWindow.close();
+            Window.close();
+        }, 2500);
+    })
+        .catch(function (error) {
+            new Morebits.status("❌ Se ha producido un error", "comprueba las ediciones realizadas", "error");
+            console.log(`Error: ${error}`);
+        })
+
 }
 
 export { createFormWindow };
