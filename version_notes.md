@@ -4,9 +4,13 @@
 * Many of the modules will now simply close morebit's windows after submitting the form instead of refreshing the page every time. The latter will only happen if a change on the current page the user is in has been made.
 * Improved error management across all modules.
 
+## Module: Hide
+* __The mode that creates edit hide reports has been implemented__. It will show as an option on diff pages.
+
 ## Module: Reports
 * An option to report users from their user link in watchlist, recent changes, diff and page history pages will now be avilable. Upon clicking, the form will complete the input name of the reported user with the corresponding one. It works in mobile view too.
 * Fixed a bug whereby the link that is part of the notification on the reported user's talk page would not take to the right report in the relevant board if other reports with the same name were already present.
+* When reporting through VEC, a link to the user's contribution page will now be available on the reporter's edit summary.
 
 ## Module: Warnings
 * An option to warn users from their user link in watchlist, recent changes, diff and page history pages will now be avilable, similar to the implementation in the reports module described above.
