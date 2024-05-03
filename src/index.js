@@ -96,36 +96,36 @@ if (!window.TwinkleLite) {
 			console.log("Special or non-existent page: DRM will therefore not be loaded.");
 			console.log("Special or non-existent page: Speedy deletion will therefore not be loaded.");
 		} else {
-			const DRMportletLink = mw.util.addPortletLink('p-cactions', '#', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
+			const DRMportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
 			if (DRMportletLink) {
 				DRMportletLink.onclick = DeletionRequestMaker.createFormWindow;
 			}
-			const SDportletLink = mw.util.addPortletLink('p-cactions', '#', 'Borrado rápido', 'TL-button', 'Solicita el borrado rápido de la página');
+			const SDportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Borrado rápido', 'TL-button', 'Solicita el borrado rápido de la página');
 			if (SDportletLink) {
 				SDportletLink.onclick = SpeedyDeletion.createFormWindow;
 			}
 		}
 
 		if (currentNamespace >= 0) {
-			const PPportletLink = mw.util.addPortletLink('p-cactions', '#', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
+			const PPportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
 			if (PPportletLink) {
 				PPportletLink.onclick = PageProtection.createFormWindow;
 			}
 		}
 
 		if (currentNamespace === 0 || currentNamespace === 1 || currentNamespace === 104 || currentNamespace === 105) {
-			const TportleltLink = mw.util.addPortletLink('p-cactions', '#', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
+			const TportleltLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
 			if (TportleltLink) {
 				TportleltLink.onclick = Tags.createFormWindow;
 			}
 		}
 
 		if (currentNamespace === 2 || currentNamespace === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
-			const RportletLink = mw.util.addPortletLink('p-cactions', '#', 'Denunciar usuario', 'TL-button', 'Informa de un problema en relación con el usuario');
+			const RportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Denunciar usuario', 'TL-button', 'Informa de un problema en relación con el usuario');
 			if (RportletLink) {
 				RportletLink.onclick = Reports.createFormWindow;
 			}
-			const WportletLink = mw.util.addPortletLink('p-cactions', '#', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
+			const WportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
 			if (WportletLink) {
 				WportletLink.onclick = Warns.createFormWindow;
 			}
