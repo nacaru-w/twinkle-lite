@@ -2,6 +2,7 @@
 
 ## Global enhacements
 * Many of the modules will now simply close morebit's windows after submitting the form instead of refreshing the page every time. The latter will only happen if a change on the current page the user is in has been made.
+* User window will now stay in place instead of scrolling up when opening morebits Windows
 * Improved error management across all modules.
 
 ## Module: Hide
