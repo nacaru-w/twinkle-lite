@@ -277,9 +277,10 @@ function VECReportBuilder(usernames, input) {
 function buildEditOnNoticeboard(input, usernames, articles) {
     if (input.motive == "Vandalismo en curso") {
         return (revision) => {
+            const summaryUser = usernames.length > 1 ? 'usuarios' : `[[Especial:Contribuciones/${usernames[0]}|usuario]]`;
             return {
                 text: revision.content + '\n' + '\n' + VECReportBuilder(usernames, input),
-                summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                summary: `Creando denuncia de ${summaryUser} mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                 minor: false
             }
         }
