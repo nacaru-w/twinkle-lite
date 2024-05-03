@@ -2,7 +2,7 @@
   "name": "twinkle-lite",
   "version": "1.0.0",
   "description": "Light version of Twinkle for eswiki",
-  "homepage": "https://github.com/nasch92/twinkle-lite",
+  "homepage": "https://github.com/nacaru-w/twinkle-lite",
   "private": true,
   "scripts": {
     "build": "npx webpack --config webpack.config.js && npx eslint src/",
@@ -10,7 +10,7 @@
     "deploy:test": "node ./scripts/deploy.js --sandbox",
     "deploy": "node ./scripts/deploy.js"
   },
-  "author": "",
+  "author": "Nacaru",
   "license": "(GPL 3.0 OR CC-BY-4.0)",
   "devDependencies": {
     "@eslint/js": "^9.1.1",
