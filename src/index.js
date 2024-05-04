@@ -27,54 +27,58 @@ if (!window.TwinkleLite) {
 
 	function createReportButton() {
 		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-talk');
-		usersNodeList.forEach(
-			(element) => {
-				if (element.parentElement.querySelector('a.extiw')) {
-					return;
-				}
-				const newElement = document.createElement('span');
-				newElement.textContent = ' · ';
-				const elementChild = document.createElement('a')
-				elementChild.id = 'report-button';
-				elementChild.textContent = 'denunciar';
-				elementChild.style.color = '#924141';
-				elementChild.addEventListener('click', () => {
-					let username;
-					// This looks cumbersome but it's the only way to get the right username across both skins and instances
-					if (currentPageName == "Especial:PáginasNuevas") {
-						username = element.parentElement.parentElement.querySelector('bdi').innerText;
-					} else {
-						username = element.parentElement.parentElement.parentElement.querySelector('bdi').innerText;
+		if (usersNodeList) {
+			usersNodeList.forEach(
+				(element) => {
+					if (element.parentElement.querySelector('a.extiw')) {
+						return;
 					}
-					Reports.createFormWindow(username);
-				})
-				newElement.append(elementChild);
-				element.parentNode.insertBefore(newElement, element.nextSibling);
-			}
-		)
+					const newElement = document.createElement('span');
+					newElement.textContent = ' · ';
+					const elementChild = document.createElement('a')
+					elementChild.id = 'report-button';
+					elementChild.textContent = 'denunciar';
+					elementChild.style.color = '#924141';
+					elementChild.addEventListener('click', () => {
+						let username;
+						// This looks cumbersome but it's the only way to get the right username across both skins and instances
+						if (currentPageName == "Especial:PáginasNuevas") {
+							username = element.parentElement.parentElement.querySelector('bdi').innerText;
+						} else {
+							username = element.parentElement.parentElement.parentElement.querySelector('bdi').innerText;
+						}
+						Reports.createFormWindow(username);
+					})
+					newElement.append(elementChild);
+					element.parentNode.insertBefore(newElement, element.nextSibling);
+				}
+			)
+		}
 	}
 
 	function createWarningButton() {
 		const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-talk');
-		usersNodeList.forEach(
-			(element) => {
-				if (element.parentElement.querySelector('a.extiw')) {
-					return;
-				}
-				const newElement = document.createElement('span');
-				newElement.textContent = ' · ';
-				const elementChild = document.createElement('a');
-				elementChild.id = 'warning-button';
-				elementChild.textContent = 'aviso';
-				elementChild.style.color = 'teal';
-				elementChild.addEventListener('click', () => {
-					// This looks cumbersome but it's the only way to get the right username across all skins and instances
-					let username = element.parentElement.parentElement.parentElement.querySelector('bdi').innerText;
-					Warns.createFormWindow(username);
+		if (usersNodeList) {
+			usersNodeList.forEach(
+				(element) => {
+					if (element.parentElement.querySelector('a.extiw')) {
+						return;
+					}
+					const newElement = document.createElement('span');
+					newElement.textContent = ' · ';
+					const elementChild = document.createElement('a');
+					elementChild.id = 'warning-button';
+					elementChild.textContent = 'aviso';
+					elementChild.style.color = 'teal';
+					elementChild.addEventListener('click', () => {
+						// This looks cumbersome but it's the only way to get the right username across all skins and instances
+						let username = element.parentElement.parentElement.parentElement.querySelector('bdi').innerText;
+						Warns.createFormWindow(username);
+					})
+					newElement.append(elementChild);
+					element.parentNode.insertBefore(newElement, element.nextSibling);
 				})
-				newElement.append(elementChild);
-				element.parentNode.insertBefore(newElement, element.nextSibling);
-			})
+		}
 	}
 
 	const loadDependencies = (callback) => {
