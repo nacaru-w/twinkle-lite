@@ -112,7 +112,7 @@ const templateDict = {
 				label: 'Cultura o territorio del sesgo'
 			}
 		],
-		subgroup: true
+		groupable: true
 	},
 	"infraesbozo": {
 		warning: "aviso infraesbozo",
@@ -391,9 +391,9 @@ function submitMessage(e) {
 	for (const [key, value] of Object.entries(input)) {
 		if (value && !key.includes('_param') && key != 'notify' && key != 'reason' && key != 'search') {
 			if (templateDict[key]?.talkPage) {
-				templateTalkPageList.push([key])
+				templateTalkPageList.push(key)
 			} else {
-				templateList.push([key])
+				templateList.push(key)
 			}
 		}
 	}
