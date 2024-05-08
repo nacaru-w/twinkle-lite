@@ -38,17 +38,20 @@ const templateDict = {
 		description: "el tema o ámbito no está claramente redactado. Plantilla de 30 días."
 	},
 	"complejo": {
-		description: "textos difíciles de entender"
+		description: "textos difíciles de entender",
+		groupable: true
 	},
 	"copyedit": {
 		warning: "aviso copyedit",
-		description: "necesita una revisión de ortografía y gramática"
+		description: "necesita una revisión de ortografía y gramática",
+		groupable: true
 	},
 	"curiosidades": {
 		description: "textos con sección de curiosidades"
 	},
 	"desactualizado": {
-		description: "página con información obsoleta"
+		description: "página con información obsoleta",
+		groupable: true
 	},
 	"en desarrollo": {
 		description: "páginas en construcción o siendo editadas activamente",
@@ -68,14 +71,17 @@ const templateDict = {
 		description: "demasiada información sobre temas triviales"
 	},
 	"experto": {
-		description: "artículos muy técnicos con deficiencias de contenido solo corregibles por un experto"
+		description: "artículos muy técnicos con deficiencias de contenido solo corregibles por un experto",
+		groupable: true
 	},
 	"ficticio": {
-		description: "sin enfoque desde un punto de vista real"
+		description: "sin enfoque desde un punto de vista real",
+		groupable: true
 	},
 	"formato de referencias": {
 		warning: "aviso formato de referencias",
-		description: "referencias incorrectas o mal construidas"
+		description: "referencias incorrectas o mal construidas",
+		groupable: true
 	},
 	"fuente primaria": {
 		warning: "aviso fuente primaria",
@@ -105,21 +111,25 @@ const templateDict = {
 				name: '_param-globalizar-1',
 				label: 'Cultura o territorio del sesgo'
 			}
-		]
+		],
+		subgroup: true
 	},
 	"infraesbozo": {
 		warning: "aviso infraesbozo",
 		description: "contenido insuficiente como para constituir un esbozo de artículo o anexo válido. Plantilla de 30 días",
 	},
 	"largo": {
-		description: "artículos excesivamente largos que deberían subdividirse en varios"
+		description: "artículos excesivamente largos que deberían subdividirse en varios",
+		groupable: true
 	},
 	"mal traducido": {
 		warning: "aviso mal traducido",
-		description: "escasa calidad de una traducción de otro idioma"
+		description: "escasa calidad de una traducción de otro idioma",
+		groupable: true
 	},
 	"mejorar redacción": {
-		description: "redacciones que no siguen el manual de estilo"
+		description: "redacciones que no siguen el manual de estilo",
+		groupable: true
 	},
 	"no es un foro": {
 		description: "páginas de discusión que han recibido grandes cantidades de conversación irrelevante",
@@ -136,7 +146,8 @@ const templateDict = {
 				tooltip: 'Describe brevemente la razón del sesgo. Es importante, también, desarrollarla más exhaustivamente en la PD',
 				required: true
 			}
-		]
+		],
+		groupable: true
 	},
 	"plagio": {
 		warning: "aviso destruir|2=plagio",
@@ -182,19 +193,23 @@ const templateDict = {
 		]
 	},
 	"publicidad": {
-		description: "contenido comercial que defiende proselitismos o propaganda"
+		description: "contenido comercial que defiende proselitismos o propaganda",
+		groupable: true
 	},
 	"pvfan": {
 		warning: "aviso no neutralidad|2=PVfan",
-		description: "escritos poco neutrales, con punto de vista fanático"
+		description: "escritos poco neutrales, con punto de vista fanático",
+		groupable: true
 	},
 	"referencias": {
 		warning: "aviso referencias",
-		description: "artículos sin una sola referencia"
+		description: "artículos sin una sola referencia",
+		groupable: true
 	},
 	"referencias adicionales": {
 		warning: "aviso referencias",
-		description: "artículos con falta de referencias"
+		description: "artículos con falta de referencias",
+		groupable: true
 	},
 	"renombrar": {
 		description: "Para proponer un renombrado de una página",
@@ -237,11 +252,13 @@ const templateDict = {
 	},
 	"traducción incompleta": {
 		warning: "aviso traducción incompleta",
-		description: "artículos que han sido traducidos solo parcialmente"
+		description: "artículos que han sido traducidos solo parcialmente",
+		groupable: true
 	},
 	"wikificar": {
 		warning: "aviso wikificar",
-		description: "textos con mal formato o que no cumplen el manual de estilo"
+		description: "textos con mal formato o que no cumplen el manual de estilo",
+		groupable: true
 	}
 }
 
