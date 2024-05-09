@@ -402,13 +402,18 @@ function submitMessage(e) {
 		return alert('No se ha seleccionado ninguna plantilla');
 	}
 
+	// This function will identify if there are templates that can be
+	// grouped up together
+	templateList = groupTemplates(templateList);
+	const groupedTemplateWarning = createGroupedWarning(templateList);
+
 	let statusWindow = new Morebits.simpleWindow(400, 350);
 	utils.createStatusWindow(statusWindow);
 	new Morebits.status("Paso 1", `generando plantilla(s)...`, "info");
 	makeAllEdits(templateList, templateTalkPageList, input)
 		.then(function () {
 			if (!input.notify) return;
-			return utils.getCreator().then(postsMessage(templateList));
+			return utils.getCreator().then(postsMessage(templateList, groupedTemplateWarning));
 		})
 		.then(function () {
 			new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
@@ -419,6 +424,40 @@ function submitMessage(e) {
 			console.log(`Error: ${error}`);
 		})
 
+}
+
+function groupTemplates(templateList) {
+	if (templateList.length > 1) {
+		let newList = [];
+		let groupedTemplates = 'problemas artículo';
+		let groupedTemplatesNumber = 0;
+		for (let template of templateList) {
+			if (templateDict[template]?.groupable) {
+				groupedTemplatesNumber++;
+				groupedTemplates += `|${template}`;
+			} else {
+				newList.push(template);
+			}
+		}
+		if (groupedTemplatesNumber > 1) {
+			newList.push(groupedTemplates);
+			return newList
+		} else {
+			return templateList
+		}
+	}
+
+	return templateList
+
+}
+
+function createGroupedWarning(list) {
+	const groupedTemplate = list.find(element => element.includes("problemas artículo|"));
+	if (groupedTemplate) {
+		const groupedWarning = groupedTemplate.replace("problemas artículo", `aviso PA|${relevantPageNameNoUnderscores}`);
+		return groupedWarning
+	}
+	return false
 }
 
 async function makeEdit(templates, input, pagename) {
@@ -487,8 +526,8 @@ function templateBuilder(list) {
 	return finalString;
 }
 
-function allWarnings(list) {
-	let finalString = ''
+function allWarnings(list, groupedWarning) {
+	let finalString = groupedWarning ? `{{sust:${groupedWarning}}} ~~~~\n` : '';
 	for (let template of list) {
 		if (templateDict[template]?.warning) {
 			finalString += `{{sust:${templateDict[template].warning}|${relevantPageNameNoUnderscores}}} ~~~~\n`
@@ -497,7 +536,7 @@ function allWarnings(list) {
 	return finalString
 }
 
-function postsMessage(templateList) {
+function postsMessage(templateList, groupedWarning) {
 	return (creator) => {
 		if (creator == utils.currentUser) {
 			return;
@@ -505,7 +544,7 @@ function postsMessage(templateList) {
 			new Morebits.status("Paso 2", "publicando un mensaje de aviso en la página de discusión del creador (si es posible)...", "info");
 			return utils.isPageMissing(`Usuario_discusión:${creator}`)
 				.then(function (mustCreateNewTalkPage) {
-					const templates = allWarnings(templateList);
+					const templates = allWarnings(templateList, groupedWarning);
 					if (!templates) {
 						return;
 					}
