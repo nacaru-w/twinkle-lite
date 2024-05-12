@@ -15,11 +15,12 @@ const relevantPageNameNoUnderscores = relevantPageName.replaceAll('_', ' ');
 
 const templateDict = {
 	"artículo bueno": {
-		description: "para etiquetar artículos que han obtenido la calificación de AB"
+		description: "para etiquetar artículos que han obtenido la calificación de AB",
 	},
 	"autotrad": {
 		warning: "aviso autotrad",
-		description: "uso de automatismo en traducciones de nula calidad"
+		description: "uso de automatismo en traducciones de nula calidad",
+		sust: true
 	},
 	"bulo": {
 		warning: "aviso destruir|2=bulo",
@@ -35,11 +36,21 @@ const templateDict = {
 	},
 	"contextualizar": {
 		warning: "aviso contextualizar",
-		description: "el tema o ámbito no está claramente redactado. Plantilla de 30 días."
+		description: "el tema o ámbito no está claramente redactado. Plantilla de 30 días.",
+		sust: true
 	},
 	"complejo": {
 		description: "textos difíciles de entender",
-		groupable: true
+		subgroup: [
+			{
+				type: 'input',
+				name: '_param-complejo-1',
+				label: 'Explica por qué es complejo',
+				tooltip: 'Desarrolla brevemente por qué consideras que el artículo posee una elevada complejidad'
+			}
+		],
+		groupable: true,
+		sust: true
 	},
 	"copyedit": {
 		warning: "aviso copyedit",
@@ -51,7 +62,8 @@ const templateDict = {
 	},
 	"desactualizado": {
 		description: "página con información obsoleta",
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"en desarrollo": {
 		description: "páginas en construcción o siendo editadas activamente",
@@ -62,34 +74,40 @@ const templateDict = {
 				label: 'Nombre del editor',
 				tooltip: 'Escribe el nombre del usuario que está desarrollando el artículo, no utilices ningún tipo de Wikicódigo'
 			}
-		]
+		],
+		sust: true
 	},
 	"evento actual": {
 		description: "artículos de actualidad cuya información es susceptible a cambiar"
 	},
 	"excesivamente detallado": {
-		description: "demasiada información sobre temas triviales"
+		description: "demasiada información sobre temas triviales",
+		sust: true
 	},
 	"experto": {
 		description: "artículos muy técnicos con deficiencias de contenido solo corregibles por un experto",
-		groupable: true
+		groupable: true,
 	},
 	"ficticio": {
 		description: "sin enfoque desde un punto de vista real",
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"formato de referencias": {
 		warning: "aviso formato de referencias",
 		description: "referencias incorrectas o mal construidas",
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"fuente primaria": {
 		warning: "aviso fuente primaria",
-		description: "información no verificable. Plantilla de 30 días."
+		description: "información no verificable. Plantilla de 30 días.",
+		sust: true
 	},
 	"fuentes no fiables": {
 		description: "referencias que no siguen la política de fuentes fiables",
-		warning: "aviso fuentes no fiables"
+		warning: "aviso fuentes no fiables",
+		sust: true
 	},
 	"fusionar": {
 		description: "sugerir una fusión",
@@ -100,7 +118,8 @@ const templateDict = {
 				label: 'Artículo objetivo',
 				tooltip: 'Escribe el nombre del artículo con el que quieres fusionar esta página. No uses Wikicódigo.'
 			}
-		]
+		],
+		sust: true
 	},
 	"globalizar": {
 		warning: "aviso globalizar",
@@ -112,11 +131,13 @@ const templateDict = {
 				label: 'Cultura o territorio del sesgo'
 			}
 		],
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"infraesbozo": {
 		warning: "aviso infraesbozo",
 		description: "contenido insuficiente como para constituir un esbozo de artículo o anexo válido. Plantilla de 30 días",
+		sust: true
 	},
 	"largo": {
 		description: "artículos excesivamente largos que deberían subdividirse en varios",
@@ -129,7 +150,8 @@ const templateDict = {
 	},
 	"mejorar redacción": {
 		description: "redacciones que no siguen el manual de estilo",
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"no es un foro": {
 		description: "páginas de discusión que han recibido grandes cantidades de conversación irrelevante",
@@ -160,7 +182,8 @@ const templateDict = {
 				tooltip: 'Copia y pega aquí la URL de la página externa en la que se halla el texto original',
 				required: true
 			}
-		]
+		],
+		sust: true
 	},
 	"polémico": {
 		description: "temas susceptibles a guerras de edición o vandalismo",
@@ -190,26 +213,32 @@ const templateDict = {
 				tooltip: 'Rellena este campo para especificar el motivo por el que se ha colocado la plantilla',
 				required: false
 			}
-		]
+		],
+		sust: true
 	},
 	"publicidad": {
 		description: "contenido comercial que defiende proselitismos o propaganda",
-		groupable: true
+		groupable: true,
+		sust: true
+
 	},
 	"pvfan": {
 		warning: "aviso no neutralidad|2=PVfan",
 		description: "escritos poco neutrales, con punto de vista fanático",
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"referencias": {
 		warning: "aviso referencias",
 		description: "artículos sin una sola referencia",
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"referencias adicionales": {
 		warning: "aviso referencias",
 		description: "artículos con falta de referencias",
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"renombrar": {
 		description: "Para proponer un renombrado de una página",
@@ -220,7 +249,8 @@ const templateDict = {
 				label: 'Nuevo nombre sugerido',
 				required: true
 			}
-		]
+		],
+		sust: true
 	},
 	"revisar traducción": {
 		description: "texto traducido legible pero necesita un repaso lingüístico"
@@ -236,7 +266,8 @@ const templateDict = {
 				tooltip: 'Rellena este campo para especificar el motivo por el que se ha colocado la plantilla',
 				required: false
 			}
-		]
+		],
+		sust: true
 	},
 	"traducción": {
 		description: "artículos que se están traduciendo desde otro idioma",
@@ -253,12 +284,14 @@ const templateDict = {
 	"traducción incompleta": {
 		warning: "aviso traducción incompleta",
 		description: "artículos que han sido traducidos solo parcialmente",
-		groupable: true
+		groupable: true,
+		sust: true
 	},
 	"wikificar": {
 		warning: "aviso wikificar",
 		description: "textos con mal formato o que no cumplen el manual de estilo",
-		groupable: true
+		groupable: true,
+		sust: true
 	}
 }
 
@@ -518,10 +551,10 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 function templateBuilder(list) {
 	let finalString = '';
 	for (const element of list) {
-		const noSust = templateDict[element]?.talkPage ? true : false; /* Check whether the template uses sust or not (TP templates don't) */
+		const needsSust = templateDict[element]?.sust ? true : false; /* Check whether the template uses sust or not (TP templates don't) */
 		let parameter = list[element]?.param ? `|${list[element].param}=` : '';
 		let parameterValue = list[element]?.paramValue || '';
-		finalString += `{{${noSust ? '' : 'sust:'}${element}${parameter}${parameterValue}}}\n`;
+		finalString += `{{${needsSust ? 'sust' : ''}${element}${parameter}${parameterValue}}}\n`;
 	}
 	return finalString;
 }
