@@ -31,7 +31,7 @@ export function getCreator() {
     let params = {
         action: 'query',
         prop: 'revisions',
-        titles: cleansePageName(currentPageName),
+        titles: currentPageName,
         rvprop: 'user',
         rvdir: 'newer',
         format: 'json',
