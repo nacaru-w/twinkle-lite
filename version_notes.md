@@ -1,4 +1,8 @@
-# v.2.4.0
+# v.3.1.0
+## Module: Speedy deletion
+* Fixed a bug whereby the script would find the creator of the main page when adding deletion templates to talk pages.
+
+# v.3.0.0
 
 ## Global enhacements
 * Many of the modules will now simply close morebit's windows after submitting the form instead of refreshing the page every time. The latter will only happen if a change on the current page the user is in has been made.
