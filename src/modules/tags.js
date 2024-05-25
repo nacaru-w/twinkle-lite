@@ -241,7 +241,7 @@ const templateDict = {
 		sust: true
 	},
 	"renombrar": {
-		description: "Para proponer un renombrado de una página",
+		description: "para proponer un renombrado de una página",
 		subgroup: [
 			{
 				type: 'input',
@@ -554,7 +554,7 @@ function templateBuilder(list) {
 		const needsSust = templateDict[element]?.sust ? true : false; /* Check whether the template uses sust or not (TP templates don't) */
 		let parameter = list[element]?.param ? `|${list[element].param}=` : '';
 		let parameterValue = list[element]?.paramValue || '';
-		finalString += `{{${needsSust ? 'sust' : ''}${element}${parameter}${parameterValue}}}\n`;
+		finalString += `{{${needsSust ? 'sust:' : ''}${element}${parameter}${parameterValue}}}\n`;
 	}
 	return finalString;
 }
