@@ -2,6 +2,9 @@
 ## Module: Speedy deletion
 * Fixed a bug whereby the script would find the creator of the main page when adding deletion templates to talk pages.
 
+## Module: Tags
+* The script will now appropriately use "sust:" before introducing the template only when necessary according to each template's documentation.
+
 # v.3.0.0
 
 ## Global enhacements
