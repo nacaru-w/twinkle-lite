@@ -150,7 +150,7 @@ if (!window.TwinkleLite) {
 			})
 		}
 
-		if (diffNewId) {
+		if (diffNewId && !document.querySelector('.TL-hide-button')) {
 			mw.hook('wikipage.content').add(() => {
 				createHideButton();
 			})
