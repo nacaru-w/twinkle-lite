@@ -551,11 +551,15 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 function templateBuilder(list) {
 	let finalString = '';
 	for (const element of list) {
-		const needsSust = templateDict[element]?.sust ? true : false; /* Check whether the template uses sust or not (TP templates don't) */
+		let needsSust = templateDict[element]?.sust ? true : false; /* Check whether the template uses sust or not (TP templates don't) */
+		if (element.includes('problemas artículo|')) {
+			needsSust = true;
+		}
 		let parameter = list[element]?.param ? `|${list[element].param}=` : '';
 		let parameterValue = list[element]?.paramValue || '';
 		finalString += `{{${needsSust ? 'sust:' : ''}${element}${parameter}${parameterValue}}}\n`;
 	}
+	debugger;
 	return finalString;
 }
 
