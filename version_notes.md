@@ -5,6 +5,7 @@
 ## Module: Tags
 * Templates will now be grouped up if they can be used under the «problemas artículo» template.
 * The script will now appropriately use "sust:" before introducing the template only when necessary according to each template's documentation.
+* The script will now appropriately use "sust:" when group up templates under the {{problemas artículo}} template
 
 # v.3.0.0
 
