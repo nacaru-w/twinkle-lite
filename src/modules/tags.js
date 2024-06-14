@@ -559,7 +559,6 @@ function templateBuilder(list) {
 		let parameterValue = list[element]?.paramValue || '';
 		finalString += `{{${needsSust ? 'sust:' : ''}${element}${parameter}${parameterValue}}}\n`;
 	}
-	debugger;
 	return finalString;
 }
 
