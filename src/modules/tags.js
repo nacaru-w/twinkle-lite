@@ -258,15 +258,6 @@ const templateDict = {
 	"sin relevancia": {
 		warning: "aviso sin relevancia",
 		description: "artículos que no superan umbral de relevancia. Plantilla de 30 días",
-		subgroup: [
-			{
-				type: 'input',
-				name: '_param-sin relevancia-motivo',
-				label: 'Motivo (opcional)',
-				tooltip: 'Rellena este campo para especificar el motivo por el que se ha colocado la plantilla',
-				required: false
-			}
-		],
 		sust: true
 	},
 	"traducción": {
@@ -549,8 +540,10 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 }
 
 function templateBuilder(list) {
+	debugger;
 	let finalString = '';
 	for (const element of list) {
+		debugger;
 		let needsSust = templateDict[element]?.sust ? true : false; /* Check whether the template uses sust or not (TP templates don't) */
 		if (element.includes('problemas artículo|')) {
 			needsSust = true;
@@ -559,6 +552,7 @@ function templateBuilder(list) {
 		let parameterValue = list[element]?.paramValue || '';
 		finalString += `{{${needsSust ? 'sust:' : ''}${element}${parameter}${parameterValue}}}\n`;
 	}
+	debugger;
 	return finalString;
 }
 
