@@ -540,10 +540,8 @@ async function makeAllEdits(templateList, templateTalkPageList, input) {
 }
 
 function templateBuilder(list) {
-	debugger;
 	let finalString = '';
 	for (const element of list) {
-		debugger;
 		let needsSust = templateDict[element]?.sust ? true : false; /* Check whether the template uses sust or not (TP templates don't) */
 		if (element.includes('problemas artículo|')) {
 			needsSust = true;
@@ -552,7 +550,6 @@ function templateBuilder(list) {
 		let parameterValue = list[element]?.paramValue || '';
 		finalString += `{{${needsSust ? 'sust:' : ''}${element}${parameter}${parameterValue}}}\n`;
 	}
-	debugger;
 	return finalString;
 }
 
