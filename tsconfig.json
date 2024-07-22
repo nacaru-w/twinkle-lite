@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "es2022",
+        "lib": [
+            "dom",
+            "es6"
+        ],
+        "baseUrl": "./src", // Base directory for resolving non-relative module names
+        "paths": {
+            "*": [
+                "*",
+                "./module/*"
+            ] // Allow importing from the module folder
+        },
+        "outDir": "./build", // Redirect output structure to the build directory
+        "esModuleInterop": true, // Emit __importStar and __importDefault helpers
+        "forceConsistentCasingInFileNames": true, // Ensure consistent casing in imports
+        "strict": true, // Enable all strict type-checking options
+    },
+    "include": [
+        "./node_modules/types-mediawiki",
+        "./src/globals.d.ts",
+        "./src/**/*", // Include all files in the src directory
+    ],
+    "exclude": [
+        "node_modules", // Exclude node_modules directory
+        "build" // Exclude build directory
+    ]
+}
