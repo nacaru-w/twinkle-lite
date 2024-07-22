@@ -9,10 +9,15 @@ declare const mw: {
     config: {
         get(key: string): string;
     };
+    Api: {
+        new(): {
+            get(params: any): Promise<any>;
+        };
+    };
 };
 
 declare const Morebits: {
     status: {
-        init(statusdiv: HTMLDivElement)
+        init(statusdiv: HTMLDivElement): any
     }
 }
