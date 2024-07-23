@@ -17,7 +17,7 @@ declare const mw: {
 };
 
 declare const Morebits: {
-    status: {
-        init(statusdiv: HTMLDivElement): any
-    }
-}
+    status: StatusConstructor
+    simpleWindow: SimpleWindowConstructor;
+    quickForm: QuickForm;
+};
