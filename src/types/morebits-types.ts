@@ -97,3 +97,16 @@ export interface StatusConstructor {
     actionCompleted(text: string): void;
     printUserText(comments: string, message: string): void;
 }
+
+// Quickform Radio element types
+
+export interface RadioListElementData {
+    type?: string;
+    name?: string;
+    label?: string;
+    value?: string;
+    checked?: boolean;
+    disabled?: boolean;
+    event?: EventListener;
+    subgroup?: any;
+}
