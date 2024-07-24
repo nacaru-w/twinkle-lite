@@ -5,6 +5,10 @@ import { ApiEditPageParams } from "types-mediawiki/api_params";
 let diffID: string;
 let Window: SimpleWindowInstance;
 
+/**
+ * Updates the display status of the label for the additional diffs input field.
+ * @param checkstatus - Determines whether the label should be displayed or hidden based on checkbox status.
+ */
 function updateLabel(checkstatus: boolean = false): void {
     const label: HTMLLabelElement | null = document.querySelector('label[for=moreDiffsInputField]');
     if (label) {
@@ -16,6 +20,10 @@ function updateLabel(checkstatus: boolean = false): void {
     }
 }
 
+/**
+ * Creates and displays the Morebits form window.
+ * @param diff - The initial diff ID to be included in the request, fetched from UI.
+ */
 function createFormWindow(diff: string): void {
     diffID = diff;
 
@@ -81,6 +89,11 @@ function createFormWindow(diff: string): void {
 
 }
 
+/**
+ * Processes the additional diffs input field string and returns an array of valid diff IDs.
+ * @param input - The input string containing additional diff IDs separated by commas.
+ * @returns An array of valid diff IDs.
+ */
 function makeDiffList(input: string): string[] {
     // This first step makes sure no characters that are either
     // numbers or commas are processed
@@ -90,6 +103,11 @@ function makeDiffList(input: string): string[] {
     return processedDiffListArray;
 }
 
+/**
+ * Creates a formatted message listing the diffs to include in the board bullet list.
+ * @param inputList - An array of diff IDs to be included in the message.
+ * @returns A formatted string listing the diffs as bullet points with internal links.
+ */
 function makeDiffMessage(inputList: string[]): string {
     let iterations = inputList.length;
     let message = '';
@@ -100,6 +118,12 @@ function makeDiffMessage(inputList: string[]): string {
     return message;
 }
 
+/**
+ * Builds the complete message to be posted to the board.
+ * @param moreDiffs - The input string containing additional diff IDs separated by commas.
+ * @param reason - The reason provided by the user in the corresponding field.
+ * @returns The complete message to be posted to the board.
+ */
 function buildMessage(moreDiffs: string, reason: string): string {
     let diffList = [];
 
@@ -123,6 +147,10 @@ ${reason ? `; Motivo\n${reason}` : ''}
     return boardMessage
 }
 
+/**
+ * Submits the message to the board by MW API interaction, requesting edit suppression.
+ * @param e - The event triggered by the form submission.
+ */
 function submitMessage(e: Event): void {
     const board: string = "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual";
     const form = e.target as HTMLFormElement;
