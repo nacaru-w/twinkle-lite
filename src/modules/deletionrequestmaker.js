@@ -198,19 +198,14 @@ function createDeletionRequestPage(category, reason) {
     return utils.isPageMissing(`Wikipedia:Consultas de borrado/${utils.currentPageName}`)
         .then((isPageMissing) => {
             if (isPageMissing) {
-                debugger;
                 return new mw.Api().create(`Wikipedia:Consultas de borrado/${utils.currentPageName}`,
                     { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                     buildDeletionTemplate(category, reason)
                 );
             } else {
                 utils.getContent(`Wikipedia:Consultas de borrado/${utils.currentPageName}`).then((content) => {
-                    debugger;
                     if (content.includes('{{archivo borrar cabecera') || content.includes('{{cierracdb-arr}}')) {
-                        debugger;
                         if (confirm(`Parece que ya se había creado una consulta de borrado para ${utils.currentPageNameWithoutUnderscores} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`)) {
-                            console.log(`Wikipedia:Consultas de borrado/${utils.currentPageName}_(segunda_consulta)`);
-                            debugger;
                             return new mw.Api().create(
                                 `Wikipedia:Consultas de borrado/${utils.currentPageName}_(segunda_consulta)`,
                                 { summary: `Creando página de discusión para el borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
