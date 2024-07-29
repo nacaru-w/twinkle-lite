@@ -12,6 +12,8 @@ declare const mw: {
     Api: {
         new(): {
             get(params: any): Promise<any>;
+            edit(url: string, revisionCallback: (revision: Revision) => EditParams): Promise<any>;
+            create(title: string, params: { summary: string }, content)
         };
     };
 };
