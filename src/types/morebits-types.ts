@@ -77,6 +77,10 @@ export interface QuickForm {
     setElementTooltipVisibility(element: HTMLElement | JQuery, visibility?: boolean): void;
 }
 
+export interface QuickFormInputObject {
+    [key: string]: string | number | boolean
+}
+
 export interface StatusInstance {
     link(): void;
     unlink(): void;
@@ -100,13 +104,15 @@ export interface StatusConstructor {
 
 // Quickform Radio element types
 
-export interface RadioListElementData {
+export interface ListElementData {
     type?: string;
     name?: string;
     label?: string;
     value?: string;
+    tooltip?: string
     checked?: boolean;
     disabled?: boolean;
+    required?: boolean;
     event?: EventListener;
     subgroup?: any;
 }
