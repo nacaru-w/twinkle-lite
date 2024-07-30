@@ -183,3 +183,5 @@ function submitMessage(e: Event): void {
         })
 
 }
+
+export { createFormWindow };
