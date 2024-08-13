@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { SpeedyDeletionCriteriaType, SpeedyDeletionCriteriaCategories } from "types/twinkle-types";
-import { createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, getContent, getCreator, isPageMissing } from "./utils";
+import { createMorebitsStatus, createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, getContent, getCreator, isPageMissing } from "./utils";
 
 let Window: SimpleWindowInstance
 let deletionTemplateExists: boolean;
@@ -73,7 +73,12 @@ let criteriaLists: SpeedyDeletionCriteriaCategories = {
     ]
 }
 
-function getOptions(criteriaType: SpeedyDeletionCriteriaType) {
+/**
+ * Retrieves the list of criteria options for the specified type of speedy deletion.
+ * @param {SpeedyDeletionCriteriaType} criteriaType - The type of criteria to retrieve.
+ * @returns {Array} An array of criteria options.
+ */
+function getOptions(criteriaType: SpeedyDeletionCriteriaType): { value: string, label: string, checked?: boolean, subgroup?: any }[] {
     let options = [];
     for (let chosenType of criteriaLists[criteriaType]) {
         let option = { value: chosenType.code, label: chosenType.name, checked: chosenType.default, subgroup: chosenType.subgroup };
@@ -82,6 +87,9 @@ function getOptions(criteriaType: SpeedyDeletionCriteriaType) {
     return options;
 }
 
+/**
+ * Creates and displays the Morebits form window.
+ */
 async function createFormWindow() {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
@@ -195,6 +203,10 @@ async function createFormWindow() {
     deletionTemplateExists = await checkExistingDeletionTemplate();
 }
 
+/**
+ * Submits the speedy deletion request and handles user notification if necessary.
+ * @param {Event} e - The form submission event.
+ */
 function submitMessage(e: Event) {
     let form = e.target as HTMLFormElement;
     let input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
@@ -224,25 +236,34 @@ function submitMessage(e: Event) {
             return getCreator().then(postsMessage(input));
         })
         .then(function () {
-            new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
-            setTimeout(() => { location.reload() }, 2000);
+            createMorebitsStatus(Window, statusWindow, 'finished', true)
         })
         .catch(function (error) {
-            new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-            console.log(`Error: ${error}`);
+            createMorebitsStatus(Window, statusWindow, 'error');
+            console.error(`Error: ${error}`);
         })
 }
 
+
+/**
+ * Checks if a deletion template already exists on the current page.
+ * @returns A promise that resolves to true if a deletion template exists, otherwise false.
+ */
 async function checkExistingDeletionTemplate(): Promise<boolean> {
-    const regex = /{{(?:sust:)?(?:destruir|d|db-ul|db-user|speedy|borrar|db|delete|eliminar|aviso\sborrar)\|.+?}}/i
-    const content = await getContent(currentPageName);
+    const regex: RegExp = /{{(?:sust:)?(?:destruir|d|db-ul|db-user|speedy|borrar|db|delete|eliminar|aviso\sborrar)\|.+?}}/i
+    const content: string = await getContent(currentPageName);
     if (content.match(regex)) {
         return true
     }
     return false
 }
 
-function editBuilder(data: QuickFormInputObject) {
+/**
+ * Builds the edit request payload for adding a speedy deletion template to a page.
+ * @param {QuickFormInputObject} data - The input data from the form.
+ * @returns A function that takes a revision and returns an edit request payload.
+ */
+function editBuilder(data: QuickFormInputObject): any {
     return (revision: any) => {
         return {
             text: `{{destruir|${allCriteria(data)}}} \n` + revision.content,
@@ -252,6 +273,11 @@ function editBuilder(data: QuickFormInputObject) {
     }
 }
 
+/**
+ * Concatenates all selected criteria into a single string for use in the deletion template.
+ * @param {QuickFormInputObject} data - The input data from the form.
+ * @returns A string of concatenated criteria.
+ */
 function allCriteria(data: QuickFormInputObject): string {
     let fields = [];
     for (let criteriaType in data) {
@@ -267,6 +293,11 @@ function allCriteria(data: QuickFormInputObject): string {
     return fields.join('|');
 }
 
+/**
+ * Posts a notification message to the creator's talk page if the notify option is selected.
+ * @param input - The input data from the form.
+ * @returns A promise that resolves when the message is posted.
+ */
 function postsMessage(input: QuickFormInputObject): any | Promise<any> {
     if (!input.notify) return;
     return (creator: string) => {
