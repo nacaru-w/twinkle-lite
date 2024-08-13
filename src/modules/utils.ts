@@ -1,3 +1,4 @@
+import { SimpleWindowInstance } from 'types/morebits-types';
 import { ProtectionStatus } from '../types/twinkle-types'
 import { ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 
@@ -5,7 +6,7 @@ export const currentPageName = mw.config.get('wgPageName');
 export const currentPageNameNoUnderscores = currentPageName.replace(/_/g, ' ');
 export const currentUser = mw.config.get('wgUserName');
 export const relevantUserName = mw.config.get("wgRelevantUserName");
-export const currentNamespace = mw.config.get('wgNamespaceNumber');
+export const currentNamespace: string | number = mw.config.get('wgNamespaceNumber');
 export const currentAction = mw.config.get('wgAction');
 export const currentSkin = mw.config.get('skin');
 export const diffNewId = mw.config.get('wgDiffNewId');
@@ -137,7 +138,7 @@ export async function getProtectionStatus(pageName: string): Promise<ProtectionS
  * @returns A promise that resolves to the page content as a string, or undefined if not found.
  * @throws An error if the API request fails.
  */
-export async function getContent(pageName: string): Promise<string | undefined> {
+export async function getContent(pageName: string): Promise<string> {
     const params: ApiQueryRevisionsParams = {
         action: 'query',
         prop: 'revisions',
@@ -173,4 +174,32 @@ export function parseTimeStamp(timeStamp: string): string {
     }
     const date = new Date(timeStamp);
     return date.toLocaleDateString('es-ES', options)
+}
+
+export function createMorebitsStatus(window: SimpleWindowInstance, statusWindow: SimpleWindowInstance, status: 'finished' | 'error', refresh?: boolean): void {
+    let statusState, statusMessage, statusType;
+    switch (status) {
+        case 'finished':
+            statusState = '✔️ Finalizado';
+            statusMessage = refresh ? 'actualizando página...' : 'cerrando ventana...';
+            statusType = 'status';
+            break;
+        case 'error':
+            statusState = '❌ Se ha producido un error';
+            statusMessage = 'Comprueba las ediciones realizadas';
+            statusType = 'error';
+            break;
+    }
+    new Morebits.status(statusState, statusMessage, statusType);
+    if (refresh) {
+        setTimeout(() => {
+            location.reload();
+        }, 2500);
+    } else if (!refresh && status !== 'error') {
+        setTimeout(() => {
+            statusWindow.close();
+            window.close();
+        }, 2500);
+    }
+
 }

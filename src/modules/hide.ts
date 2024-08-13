@@ -1,5 +1,5 @@
-import { QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow } from "./utils";
+import { QuickFormElementInstance, QuickFormInputObject, QuickFormInputValue, SimpleWindowInstance } from "types/morebits-types";
+import { createMorebitsStatus, createStatusWindow } from "./utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let diffID: string;
@@ -94,10 +94,10 @@ function createFormWindow(diff: string): void {
  * @param input - The input string containing additional diff IDs separated by commas.
  * @returns An array of valid diff IDs.
  */
-function makeDiffList(input: string): string[] {
+function makeDiffList(diffIDs: string): string[] {
     // This first step makes sure no characters that are either
     // numbers or commas are processed
-    let processedDiffList = input.replace(/[^0-9,]+/g, "");
+    let processedDiffList = diffIDs.replace(/[^0-9,]+/g, "");
     let processedDiffListArray: string[] = processedDiffList.split(',');
     processedDiffListArray.unshift(diffID);
     return processedDiffListArray;
@@ -125,7 +125,7 @@ function makeDiffMessage(inputList: string[]): string {
  * @returns The complete message to be posted to the board.
  */
 function buildMessage(moreDiffs: string, reason: string): string {
-    let diffList = [];
+    let diffList: string[] = [];
 
     if (moreDiffs) {
         diffList = makeDiffList(moreDiffs);
@@ -154,7 +154,7 @@ ${reason ? `; Motivo\n${reason}` : ''}
 function submitMessage(e: Event): void {
     const board: string = "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual";
     const form = e.target as HTMLFormElement;
-    const input = Morebits.quickForm.getInputData(form);
+    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
 
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
     createStatusWindow(statusWindow);
@@ -164,22 +164,18 @@ function submitMessage(e: Event): void {
         board,
         (revision) => {
             const editParams: ApiEditPageParams = {
-                text: revision.content + buildMessage(input.moreDiffsString, input.reason),
+                text: revision.content + buildMessage(input.moreDiffsString as string, input.reason as string),
                 summary: `Solicitando ocultado de ${input.moreDiffs ? 'ediciones' : 'una edición'} mediante [[WP:TL|Twinkle Lite]]`,
                 minor: false
             }
             return editParams
         }
     ).then(() => {
-        new Morebits.status("✔️ Finalizado", "cerrando ventana...", "status");
-        setTimeout(() => {
-            statusWindow.close();
-            Window.close();
-        }, 2500);
+        createMorebitsStatus(Window, statusWindow, 'finished', false);
     })
         .catch(function (error: Error) {
-            new Morebits.status("❌ Se ha producido un error", "comprueba las ediciones realizadas", "error");
-            console.log(`Error: ${error}`);
+            createMorebitsStatus(Window, statusWindow, 'error');
+            console.error(`Error: ${error}`);
         })
 
 }

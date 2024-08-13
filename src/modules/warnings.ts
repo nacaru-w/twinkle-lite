@@ -3,7 +3,7 @@
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { templateParamsDictionary, WarningsModuleProcessedList, WikipediaTemplateDict } from "types/twinkle-types";
-import { createStatusWindow, currentPageName, currentUser, isPageMissing, relevantUserName } from "./utils";
+import { createMorebitsStatus, createStatusWindow, currentPageName, currentUser, isPageMissing, relevantUserName } from "./utils";
 
 let Window: SimpleWindowInstance;
 let warnedUser: string;
@@ -291,7 +291,7 @@ function listBuilder(list: WikipediaTemplateDict) {
  * @param paramObj - The template dictionary with the assigned parameters.
  * @returns A formatted string with the template and its parameters.
  */
-function templateBuilder(paramObj: templateParamsDictionary) {
+function templateBuilder(paramObj: templateParamsDictionary): string {
     let finalString = '';
     for (const element in paramObj) {
         const parameter = paramObj[element]?.param ? `|${paramObj[element].param}=` : '';
@@ -449,25 +449,14 @@ function submitMessage(e: Event) {
         postsMessage(templateParams, input)
             .then(function () {
                 if (currentPageName.includes(`_discusión:${warnedUser}`)) {
-                    new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
+                    createMorebitsStatus(Window, statusWindow, 'finished', true);
                 } else {
-                    new Morebits.status("✔️ Finalizado", "cerrando ventana...", "status");
-                    setTimeout(() => {
-                        statusWindow.close();
-                        Window.close();
-                    }, 2500);
+                    createMorebitsStatus(Window, statusWindow, 'finished', false);
                 }
             })
             .catch(function (error) {
-                new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
-                console.log(`Error: ${error}`);
-                setTimeout(() => {
-                    statusWindow.close();
-                    Window.close();
-                }, 4000);
+                createMorebitsStatus(Window, statusWindow, 'error');
+                console.error(`Error: ${error}`);
             })
     }
 }

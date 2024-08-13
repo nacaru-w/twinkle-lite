@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, ListElementData, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, getProtectionStatus, parseTimeStamp } from "./utils";
+import { createMorebitsStatus, createStatusWindow, currentPageName, currentPageNameNoUnderscores, getProtectionStatus, parseTimeStamp } from "./utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { ProtectionStatus } from "types/twinkle-types";
 
@@ -187,15 +187,11 @@ function submitMessage(e: Event): void {
             buildEditOnNoticeboard(input)
         )
             .then(function () {
-                new Morebits.status("✔️ Finalizado", "cerrando ventana...", "status");
-                setTimeout(() => {
-                    statusWindow.close();
-                    Window.close();
-                }, 2500);
+                createMorebitsStatus(Window, statusWindow, 'finished', false);
             })
             .catch(function (error: Error) {
-                new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
-                console.log(`Error: ${error}`);
+                createMorebitsStatus(Window, statusWindow, 'error');
+                console.error(`Error: ${error}`);
             })
 
     }
