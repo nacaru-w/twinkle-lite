@@ -1,4 +1,4 @@
-import { ListElementData } from "./morebits-types"
+import { ListElementData, QuickFormInputValue } from "./morebits-types"
 
 export interface ProtectionStatus {
     level: string,
@@ -35,6 +35,45 @@ export interface WarningsModuleProcessedList {
 export interface templateParamsDictionary {
     [key: string]: {
         param: string;
-        paramValue: string | number | boolean
+        paramValue: QuickFormInputValue
     }
+}
+
+// Speedy deletion module
+export interface SpeedyDeletionCriteriaSubgroup extends ListElementData {
+    list?: {
+        value: string,
+        label: string
+    }[]
+}
+
+export interface SpeedyDeletionCriteria {
+    code: string;
+    name: string;
+    subgroup?: SpeedyDeletionCriteriaSubgroup;
+    default?: boolean;
+}
+
+export interface SpeedyDeletionCriteriaCategories {
+    general: SpeedyDeletionCriteria[];
+    articles: SpeedyDeletionCriteria[];
+    redirects: SpeedyDeletionCriteria[];
+    categories: SpeedyDeletionCriteria[];
+    userpages: SpeedyDeletionCriteria[];
+    templates: SpeedyDeletionCriteria[];
+    other: SpeedyDeletionCriteria[];
+}
+
+export type SpeedyDeletionCriteriaType = keyof SpeedyDeletionCriteriaCategories;
+
+// Reports module
+
+export interface Motive {
+    link: string,
+    usersSubtitle?: string,
+    optionalReason: boolean
+}
+
+export interface ReportMotive {
+    [motive: string]: Motive
 }
