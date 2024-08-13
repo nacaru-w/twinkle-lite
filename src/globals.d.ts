@@ -16,6 +16,9 @@ declare const mw: {
             create(title: string, params: { summary: string }, content)
         };
     };
+    util: {
+        isIPAddress(user: string, blockAllowed: boolean)
+    }
 };
 
 declare const Morebits: {
