@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { SpeedyDeletionCriteriaType, SpeedyDeletionCriteriaCategories } from "types/twinkle-types";
-import { createMorebitsStatus, createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, getContent, getCreator, isPageMissing } from "./utils";
+import { createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing } from "./utils";
 
 let Window: SimpleWindowInstance
 let deletionTemplateExists: boolean;
@@ -236,10 +236,10 @@ function submitMessage(e: Event) {
             return getCreator().then(postsMessage(input));
         })
         .then(function () {
-            createMorebitsStatus(Window, statusWindow, 'finished', true)
+            finishMorebitsStatus(Window, statusWindow, 'finished', true)
         })
         .catch(function (error) {
-            createMorebitsStatus(Window, statusWindow, 'error');
+            finishMorebitsStatus(Window, statusWindow, 'error');
             console.error(`Error: ${error}`);
         })
 }

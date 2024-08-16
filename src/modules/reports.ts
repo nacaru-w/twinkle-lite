@@ -1,7 +1,7 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { ReportMotive } from "types/twinkle-types";
-import { createMorebitsStatus, createStatusWindow, currentPageName, getContent, isPageMissing, relevantUserName } from "./utils";
-import { ApiAMCreateAccountParams, ApiEditPageParams } from "types-mediawiki/api_params";
+import { createStatusWindow, currentPageName, finishMorebitsStatus, getContent, isPageMissing, relevantUserName } from "./utils";
+import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let reportedUser: string;
 let Window: SimpleWindowInstance;
@@ -255,13 +255,13 @@ function submitMessage(e: Event) {
             })
             .then(() => {
                 if (currentPageName.includes(`_discusión:${reportedUser}`)) {
-                    createMorebitsStatus(Window, statusWindow, 'finished', true);
+                    finishMorebitsStatus(Window, statusWindow, 'finished', true);
                 } else {
-                    createMorebitsStatus(Window, statusWindow, 'finished', false);
+                    finishMorebitsStatus(Window, statusWindow, 'finished', false);
                 }
             })
             .catch((error) => {
-                createMorebitsStatus(Window, statusWindow, 'error');
+                finishMorebitsStatus(Window, statusWindow, 'error');
                 console.error(`Error: ${error}`);
             })
     }

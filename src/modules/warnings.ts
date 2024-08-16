@@ -3,7 +3,7 @@
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { templateParamsDictionary, WarningsModuleProcessedList, WikipediaTemplateDict } from "types/twinkle-types";
-import { createMorebitsStatus, createStatusWindow, currentPageName, currentUser, isPageMissing, relevantUserName } from "./utils";
+import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName } from "./utils";
 
 let Window: SimpleWindowInstance;
 let warnedUser: string;
@@ -301,6 +301,32 @@ function templateBuilder(paramObj: templateParamsDictionary): string {
     return finalString;
 }
 
+function extractParamsFromInput(input: QuickFormInputObject): string[] {
+    let temporaryTemplateList = [];
+    // First let's tidy up Morebit's array
+    for (const [key, value] of Object.entries(input)) {
+        if (value && !key.includes('_param') && key != 'notify' && key != 'reason' && key != 'search') {
+            temporaryTemplateList.push(key);
+        }
+    }
+    return temporaryTemplateList
+}
+
+function paramAssigner(paramList: string[], input: QuickFormInputObject): templateParamsDictionary {
+    let finalObj: templateParamsDictionary = {}
+    for (const element of paramList) {
+        for (const [key, value] of Object.entries(input)) {
+            if (key.includes('_param') && key.includes(element)) {
+                finalObj[element] = {
+                    "param": key.split('-').pop()!,
+                    "paramValue": value
+                };
+            }
+        }
+    }
+    return finalObj;
+}
+
 /**
  * Creates the Morebits window holding the form.
  * @param warnedUserFromDOM - The username of the warned user fetched from the DOM.
@@ -413,27 +439,9 @@ function createFormWindow(warnedUserFromDOM: string | null) {
 function submitMessage(e: Event) {
     const form = e.target as HTMLFormElement;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
-    let templateList: string[] = [];
-    let templateParams: templateParamsDictionary = {};
 
-    // First let's tidy up Morebit's array
-    for (const [key, value] of Object.entries(input)) {
-        if (value && !key.includes('_param') && key != 'notify' && key != 'reason' && key != 'search') {
-            templateList.push(key);
-        }
-    }
-
-    // Then we will assign each parameter to their corresponding value and make it accessible
-    for (const element of templateList) {
-        for (const [key, value] of Object.entries(input)) {
-            if (key.includes('_param') && key.includes(element)) {
-                templateParams[element] = {
-                    "param": key.split('-').pop() || "",
-                    "paramValue": value
-                };
-            }
-        }
-    }
+    let templateList: string[] = extractParamsFromInput(input);
+    let templateParams: templateParamsDictionary = paramAssigner(templateList, input);
 
     // Prevent the user from warning themselves
     if (warnedUser == currentUser) {
@@ -449,13 +457,13 @@ function submitMessage(e: Event) {
         postsMessage(templateParams, input)
             .then(function () {
                 if (currentPageName.includes(`_discusión:${warnedUser}`)) {
-                    createMorebitsStatus(Window, statusWindow, 'finished', true);
+                    finishMorebitsStatus(Window, statusWindow, 'finished', true);
                 } else {
-                    createMorebitsStatus(Window, statusWindow, 'finished', false);
+                    finishMorebitsStatus(Window, statusWindow, 'finished', false);
                 }
             })
             .catch(function (error) {
-                createMorebitsStatus(Window, statusWindow, 'error');
+                finishMorebitsStatus(Window, statusWindow, 'error');
                 console.error(`Error: ${error}`);
             })
     }

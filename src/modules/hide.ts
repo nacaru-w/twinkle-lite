@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, QuickFormInputObject, QuickFormInputValue, SimpleWindowInstance } from "types/morebits-types";
-import { createMorebitsStatus, createStatusWindow } from "./utils";
+import { createStatusWindow, finishMorebitsStatus } from "./utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let diffID: string;
@@ -171,10 +171,10 @@ function submitMessage(e: Event): void {
             return editParams
         }
     ).then(() => {
-        createMorebitsStatus(Window, statusWindow, 'finished', false);
+        finishMorebitsStatus(Window, statusWindow, 'finished', false);
     })
         .catch(function (error: Error) {
-            createMorebitsStatus(Window, statusWindow, 'error');
+            finishMorebitsStatus(Window, statusWindow, 'error');
             console.error(`Error: ${error}`);
         })
 

@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, ListElementData, SimpleWindowInstance } from "types/morebits-types";
-import { createMorebitsStatus, createStatusWindow, currentPageName, currentPageNameNoUnderscores, getProtectionStatus, parseTimeStamp } from "./utils";
+import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimeStamp } from "./utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { ProtectionStatus } from "types/twinkle-types";
 
@@ -187,10 +187,10 @@ function submitMessage(e: Event): void {
             buildEditOnNoticeboard(input)
         )
             .then(function () {
-                createMorebitsStatus(Window, statusWindow, 'finished', false);
+                finishMorebitsStatus(Window, statusWindow, 'finished', false);
             })
             .catch(function (error: Error) {
-                createMorebitsStatus(Window, statusWindow, 'error');
+                finishMorebitsStatus(Window, statusWindow, 'error');
                 console.error(`Error: ${error}`);
             })
 

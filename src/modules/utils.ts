@@ -176,7 +176,7 @@ export function parseTimeStamp(timeStamp: string): string {
     return date.toLocaleDateString('es-ES', options)
 }
 
-export function createMorebitsStatus(window: SimpleWindowInstance, statusWindow: SimpleWindowInstance, status: 'finished' | 'error', refresh?: boolean): void {
+export function finishMorebitsStatus(window: SimpleWindowInstance, statusWindow: SimpleWindowInstance, status: 'finished' | 'error', refresh?: boolean): void {
     let statusState, statusMessage, statusType;
     switch (status) {
         case 'finished':
