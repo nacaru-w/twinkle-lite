@@ -33,7 +33,7 @@ export interface QuickFormElementData {
     label?: string;
     value?: string;
     multiple?: boolean;
-    size?: number;
+    size?: number | string;
     list?: any;
     event?: EventListener;
     disabled?: boolean;
@@ -78,7 +78,7 @@ export interface QuickForm {
     setElementTooltipVisibility(element: HTMLElement | JQuery, visibility?: boolean): void;
 }
 
-export type QuickFormInputValue = any;
+export type QuickFormInputValue = string | number | boolean | string[] | number[];
 export interface QuickFormInputObject {
     [key: string]: QuickFormInputValue,
 }

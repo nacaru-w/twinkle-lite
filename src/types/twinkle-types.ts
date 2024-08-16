@@ -1,4 +1,4 @@
-import { ListElementData, QuickFormInputValue } from "./morebits-types"
+import { ListElementData, QuickFormElementData, QuickFormInputValue } from "./morebits-types"
 
 export interface ProtectionStatus {
     level: string,
@@ -76,4 +76,31 @@ export interface Motive {
 
 export interface ReportMotive {
     [motive: string]: Motive
+}
+
+// Tags module
+
+export interface TagTemplateDict {
+    [tag: string]: {
+        description: string,
+        warning?: string,
+        sust?: boolean,
+        subgroup?: QuickFormElementData[],
+        groupable?: boolean,
+        talkPage?: boolean
+    }
+}
+
+export interface TagTemplateListElement {
+    name: string,
+    value: string,
+    label: string,
+    subgroup: QuickFormElementData[] | '',
+}
+
+export interface TagTemplateListWithParams {
+    [tag: string]: {
+        param: string,
+        paramValue: string | number
+    }
 }
