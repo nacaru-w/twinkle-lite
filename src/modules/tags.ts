@@ -311,7 +311,7 @@ function listBuilder(): TagTemplateListElement[] {
             name: item,
             value: item,
             label: `{{${item}}} · ${tagTemplateDict[item].description} ${linkBuilder(item)}`,
-            subgroup: tagTemplateDict[item]?.subgroup ? tagTemplateDict[item].subgroup : ''
+            subgroup: tagTemplateDict[item]?.subgroup ?? ''
         };
         finalList.push(template)
     }

@@ -331,7 +331,7 @@ function paramAssigner(paramList: string[], input: QuickFormInputObject): templa
  * Creates the Morebits window holding the form.
  * @param warnedUserFromDOM - The username of the warned user fetched from the DOM.
  */
-function createFormWindow(warnedUserFromDOM: string | null) {
+function createFormWindow(warnedUserFromDOM: string | null): void {
 
     // Something about the addPortletLink feature doesn't work well so this condition is unfortunately needed
     // Set the warned user from the DOM or fallback to the relevant username

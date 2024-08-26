@@ -98,9 +98,6 @@ export interface TagTemplateListElement {
     subgroup: QuickFormElementData[] | '',
 }
 
-export interface TagTemplateListWithParams {
-    [tag: string]: {
-        param: string,
-        paramValue: string | number
-    }
+export interface TwinkleLiteWindow extends Window {
+    TwinkleLite?: boolean
 }

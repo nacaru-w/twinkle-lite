@@ -5,7 +5,7 @@
   "homepage": "https://github.com/nacaru-w/twinkle-lite",
   "private": true,
   "scripts": {
-    "build": "npx webpack --config webpack.config.js && npx eslint src/",
+    "build": "rm -rf build && tsc && npx webpack --config webpack.config.js",
     "build:watch": "npx webpack --watch --config webpack.config.js",
     "deploy:test": "node ./scripts/deploy.js --sandbox",
     "deploy": "node ./scripts/deploy.js"
@@ -13,11 +13,10 @@
   "author": "Nacaru",
   "license": "(GPL 3.0 OR CC-BY-4.0)",
   "devDependencies": {
-    "@eslint/js": "^9.1.1",
-    "eslint": "^9.1.1",
     "globals": "^15.1.0",
+    "ts-loader": "^9.5.1",
     "types-mediawiki": "^1.8.0",
-    "typescript": "^5.5.3",
+    "typescript": "^5.5.4",
     "webpack": "^5.73.0",
     "webpack-cli": "^4.7.2"
   }

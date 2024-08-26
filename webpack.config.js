@@ -16,9 +16,20 @@ class NoWiki {
 }
 
 module.exports = {
-    entry: './build/index.js',
+    entry: './src/index.ts',
     output: {
         filename: output,
+    },
+    module: {
+        rules: [
+            {
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            }
+        ]
+    },
+    resolve: {
+        extensions: ['.ts'],
     },
     optimization: { minimize: false },
     mode: 'production',

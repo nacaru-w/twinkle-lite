@@ -5,6 +5,15 @@ not defined in local development by creating a custom type
 definition.
 */
 
+/*
+* Global variable to check whether the script has already
+* been loaded or not
+*/
+
+interface Window {
+    IS_TWINKLE_LITE_LOADED: boolean;
+}
+
 declare const mw: {
     config: {
         get(key: string): string;
@@ -17,7 +26,15 @@ declare const mw: {
         };
     };
     util: {
-        isIPAddress(user: string, blockAllowed: boolean)
+        isIPAddress(user: string, blockAllowed: boolean);
+        addPortletLink(menu: string, link: string, label: string, identifier: string, tooltip: string)
+    };
+    loader: {
+        using(string);
+        load(string, string);
+    }
+    hook(hookType: string): {
+        add(addedFunction: any)
     }
 };
 

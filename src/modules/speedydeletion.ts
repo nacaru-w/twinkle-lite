@@ -282,11 +282,11 @@ function allCriteria(data: QuickFormInputObject): string {
     let fields = [];
     for (let criteriaType in data) {
         if (criteriaType !== "other" && Array.isArray(data[criteriaType])) {
-            fields.push(...data[criteriaType]);
+            fields.push(...data[criteriaType] as string[]);
         }
     }
 
-    let reasonString = data?.otherreason ?? '';
+    const reasonString = data?.otherreason ?? '';
     if (reasonString != '') {
         fields.push(reasonString);
     }
