@@ -1,6 +1,6 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
-import { createButton, createHideButton } from "./DOMutils/DOMutils";
-import { currentAction, currentNamespace, currentPageName, diffNewId } from "./modules/utils";
+import { createButton, createHideButton } from "./utils/DOMutils";
+import { currentAction, currentNamespace, currentPageName, diffNewId } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
 import { createTagsFormWindow } from "./modules/tags";
@@ -77,19 +77,19 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 				createHideButton(createHideFormWindow);
 			})
 		}
+	};
 
-		const loadTwinkleLite = () => {
-			loadDependencies(() => {
-				loadMorebits(() => {
-					initializeTwinkleLite();
-					console.log("Twinkle Lite cargado");
-				});
-			})
-		};
+	const loadTwinkleLite = () => {
+		loadDependencies(() => {
+			loadMorebits(() => {
+				initializeTwinkleLite();
+				console.log("Twinkle Lite cargado");
+			});
+		})
+	};
 
-		console.log("test");
-		loadTwinkleLite();
-	}
+	console.log("test");
+	loadTwinkleLite();
 
 } else {
 	console.warn('Parece que Twinkle Lite se ha intentado cargar dos veces. Comprueba la configuración para evitar la doble importación del script.');
