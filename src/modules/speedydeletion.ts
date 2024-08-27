@@ -90,7 +90,7 @@ function getOptions(criteriaType: SpeedyDeletionCriteriaType): { value: string, 
 /**
  * Creates and displays the Morebits form window.
  */
-async function createFormWindow() {
+async function createSpeedyDeletionFormWindow() {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Solicitar borrado rápido');
@@ -330,4 +330,4 @@ function postsMessage(input: QuickFormInputObject): any | Promise<any> {
     }
 }
 
-export { createFormWindow };
+export { createSpeedyDeletionFormWindow };

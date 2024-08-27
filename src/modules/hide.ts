@@ -24,7 +24,7 @@ function updateLabel(checkstatus: boolean = false): void {
  * Creates and displays the Morebits form window.
  * @param diff - The initial diff ID to be included in the request, fetched from UI.
  */
-function createFormWindow(diff: string): void {
+function createHideFormWindow(diff: string): void {
     diffID = diff;
 
     Window = new Morebits.simpleWindow(620, 530);
@@ -180,4 +180,4 @@ function submitMessage(e: Event): void {
 
 }
 
-export { createFormWindow };
+export { createHideFormWindow };

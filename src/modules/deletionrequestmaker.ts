@@ -197,7 +197,7 @@ function submitMessage(e: Event) {
 /**
  * Creates the form window where the user will input the deletion request details.
  */
-function createFormWindow(): void {
+function createDeletionRequestMarkerFormWindow(): void {
     Window = new Morebits.simpleWindow(620, 530);
 
     Window.setScriptName('Twinkle Lite');
@@ -297,4 +297,4 @@ function createFormWindow(): void {
 }
 
 
-export { createFormWindow }
+export { createDeletionRequestMarkerFormWindow }

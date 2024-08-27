@@ -87,7 +87,7 @@ function buildEditOnNoticeboard(input: any): (revision: any) => ApiEditPageParam
 /**
  * Creates the Morebits' form window for requesting page protection.
  */
-function createFormWindow(): void {
+function createPageProtectionFormWindow(): void {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Solicitar protección de la página');
@@ -197,4 +197,4 @@ function submitMessage(e: Event): void {
     }
 }
 
-export { createFormWindow };
+export { createPageProtectionFormWindow };

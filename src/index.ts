@@ -1,13 +1,12 @@
-import * as DeletionRequestMaker from "./modules/deletionrequestmaker";
-import * as PageProtection from "./modules/pageprotection";
-import * as SpeedyDeletion from "./modules/speedydeletion";
-import * as Reports from "./modules/reports";
-import * as Tags from "./modules/tags";
-import * as Warnings from "./modules/warnings"
-import * as Hide from "./modules/hide";
-
+import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
 import { createButton, createHideButton } from "./DOMutils/DOMutils";
 import { currentAction, currentNamespace, currentPageName, diffNewId } from "./modules/utils";
+import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
+import { createPageProtectionFormWindow } from "./modules/pageprotection";
+import { createTagsFormWindow } from "./modules/tags";
+import { createReportsFormWindow } from "./modules/reports";
+import { createWarningsFormWindow } from "./modules/warnings";
+import { createHideFormWindow } from "./modules/hide";
 
 // Let's check first whether the script has been already loaded through global variable
 if (!window.IS_TWINKLE_LITE_LOADED) {
@@ -28,33 +27,33 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		if (+currentNamespace >= 0 || mw.config.get('wgArticleId')) {
 			const DRMportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
 			if (DRMportletLink) {
-				DRMportletLink.onclick = DeletionRequestMaker.createFormWindow;
+				DRMportletLink.onclick = createDeletionRequestMarkerFormWindow;
 			}
 			const SDportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Borrado rápido', 'TL-button', 'Solicita el borrado rápido de la página');
 			if (SDportletLink) {
-				SDportletLink.onclick = SpeedyDeletion.createFormWindow;
+				SDportletLink.onclick = createSpeedyDeletionFormWindow;
 			}
 			const PPportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
 			if (PPportletLink) {
-				PPportletLink.onclick = PageProtection.createFormWindow;
+				PPportletLink.onclick = createPageProtectionFormWindow;
 			}
 		}
 
 		if (currentNamespace === 0 || currentNamespace === 1 || currentNamespace === 104 || currentNamespace === 105) {
 			const TportleltLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
 			if (TportleltLink) {
-				TportleltLink.onclick = Tags.createFormWindow;
+				TportleltLink.onclick = createTagsFormWindow;
 			}
 		}
 
 		if (currentNamespace === 2 || currentNamespace === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
 			const RportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Denunciar usuario', 'TL-button', 'Informa de un problema en relación con el usuario');
 			if (RportletLink) {
-				RportletLink.onclick = Reports.createFormWindow;
+				RportletLink.onclick = createReportsFormWindow;
 			}
 			const WportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
 			if (WportletLink) {
-				WportletLink.onclick = Warnings.createFormWindow;
+				WportletLink.onclick = createWarningsFormWindow;
 			}
 		}
 
@@ -67,15 +66,15 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		) {
 			mw.hook('wikipage.content').add(() => {
 				if (document.querySelectorAll('a.mw-userlink').length > 0 && !document.getElementById('report-button')) {
-					createButton('report-button', 'denunciar', '#924141', Reports.createFormWindow);
-					createButton('warning-button', 'aviso', 'teal', Warnings.createFormWindow);
+					createButton('report-button', 'denunciar', '#924141', createReportsFormWindow);
+					createButton('warning-button', 'aviso', 'teal', createWarningsFormWindow);
 				}
 			})
 		}
 
 		if (diffNewId && !document.querySelector('.TL-hide-button')) {
 			mw.hook('wikipage.content').add(() => {
-				createHideButton(Hide.createFormWindow);
+				createHideButton(createHideFormWindow);
 			})
 		}
 

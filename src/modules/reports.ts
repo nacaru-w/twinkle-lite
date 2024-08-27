@@ -267,7 +267,7 @@ function submitMessage(e: Event) {
     }
 }
 
-function createFormWindow(reportedUserFromDOM: string | null): void {
+function createReportsFormWindow(reportedUserFromDOM: string | null): void {
 
     // Something about the addPortletLink feature doesn't work well so this condition is unfortunately needed
     if (typeof reportedUserFromDOM == 'string') {
@@ -364,4 +364,4 @@ function createFormWindow(reportedUserFromDOM: string | null): void {
 
 }
 
-export { createFormWindow };
+export { createReportsFormWindow };

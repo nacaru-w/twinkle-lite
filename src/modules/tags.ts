@@ -467,7 +467,7 @@ async function makeAllEdits(templateList: string[], templateTalkPageList: string
 /**
  * Creates the Morebits form window where users can select and configure tags to be added to the page.
  */
-function createFormWindow() {
+function createTagsFormWindow() {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Añadir plantilla');
@@ -680,4 +680,4 @@ function submitMessage(e: Event) {
 
 }
 
-export { createFormWindow }
+export { createTagsFormWindow }
