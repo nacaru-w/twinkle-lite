@@ -68,15 +68,15 @@ function buildEditOnNoticeboard(input: any): (revision: any) => ApiEditPageParam
     return (revision: any) => {
         const editParams: ApiEditPageParams = {
             text: revision.content + `\n
-    ${title} 
-    ;Artículo(s) 
-    * {{a|${currentPageNameNoUnderscores}}}
-    ;Causa 
-    ${input.reason ? input.reason : input.motive}
-    ; Usuario que lo solicita
-    * ~~~~ 
-    ;Respuesta
-    (a rellenar por un bibliotecario)`,
+${title} 
+;Artículo(s) 
+* {{a|${currentPageNameNoUnderscores}}}
+;Causa 
+${input.reason ? input.reason : input.motive}
+; Usuario que lo solicita
+* ~~~~ 
+;Respuesta
+(a rellenar por un bibliotecario)`,
             summary: `Solicitando ${input.protection} de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
             minor: false
         }
