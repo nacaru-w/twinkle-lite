@@ -3,7 +3,7 @@
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { templateParamsDictionary, WarningsModuleProcessedList, WikipediaTemplateDict } from "types/twinkle-types";
-import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName } from "./utils";
+import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let warnedUser: string;
@@ -331,7 +331,7 @@ function paramAssigner(paramList: string[], input: QuickFormInputObject): templa
  * Creates the Morebits window holding the form.
  * @param warnedUserFromDOM - The username of the warned user fetched from the DOM.
  */
-function createWarningsFormWindow(warnedUserFromDOM: string | null): void {
+export function createWarningsFormWindow(warnedUserFromDOM: string | null): void {
 
     // Something about the addPortletLink feature doesn't work well so this condition is unfortunately needed
     // Set the warned user from the DOM or fallback to the relevant username
@@ -499,5 +499,3 @@ function postsMessage(templateParams: templateParamsDictionary, input: QuickForm
             }
         })
 }
-
-export { createWarningsFormWindow };

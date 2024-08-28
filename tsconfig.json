@@ -14,7 +14,7 @@
         "strict": true, // Enable all strict type-checking options
         "skipLibCheck": true,
         "rootDir": "./src",
-        "outDir": "./build"
+        "outDir": "./build",
     },
     "include": [
         "./node_modules/types-mediawiki",

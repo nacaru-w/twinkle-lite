@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { SpeedyDeletionCriteriaType, SpeedyDeletionCriteriaCategories } from "types/twinkle-types";
-import { createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing } from "./utils";
+import { createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing } from "./../utils/utils";
 
 let Window: SimpleWindowInstance
 let deletionTemplateExists: boolean;
@@ -90,7 +90,7 @@ function getOptions(criteriaType: SpeedyDeletionCriteriaType): { value: string, 
 /**
  * Creates and displays the Morebits form window.
  */
-async function createSpeedyDeletionFormWindow() {
+export async function createSpeedyDeletionFormWindow() {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Solicitar borrado rápido');
@@ -329,5 +329,3 @@ function postsMessage(input: QuickFormInputObject): any | Promise<any> {
         }
     }
 }
-
-export { createSpeedyDeletionFormWindow };

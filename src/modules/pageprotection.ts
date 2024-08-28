@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, ListElementData, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimeStamp } from "./utils";
+import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimeStamp } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { ProtectionStatus } from "types/twinkle-types";
 
@@ -87,7 +87,7 @@ function buildEditOnNoticeboard(input: any): (revision: any) => ApiEditPageParam
 /**
  * Creates the Morebits' form window for requesting page protection.
  */
-function createPageProtectionFormWindow(): void {
+export function createPageProtectionFormWindow(): void {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Solicitar protección de la página');
@@ -196,5 +196,3 @@ function submitMessage(e: Event): void {
 
     }
 }
-
-export { createPageProtectionFormWindow };

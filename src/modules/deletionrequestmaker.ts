@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, getContent, getCreator, isPageMissing } from "./utils";
+import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, getContent, getCreator, isPageMissing } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 // Declaring the variable that will eventually hold the form window now will allow us to manipulate it more easily  later
@@ -197,7 +197,7 @@ function submitMessage(e: Event) {
 /**
  * Creates the form window where the user will input the deletion request details.
  */
-function createDeletionRequestMarkerFormWindow(): void {
+export function createDeletionRequestMarkerFormWindow(): void {
     Window = new Morebits.simpleWindow(620, 530);
 
     Window.setScriptName('Twinkle Lite');
@@ -295,6 +295,3 @@ function createDeletionRequestMarkerFormWindow(): void {
     Window.setContent(result);
     Window.display();
 }
-
-
-export { createDeletionRequestMarkerFormWindow }

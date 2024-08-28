@@ -1,4 +1,4 @@
-import { currentPageName, diffNewId } from "./../modules/utils";
+import { currentPageName, diffNewId } from "./../utils/utils";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
     const parentElement = document.querySelector('.mw-diff-uno')?.parentElement;

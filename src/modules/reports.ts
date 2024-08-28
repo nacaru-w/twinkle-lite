@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { ReportMotive } from "types/twinkle-types";
-import { createStatusWindow, currentPageName, finishMorebitsStatus, getContent, isPageMissing, relevantUserName } from "./utils";
+import { createStatusWindow, currentPageName, finishMorebitsStatus, getContent, isPageMissing, relevantUserName } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let reportedUser: string;
@@ -267,7 +267,7 @@ function submitMessage(e: Event) {
     }
 }
 
-function createReportsFormWindow(reportedUserFromDOM: string | null): void {
+export function createReportsFormWindow(reportedUserFromDOM: string | null): void {
 
     // Something about the addPortletLink feature doesn't work well so this condition is unfortunately needed
     if (typeof reportedUserFromDOM == 'string') {
@@ -363,5 +363,3 @@ function createReportsFormWindow(reportedUserFromDOM: string | null): void {
     changeButtonNames();
 
 }
-
-export { createReportsFormWindow };

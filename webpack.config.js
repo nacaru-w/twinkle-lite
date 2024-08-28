@@ -1,4 +1,4 @@
-const { Compilation, sources, ConcatenationScope } = require('webpack');
+const { Compilation, sources, ConcatenationScope, experiments } = require('webpack');
 const output = "twinkle-lite.js";
 
 // Adapted from https://stackoverflow.com/a/65529189
@@ -40,7 +40,7 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: ['.ts', '.js'],
+        extensions: ['.ts', '.tsx', '.js'],
     },
     optimization: {
         minimize: false,

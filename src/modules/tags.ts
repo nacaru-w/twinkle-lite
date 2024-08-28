@@ -2,7 +2,7 @@
 // Allows users to add a tag in articles. The tag can be selected as part of a series of options of a checkbox list
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentNamespace, currentPageName, currentUser, finishMorebitsStatus, getCreator, isPageMissing, stripTalkPagePrefix } from "./utils";
+import { createStatusWindow, currentNamespace, currentPageName, currentUser, finishMorebitsStatus, getCreator, isPageMissing, stripTalkPagePrefix } from "./../utils/utils";
 import { TagTemplateDict, TagTemplateListElement, templateParamsDictionary } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
@@ -467,7 +467,7 @@ async function makeAllEdits(templateList: string[], templateTalkPageList: string
 /**
  * Creates the Morebits form window where users can select and configure tags to be added to the page.
  */
-function createTagsFormWindow() {
+export function createTagsFormWindow() {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Añadir plantilla');
@@ -679,5 +679,3 @@ function submitMessage(e: Event) {
         })
 
 }
-
-export { createTagsFormWindow }

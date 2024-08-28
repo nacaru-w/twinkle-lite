@@ -1,4 +1,4 @@
-import { SimpleWindowInstance } from 'types/morebits-types';
+import { SimpleWindowInstance } from './../types/morebits-types';
 import { ProtectionStatus } from '../types/twinkle-types'
 import { ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 

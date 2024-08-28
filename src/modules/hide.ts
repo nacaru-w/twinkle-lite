@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, QuickFormInputObject, QuickFormInputValue, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, finishMorebitsStatus } from "./utils";
+import { createStatusWindow, finishMorebitsStatus } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let diffID: string;
@@ -24,7 +24,7 @@ function updateLabel(checkstatus: boolean = false): void {
  * Creates and displays the Morebits form window.
  * @param diff - The initial diff ID to be included in the request, fetched from UI.
  */
-function createHideFormWindow(diff: string): void {
+export function createHideFormWindow(diff: string): void {
     diffID = diff;
 
     Window = new Morebits.simpleWindow(620, 530);
@@ -179,5 +179,3 @@ function submitMessage(e: Event): void {
         })
 
 }
-
-export { createHideFormWindow };
