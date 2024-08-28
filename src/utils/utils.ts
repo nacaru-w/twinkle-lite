@@ -89,6 +89,14 @@ export async function isPageMissing(title: string): Promise<boolean> {
  * @returns A promise that resolves to an object containing the protection level and expiry date.
  */
 export async function getProtectionStatus(pageName: string): Promise<ProtectionStatus> {
+    const interfaceExtensions = ['.js', '.css', '.json'];
+    if (currentNamespace == 8 || interfaceExtensions.some(ext => pageName.endsWith(ext))) {
+        return {
+            level: 'solo administradores de interfaz',
+            expiry: ''
+        }
+    }
+
     const params: ApiQueryInfoParams = {
         action: 'query',
         prop: 'info',
@@ -105,7 +113,6 @@ export async function getProtectionStatus(pageName: string): Promise<ProtectionS
     };
     for (let p in pages) {
         for (let info of pages[p].protection) {
-            console.log(info.type);
             if (info?.type == 'move') {
                 continue;
             } else {

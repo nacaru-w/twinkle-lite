@@ -47,9 +47,9 @@ function adaptMotiveOptions(): ListElementData[] {
  * @param protectionExpiry - The expiry date of the protection.
  * @returns The formatted expiry string.
  */
-function protectionTextBuilder(protectionExpiry: string | undefined): string {
+function protectionStatusTextBuilder(protectionExpiry: string): string {
     switch (protectionExpiry) {
-        case undefined:
+        case '':
             return ''
         case 'infinity':
             return '(protegido para siempre)'
@@ -81,6 +81,26 @@ function buildEditOnNoticeboard(input: any): (revision: any) => ApiEditPageParam
             minor: false
         }
         return editParams
+    }
+}
+
+/**
+ * Fetches and adds protection status to form window
+ */
+export async function fetchAndShowProtectionStatus(): Promise<void> {
+    // Fetches the current protection status of the article and updates the form accordingly
+    const protection = await getProtectionStatus(currentPageName);
+    // Displays protection level on page
+    const showProtection = document.querySelector("div[name='currentProtection'] > span.quickformDescription");
+    if (showProtection) {
+        showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protection.level} <span style="font-weight: normal;">${protectionStatusTextBuilder(protection.expiry)}</span>`;
+        // Disables "unprotect" option if not applicable
+        if (protection.level == 'sin protección') {
+            let unprotectDiv: HTMLElement | undefined = document.getElementById('protect')?.children[1] as HTMLElement;
+            if (unprotectDiv && unprotectDiv.firstChild instanceof HTMLElement) {
+                unprotectDiv.firstChild.setAttribute('disabled', '');
+            }
+        }
     }
 }
 
@@ -152,21 +172,8 @@ export function createPageProtectionFormWindow(): void {
     Window.setContent(result);
     Window.display();
 
-    // Fetches the current protection status of the article and updates the form accordingly
-    getProtectionStatus(currentPageName).then(function (protection: ProtectionStatus) {
-        // Displays protection level on page
-        const showProtection = document.querySelector("div[name='currentProtection'] > span.quickformDescription");
-        if (showProtection) {
-            showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protection.level} <span style="font-weight: normal;">${protectionTextBuilder(protection.expiry)}</span>`;
-            // Disables "unprotect" option if not applicable
-            if (protection.level == 'sin protección') {
-                let unprotectDiv: HTMLElement | undefined = document.getElementById('protect')?.children[1] as HTMLElement;
-                if (unprotectDiv && unprotectDiv.firstChild instanceof HTMLElement) {
-                    unprotectDiv.firstChild.setAttribute('disabled', '');
-                }
-            }
-        }
-    })
+    fetchAndShowProtectionStatus();
+
 }
 
 /**
