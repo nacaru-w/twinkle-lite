@@ -1,12 +1,16 @@
 // ** Warn module **
 // Posts a warning message on a user discussion page that can be selected as part of a series of options of a checkbox list
 
-import * as utils from "./utils";
+import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
+import { templateParamsDictionary, WarningsModuleProcessedList, WikipediaTemplateDict } from "types/twinkle-types";
+import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName } from "./../utils/utils";
 
-let warnedUser;
-let Window;
+let Window: SimpleWindowInstance;
+let warnedUser: string;
 
-const templateDict = {
+// Dictionary holding the different template definitions with descriptions and 
+// optional subgroups for specific parameters
+const templateDict: WikipediaTemplateDict = {
     "aviso autopromoción": {
         description: "usuarios creadores de páginas promocionales o de publicidad",
         subgroup: [
@@ -251,52 +255,99 @@ const templateDict = {
             }
         ]
     }
-
 }
 
-function linkBuilder(link) {
-    let fullLink = `https://es.wikipedia.org/wiki/Plantilla:${link}`
+/**
+ * Builds a description link for a given template link.
+ * @param link - The link to the template.
+ * @returns A formatted anchor tag with the full link to the template.
+ */
+function descriptionLinkBuilder(link: string) {
+    const fullLink = `https://es.wikipedia.org/wiki/Plantilla:${link}`;
     return `<a href="${fullLink}" target="_blank">(+)</a>`
 }
 
-function listBuilder(list) {
+/**
+ * Builds a list of template data for use in the checkbox list.
+ * @param list - The dictionary of templates.
+ * @returns An array of processed list items.
+ */
+function listBuilder(list: WikipediaTemplateDict) {
     let finalList = [];
     for (let item in list) {
-        let template = {};
-        template.name = item
-        template.value = item
-        template.label = `{{${item}}} · ${list[item].description} ${linkBuilder(item)}`
-        template.subgroup = list[item]?.subgroup ? list[item].subgroup : '';
+        const template: WarningsModuleProcessedList = {
+            name: item,
+            value: item,
+            label: `{{${item}}} · ${list[item].description} ${descriptionLinkBuilder(item)}`,
+            subgroup: list[item]?.subgroup ? list[item].subgroup : null
+        };
         finalList.push(template)
     }
     return finalList;
 }
 
-function templateBuilder(list) {
+/**
+ * Builds the posted template string based on the provided parameters.
+ * @param paramObj - The template dictionary with the assigned parameters.
+ * @returns A formatted string with the template and its parameters.
+ */
+function templateBuilder(paramObj: templateParamsDictionary): string {
     let finalString = '';
-    for (const element of list) {
-        let parameter = list[element]?.param ? `|${list[element].param}=` : '';
-        let parameterValue = list[element]?.paramValue || '';
+    for (const element in paramObj) {
+        const parameter = paramObj[element]?.param ? `|${paramObj[element].param}=` : '';
+        const parameterValue = paramObj[element]?.paramValue || '';
         finalString += `{{sust:${element}${parameter}${parameterValue}}}\n`;
     }
     return finalString;
 }
 
-// Creates the Morebits window holding the form
-function createFormWindow(warnedUserFromDOM) {
+function extractParamsFromInput(input: QuickFormInputObject): string[] {
+    let temporaryTemplateList = [];
+    // First let's tidy up Morebit's array
+    for (const [key, value] of Object.entries(input)) {
+        if (value && !key.includes('_param') && key != 'notify' && key != 'reason' && key != 'search') {
+            temporaryTemplateList.push(key);
+        }
+    }
+    return temporaryTemplateList
+}
+
+function paramAssigner(paramList: string[], input: QuickFormInputObject): templateParamsDictionary {
+    let finalObj: templateParamsDictionary = {}
+    for (const element of paramList) {
+        for (const [key, value] of Object.entries(input)) {
+            if (key.includes('_param') && key.includes(element)) {
+                finalObj[element] = {
+                    "param": key.split('-').pop()!,
+                    "paramValue": value
+                };
+            }
+        }
+    }
+    return finalObj;
+}
+
+/**
+ * Creates the Morebits window holding the form.
+ * @param warnedUserFromDOM - The username of the warned user fetched from the DOM.
+ */
+export function createWarningsFormWindow(warnedUserFromDOM: string | null): void {
 
     // Something about the addPortletLink feature doesn't work well so this condition is unfortunately needed
+    // Set the warned user from the DOM or fallback to the relevant username
     if (typeof warnedUserFromDOM == 'string') {
         warnedUser = warnedUserFromDOM;
     } else {
-        warnedUser = utils.relevantUserName;
+        warnedUser = relevantUserName;
     }
 
+    // Initialize the Morebits window
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Avisar al usuario');
     Window.addFooterLink('Plantillas de aviso a usuario', 'Wikipedia:Plantillas de aviso a usuario');
-    let form = new Morebits.quickForm(submitMessage);
+
+    const form: QuickFormElementInstance = new Morebits.quickForm(submitMessage);
 
     form.append({
         type: 'input',
@@ -304,42 +355,47 @@ function createFormWindow(warnedUserFromDOM) {
         name: 'search',
         label: 'Búsqueda:',
         id: 'search',
-        size: '30',
+        size: 30,
         event: function quickFilter() {
-            const searchInput = document.getElementById("search");
-            const allCheckboxDivs = document.querySelectorAll("#checkboxContainer > div");
-            if (this.value) {
-                // Flushes the list before calling the search query function, then does it as a callback so that it happens in the right order
-                function flushList(callback) {
-                    for (let i = 0; i < allCheckboxDivs.length; i++) {
-                        const div = allCheckboxDivs[i];
-                        div.style.display = 'none';
+            const searchInput = document.getElementById("search") as HTMLInputElement
+            if (searchInput) {
+                const allCheckboxDivs = document.querySelectorAll("#checkboxContainer > div");
+                if (this.value) {
+                    // Flushes the list before calling the search query function, then does it as a callback so that it happens in the right order
+                    function flushList(callback: any) {
+                        for (let i = 0; i < allCheckboxDivs.length; i++) {
+                            const div = allCheckboxDivs[i] as HTMLElement;
+                            div.style.display = 'none';
+                        }
+                        callback();
                     }
-                    callback();
-                }
-                // Finds matches for the search query within the checkbox list
-                function updateList(searchString) {
-                    for (let i = 0; i < allCheckboxDivs.length; i++) {
-                        let checkboxText = allCheckboxDivs[i].childNodes[1].innerText
-                        if (checkboxText.includes(searchString.toLowerCase()) || checkboxText.includes(searchString.toUpperCase())) {
-                            const div = allCheckboxDivs[i];
-                            div.style.display = '';
+                    // Finds matches for the search query within the checkbox list
+                    function updateList(searchString: string) {
+                        for (let i = 0; i < allCheckboxDivs.length; i++) {
+                            const checkboxText = allCheckboxDivs[i].childNodes[1].textContent
+                            if (checkboxText) {
+                                if (checkboxText.includes(searchString.toLowerCase()) || checkboxText.includes(searchString.toUpperCase())) {
+                                    const div = allCheckboxDivs[i] as HTMLElement;
+                                    div.style.display = '';
+                                }
+                            }
                         }
                     }
+                    flushList(() => updateList(searchInput.value));
                 }
-                flushList(() => updateList(searchInput.value));
-            }
-            // Retrieves the full list if nothing is on the search input box
-            if (this.value.length == 0) {
-                for (let i = 0; i < allCheckboxDivs.length; i++) {
-                    const div = allCheckboxDivs[i];
-                    div.style.display = '';
+                // Retrieves the full list if nothing is on the search input box
+                if (this.value && this.value.length == 0) {
+                    for (let i = 0; i < allCheckboxDivs.length; i++) {
+                        const div = allCheckboxDivs[i] as HTMLElement;
+                        div.style.display = '';
+                    }
                 }
             }
+
         }
     })
 
-    let optionBox = form.append({
+    const optionBox: QuickFormElementInstance = form.append({
         type: 'div',
         id: 'tagWorkArea',
         className: 'morebits-scrollbox',
@@ -352,7 +408,7 @@ function createFormWindow(warnedUserFromDOM) {
         list: listBuilder(templateDict)
     })
 
-    let optionsField = form.append({
+    const optionsField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Opciones:'
     })
@@ -370,87 +426,71 @@ function createFormWindow(warnedUserFromDOM) {
         label: 'Aceptar'
     });
 
-    let result = form.render();
+    const result = form.render();
     Window.setContent(result);
     Window.display();
 
 }
 
-function submitMessage(e) {
-    let form = e.target;
-    let input = Morebits.quickForm.getInputData(form);
-    let templateList = [];
+/**
+ * Handles the submission of the warning message form.
+ * @param e - The event triggered on form submission.
+ */
+function submitMessage(e: Event) {
+    const form = e.target as HTMLFormElement;
+    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
 
-    // First let's tidy up Morebit's array
-    for (const [key, value] of Object.entries(input)) {
-        if (value && !key.includes('_param') && key != 'notify' && key != 'reason' && key != 'search') {
-            templateList.push([key])
-        }
-    }
+    let templateList: string[] = extractParamsFromInput(input);
+    let templateParams: templateParamsDictionary = paramAssigner(templateList, input);
 
-    // Then we will assign each parameter to their corresponding value and make it accessible
-    for (const element of templateList) {
-        for (const [key, value] of Object.entries(input)) {
-            if (key.includes('_param') && key.includes(element)) {
-                templateList[element] = {
-                    "param": key.split('-').pop(),
-                    "paramValue": value
-                }
-            }
-        }
-    }
-
-
-    if (warnedUser == utils.currentUser) {
+    // Prevent the user from warning themselves
+    if (warnedUser == currentUser) {
         alert("No puedes dejarte un aviso a ti mismo");
         return;
     } else {
-        let statusWindow = new Morebits.simpleWindow(400, 350);
-        utils.createStatusWindow(statusWindow);
+        // Create a status window to display progress
+        const statusWindow = new Morebits.simpleWindow(400, 350);
+        createStatusWindow(statusWindow)
         new Morebits.status("Paso 1", 'generando plantilla...', 'info');
-        postsMessage(templateList, input)
+
+        // Post the message to the user's discussion page
+        postsMessage(templateParams, input)
             .then(function () {
-                if (utils.currentPageName.includes(`_discusión:${warnedUser}`)) {
-                    new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
+                if (currentPageName.includes(`_discusión:${warnedUser}`)) {
+                    finishMorebitsStatus(Window, statusWindow, 'finished', true);
                 } else {
-                    new Morebits.status("✔️ Finalizado", "cerrando ventana...", "status");
-                    setTimeout(() => {
-                        statusWindow.close();
-                        Window.close();
-                    }, 2500);
+                    finishMorebitsStatus(Window, statusWindow, 'finished', false);
                 }
             })
             .catch(function (error) {
-                new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
-                console.log(`Error: ${error}`);
-                setTimeout(() => {
-                    statusWindow.close();
-                    Window.close();
-                }, 4000);
+                finishMorebitsStatus(Window, statusWindow, 'error');
+                console.error(`Error: ${error}`);
             })
     }
-
 }
 
-function postsMessage(templateList, input) {
+/**
+ * Posts the message to the user's discussion page.
+ * @param templateParams - The parameters for the template.
+ * @param input - The form input data.
+ * @returns A promise that resolves when the message is posted.
+ */
+function postsMessage(templateParams: templateParamsDictionary, input: QuickFormInputObject) {
     new Morebits.status("Paso 2", "publicando aviso en la página de discusión del usuario", "info");
-    return utils.isPageMissing(`Usuario_discusión:${warnedUser}`)
+    return isPageMissing(`Usuario_discusión:${warnedUser}`)
         .then(function (mustCreateNewTalkPage) {
             if (mustCreateNewTalkPage) {
                 return new mw.Api().create(
                     `Usuario_discusión:${warnedUser}`,
                     { summary: `Añadiendo aviso de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
-                    `${templateBuilder(templateList)}~~~~`
+                    `${templateBuilder(templateParams)}~~~~`
                 );
             } else {
                 return new mw.Api().edit(
                     `Usuario_discusión:${warnedUser}`,
                     function (revision) {
                         return {
-                            text: revision.content + `\n${templateBuilder(templateList)}~~~~`,
+                            text: revision.content + `\n${templateBuilder(templateParams)}~~~~`,
                             summary: `Añadiendo aviso de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}`,
                             minor: false
                         }
@@ -459,6 +499,3 @@ function postsMessage(templateList, input) {
             }
         })
 }
-
-
-export { createFormWindow };

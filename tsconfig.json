@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "ES2020",
+        "moduleResolution": "Node10",
+        "removeComments": true,
+        "lib": [
+            "dom",
+            "es6"
+        ],
+        "baseUrl": "./src", // Base directory for resolving non-relative module names
+        "esModuleInterop": true, // Emit __importStar and __importDefault helpers
+        "forceConsistentCasingInFileNames": true, // Ensure consistent casing in imports
+        "strict": true, // Enable all strict type-checking options
+        "skipLibCheck": true,
+        "rootDir": "./src",
+        "outDir": "./build",
+    },
+    "include": [
+        "./node_modules/types-mediawiki",
+        "./src/**/*", // Include all files in the src directory
+    ],
+    "exclude": [
+        "build", // Exclude build directory
+        "dist"
+    ]
+}

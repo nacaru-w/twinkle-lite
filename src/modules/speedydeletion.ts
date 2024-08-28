@@ -1,8 +1,11 @@
-import * as utils from "./utils";
+import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
+import { SpeedyDeletionCriteriaType, SpeedyDeletionCriteriaCategories } from "types/twinkle-types";
+import { createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing } from "./../utils/utils";
 
-let Window, deletionTemplateExists;
+let Window: SimpleWindowInstance
+let deletionTemplateExists: boolean;
 
-let criteriaLists = {
+let criteriaLists: SpeedyDeletionCriteriaCategories = {
     general: [
         { code: "g1", name: "G1. Vandalismo" },
         { code: "g2", name: "G2. Faltas de etiqueta" },
@@ -70,7 +73,12 @@ let criteriaLists = {
     ]
 }
 
-function getOptions(criteriaType) {
+/**
+ * Retrieves the list of criteria options for the specified type of speedy deletion.
+ * @param {SpeedyDeletionCriteriaType} criteriaType - The type of criteria to retrieve.
+ * @returns {Array} An array of criteria options.
+ */
+function getOptions(criteriaType: SpeedyDeletionCriteriaType): { value: string, label: string, checked?: boolean, subgroup?: any }[] {
     let options = [];
     for (let chosenType of criteriaLists[criteriaType]) {
         let option = { value: chosenType.code, label: chosenType.name, checked: chosenType.default, subgroup: chosenType.subgroup };
@@ -79,12 +87,16 @@ function getOptions(criteriaType) {
     return options;
 }
 
-async function createFormWindow() {
+/**
+ * Creates and displays the Morebits form window.
+ */
+export async function createSpeedyDeletionFormWindow() {
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Solicitar borrado rápido');
     Window.addFooterLink('Criterios para el borrado rápido', 'Wikipedia:Criterios para el borrado rápido');
-    let form = new Morebits.quickForm(submitMessage);
+
+    const form: QuickFormElementInstance = new Morebits.quickForm(submitMessage);
 
     form.append({
         type: 'checkbox',
@@ -99,7 +111,7 @@ async function createFormWindow() {
         style: "padding-left: 1em; padding-top:0.5em;"
     })
 
-    let gField = form.append({
+    let gField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Criterios generales:',
     });
@@ -109,8 +121,8 @@ async function createFormWindow() {
         list: getOptions("general")
     })
 
-    if (utils.currentNamespace == 0 || utils.currentNamespace == 104 && !mw.config.get('wgIsRedirect')) {
-        let aField = form.append({
+    if (currentNamespace == 0 || currentNamespace == 104 && !mw.config.get('wgIsRedirect')) {
+        const aField: QuickFormElementInstance = form.append({
             type: 'field',
             label: 'Criterios para artículos y anexos:',
         })
@@ -123,7 +135,7 @@ async function createFormWindow() {
     }
 
     if (mw.config.get('wgIsRedirect')) {
-        let rField = form.append({
+        const rField: QuickFormElementInstance = form.append({
             type: 'field',
             label: 'Criterios para páginas de redirección:',
         })
@@ -134,8 +146,8 @@ async function createFormWindow() {
         })
     }
 
-    if (utils.currentNamespace == 14) {
-        let cField = form.append({
+    if (currentNamespace == 14) {
+        const cField: QuickFormElementInstance = form.append({
             type: 'field',
             label: 'Criterios para categorías:',
         })
@@ -146,8 +158,8 @@ async function createFormWindow() {
         })
     }
 
-    if (utils.currentNamespace == 2) {
-        let uField = form.append({
+    if (currentNamespace == 2) {
+        const uField: QuickFormElementInstance = form.append({
             type: 'field',
             label: 'Criterios para páginas de usuario:',
         })
@@ -158,8 +170,8 @@ async function createFormWindow() {
         })
     }
 
-    if (utils.currentNamespace == 10) {
-        let tField = form.append({
+    if (currentNamespace == 10) {
+        const tField: QuickFormElementInstance = form.append({
             type: 'field',
             label: 'Criterios para plantillas:',
         })
@@ -191,13 +203,19 @@ async function createFormWindow() {
     deletionTemplateExists = await checkExistingDeletionTemplate();
 }
 
-function submitMessage(e) {
-    let form = e.target;
-    let input = Morebits.quickForm.getInputData(form);
+/**
+ * Submits the speedy deletion request and handles user notification if necessary.
+ * @param {Event} e - The form submission event.
+ */
+function submitMessage(e: Event) {
+    let form = e.target as HTMLFormElement;
+    let input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
     //This little condition removes the A1 criterion if any of its subcriteria are included
     if (input?.subA) {
-        if (input.subA.length > 0) {
-            input.article.shift();
+        if (Array.isArray(input.subA) && input.subA.length > 0) {
+            if (Array.isArray(input.article)) {
+                input.article.shift();
+            }
         }
     }
     // This will ask the user to confirm the action if there's a deletion template
@@ -207,37 +225,46 @@ function submitMessage(e) {
             return
         }
     }
-    let statusWindow = new Morebits.simpleWindow(400, 350);
-    utils.createStatusWindow(statusWindow);
+    const statusWindow = new Morebits.simpleWindow(400, 350);
+    createStatusWindow(statusWindow)
     new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
     new mw.Api().edit(
-        utils.currentPageName,
-        speedyTemplateBuilder(input)
+        currentPageName,
+        editBuilder(input)
     )
         .then(function () {
-            return utils.getCreator().then(postsMessage(input));
+            return getCreator().then(postsMessage(input));
         })
         .then(function () {
-            new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
-            setTimeout(() => { location.reload() }, 2000);
+            finishMorebitsStatus(Window, statusWindow, 'finished', true)
         })
         .catch(function (error) {
-            new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error")
-            console.log(`Error: ${error}`);
+            finishMorebitsStatus(Window, statusWindow, 'error');
+            console.error(`Error: ${error}`);
         })
 }
 
-async function checkExistingDeletionTemplate() {
-    const regex = /{{(?:sust:)?(?:destruir|d|db-ul|db-user|speedy|borrar|db|delete|eliminar|aviso\sborrar)\|.+?}}/i
-    const content = await utils.getContent(utils.currentPageName);
+
+/**
+ * Checks if a deletion template already exists on the current page.
+ * @returns A promise that resolves to true if a deletion template exists, otherwise false.
+ */
+async function checkExistingDeletionTemplate(): Promise<boolean> {
+    const regex: RegExp = /{{(?:sust:)?(?:destruir|d|db-ul|db-user|speedy|borrar|db|delete|eliminar|aviso\sborrar)\|.+?}}/i
+    const content: string = await getContent(currentPageName);
     if (content.match(regex)) {
         return true
     }
     return false
 }
 
-function speedyTemplateBuilder(data) {
-    return (revision) => {
+/**
+ * Builds the edit request payload for adding a speedy deletion template to a page.
+ * @param {QuickFormInputObject} data - The input data from the form.
+ * @returns A function that takes a revision and returns an edit request payload.
+ */
+function editBuilder(data: QuickFormInputObject): any {
+    return (revision: any) => {
         return {
             text: `{{destruir|${allCriteria(data)}}} \n` + revision.content,
             summary: `Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]]${data?.originalArticleName ? `. Artículo existente de mayor calidad: [[${data.originalArticleName}]]` : ''}`,
@@ -246,43 +273,53 @@ function speedyTemplateBuilder(data) {
     }
 }
 
-function allCriteria(data) {
+/**
+ * Concatenates all selected criteria into a single string for use in the deletion template.
+ * @param {QuickFormInputObject} data - The input data from the form.
+ * @returns A string of concatenated criteria.
+ */
+function allCriteria(data: QuickFormInputObject): string {
     let fields = [];
     for (let criteriaType in data) {
         if (criteriaType !== "other" && Array.isArray(data[criteriaType])) {
-            fields.push(...data[criteriaType]);
+            fields.push(...data[criteriaType] as string[]);
         }
     }
 
-    let reasonString = data?.otherreason ?? '';
+    const reasonString = data?.otherreason ?? '';
     if (reasonString != '') {
         fields.push(reasonString);
     }
     return fields.join('|');
 }
 
-function postsMessage(input) {
+/**
+ * Posts a notification message to the creator's talk page if the notify option is selected.
+ * @param input - The input data from the form.
+ * @returns A promise that resolves when the message is posted.
+ */
+function postsMessage(input: QuickFormInputObject): any | Promise<any> {
     if (!input.notify) return;
-    return (creator) => {
-        if (creator == utils.currentUser) {
+    return (creator: string) => {
+        if (creator == currentUser) {
             return;
         } else {
             new Morebits.status("Paso 2", "publicando un mensaje en la página de discusión del creador...", "info");
-            return utils.isPageMissing(`Usuario_discusión:${creator}`)
-                .then(function (mustCreateNewTalkPage) {
+            return isPageMissing(`Usuario_discusión:${creator}`)
+                .then(function (mustCreateNewTalkPage: boolean) {
                     if (mustCreateNewTalkPage) {
                         return new mw.Api().create(
                             `Usuario_discusión:${creator}`,
-                            { summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
-                            `{{subst:Aviso destruir|${utils.currentPageNameWithoutUnderscores}|${allCriteria(input)}}} ~~~~`
+                            { summary: `Aviso al usuario del posible borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
+                            `{{subst:Aviso destruir|${currentPageNameNoUnderscores}|${allCriteria(input)}}} ~~~~`
                         );
                     } else {
                         return new mw.Api().edit(
                             `Usuario_discusión:${creator}`,
-                            function (revision) {
+                            function (revision: any) {
                                 return {
-                                    text: revision.content + `\n{{subst:Aviso destruir|${utils.currentPageNameWithoutUnderscores}|${allCriteria(input)}}} ~~~~`,
-                                    summary: `Aviso al usuario del posible borrado de [[${utils.currentPageNameWithoutUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                                    text: revision.content + `\n{{subst:Aviso destruir|${currentPageNameNoUnderscores}|${allCriteria(input)}}} ~~~~`,
+                                    summary: `Aviso al usuario del posible borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                                     minor: false
                                 }
                             }
@@ -292,5 +329,3 @@ function postsMessage(input) {
         }
     }
 }
-
-export { createFormWindow };

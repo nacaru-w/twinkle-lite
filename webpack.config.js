@@ -1,4 +1,4 @@
-const { Compilation, sources, DefinePlugin } = require('webpack');
+const { Compilation, sources, ConcatenationScope, experiments } = require('webpack');
 const output = "twinkle-lite.js";
 
 // Adapted from https://stackoverflow.com/a/65529189
@@ -16,13 +16,37 @@ class NoWiki {
 }
 
 module.exports = {
+    entry: './src/index.ts',
+    target: ['es6', 'web'],
     output: {
         filename: output,
     },
-    optimization: { minimize: false },
+    module: {
+        rules: [
+            {
+                test: /\.ts$/,
+                loader: 'ts-loader',
+                options: {
+                    transpileOnly: true,
+                },
+            },
+            {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                options: {
+                    presets: [['@babel/preset-env', { targets: 'defaults', loose: true }]],
+                },
+            },
+        ],
+    },
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js'],
+    },
+    optimization: {
+        minimize: false,
+    },
     mode: 'production',
     plugins: [
         new NoWiki(),
     ],
-
 };
