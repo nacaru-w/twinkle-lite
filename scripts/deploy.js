@@ -14,7 +14,7 @@ const SCRIPT_SANDBOX_PAGE = '';
 const sandboxOnly = process.argv[2] === '--sandbox';
 
 const site = new mwn({
-	apiUrl: 'https://en.wikipedia.org/w/api.php',
+	apiUrl: 'https://es.wikipedia.org/w/api.php',
 	username: credentials.username,
 	password: credentials.password
 });

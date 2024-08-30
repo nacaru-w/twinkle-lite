@@ -1,7 +1,7 @@
 import { currentPageName, diffNewId } from "./../utils/utils";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
-    const parentElement = document.querySelector('.mw-diff-uno')?.parentElement;
+    const parentElement = document.querySelector('.mw-diff-undo')?.parentElement;
     if (parentElement) {
         const hideButton = document.createElement('span');
         const tooltip: string = "Solicita que esta edición se oculte en el TAB";
