@@ -168,6 +168,17 @@ export async function getContent(pageName: string): Promise<string> {
 }
 
 /**
+ * Finds today's date and returns it as a timestamp
+ * @returns today's date as timestamp
+ */
+export function todayAsTimestamp(): string {
+    const today = new Date();
+    const timestamp = today.getTime().toString();
+
+    return timestamp
+}
+
+/**
  * Parses a timestamp string and returns it formatted as a localized date string in Spanish.
  * 
  * @param timeStamp - The timestamp string to be parsed.
@@ -182,6 +193,8 @@ export function parseTimeStamp(timeStamp: string): string {
     const date = new Date(timeStamp);
     return date.toLocaleDateString('es-ES', options)
 }
+
+export const today: string = parseTimeStamp(todayAsTimestamp());
 
 export function finishMorebitsStatus(window: SimpleWindowInstance, statusWindow: SimpleWindowInstance, status: 'finished' | 'error', refresh?: boolean): void {
     let statusState, statusMessage, statusType;
