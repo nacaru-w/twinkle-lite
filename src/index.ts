@@ -7,6 +7,7 @@ import { createTagsFormWindow } from "./modules/tags";
 import { createReportsFormWindow } from "./modules/reports";
 import { createWarningsFormWindow } from "./modules/warnings";
 import { createHideFormWindow } from "./modules/hide";
+import { createDRCFormWindow } from "./modules/deletionrequestcloser";
 
 // Let's check first whether the script has been already loaded through global variable
 if (!window.IS_TWINKLE_LITE_LOADED) {
@@ -36,6 +37,10 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			const PPportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
 			if (PPportletLink) {
 				PPportletLink.onclick = createPageProtectionFormWindow;
+			}
+			const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
+			if (DRCportletLink) {
+				DRCportletLink.onclick = createDRCFormWindow;
 			}
 		}
 
@@ -77,6 +82,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 				createHideButton(createHideFormWindow);
 			})
 		}
+
 	};
 
 	const loadTwinkleLite = () => {
