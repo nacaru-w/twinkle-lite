@@ -213,11 +213,6 @@ export function createDeletionRequestMarkerFormWindow(): void {
         tooltip: 'Puedes usar wikicódigo en tu descripción, tu firma se añadirá automáticamente.'
     });
 
-    form.append({
-        type: 'submit',
-        label: 'Aceptar'
-    });
-
     const categoryField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Categorías:',
@@ -290,6 +285,11 @@ export function createDeletionRequestMarkerFormWindow(): void {
         id: 'otherArticleFieldBox',
         tooltip: 'Escribe el nombre del artículo sin ningún tipo de wikicódigo'
     })
+
+    form.append({
+        type: 'submit',
+        label: 'Aceptar'
+    });
 
     const result = form.render();
     Window.setContent(result);
