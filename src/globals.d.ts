@@ -22,7 +22,8 @@ declare const mw: {
         new(): {
             get(params: any): Promise<any>;
             edit(url: string, revisionCallback: (revision: Revision) => EditParams): Promise<any>;
-            create(title: string, params: { summary: string }, content)
+            create(title: string, params: { summary: string }, content),
+            postWithToken(type: string, params: { [param]: string })
         };
     };
     util: {
