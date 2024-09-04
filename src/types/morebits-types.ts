@@ -78,7 +78,7 @@ export interface QuickForm {
     setElementTooltipVisibility(element: HTMLElement | JQuery, visibility?: boolean): void;
 }
 
-export type QuickFormInputValue = string | number | boolean | string[] | number[];
+export type QuickFormInputValue = any;
 export interface QuickFormInputObject {
     [key: string]: QuickFormInputValue,
 }
