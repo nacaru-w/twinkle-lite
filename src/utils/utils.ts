@@ -1,6 +1,8 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
 import { ProtectionStatus } from '../types/twinkle-types'
-import { ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+import { ApiDeleteParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+
+export const api = new mw.Api()
 
 export const currentPageName = mw.config.get('wgPageName');
 export const currentPageNameNoUnderscores = currentPageName.replace(/_/g, ' ');
@@ -10,6 +12,42 @@ export const currentNamespace: string | number = mw.config.get('wgNamespaceNumbe
 export const currentAction = mw.config.get('wgAction');
 export const currentSkin = mw.config.get('skin');
 export const diffNewId = mw.config.get('wgDiffNewId');
+
+/**
+ * 
+ */
+// export function getTalkPageName(pageName: string, namespace: string | number) {
+//     switch (namespace) {
+//         case 0:
+//             return `Discusión:${pageName}`;
+//         case 104:
+//             return 
+//     }
+// }
+
+/**
+ * Queries the mw API to obtain the namespace of a page given its name
+ * 
+ * @param pageName 
+ * @returns the namespace that corresponds to the given page or null if it can't be found
+ */
+export async function getPageNamespace(pageName: string): Promise<number | null> {
+    const params: ApiQueryInfoParams = {
+        action: 'query',
+        format: 'json',
+        titles: pageName,
+        prop: 'info',
+    }
+
+    const data = await api.get(params);
+    const pages = data.query.pages;
+    for (let p in pages) {
+        const namespace: number = pages[p].ns;
+        return namespace
+    }
+
+    return null
+}
 
 /**
  * Extracts the main page name from a string that may include a talk page prefix.
@@ -53,7 +91,7 @@ export async function getCreator(): Promise<string | null> {
         format: 'json',
         rvlimit: 1,
     }
-    const apiPromise = new mw.Api().get(params);
+    const apiPromise = api.get(params);
     const data = await apiPromise
     const pages = data.query.pages;
     for (let p in pages) {
@@ -76,7 +114,7 @@ export async function isPageMissing(title: string): Promise<boolean> {
         prop: 'pageprops',
         format: 'json'
     };
-    const apiPromise = new mw.Api().get(params);
+    const apiPromise = api.get(params);
     const data = await apiPromise;
     const result = data.query.pages;
     return Object.prototype.hasOwnProperty.call(result, "-1");
@@ -104,7 +142,7 @@ export async function getProtectionStatus(pageName: string): Promise<ProtectionS
         titles: pageName,
         format: 'json',
     }
-    const apiPromise = new mw.Api().get(params);
+    const apiPromise = api.get(params);
     const data = await apiPromise;
     const pages = data.query.pages;
     let object: ProtectionStatus = {
@@ -156,13 +194,40 @@ export async function getContent(pageName: string): Promise<string> {
         format: 'json'
     };
 
-    const apiPromise = new mw.Api().get(params);
+    const apiPromise = api.get(params);
 
     try {
         const data = await apiPromise;
         return data.query.pages[0].revisions[0].slots?.main?.content;
     } catch (error) {
         console.error('Error fetching page content:', error);
+        throw error;
+    }
+}
+
+/**
+ * Deletes a page (and, optionally, its associated talk page) given its Wikipedia name
+ * 
+ * @param pageName - The name of the page to be deleted
+ * @param deleteTalk - A boolean indicating if the associated talk page must be deleted too
+ */
+export async function deletePage(pageName: string, deleteTalk: boolean, reason?: string): Promise<void> {
+    let params: ApiDeleteParams = {
+        action: 'delete',
+        title: pageName,
+        format: 'json',
+        deletetalk: deleteTalk
+    }
+
+    if (reason !== undefined) {
+        params.reason = reason
+    }
+
+    try {
+        const responseData = await api.postWithToken('csrf', params)
+        console.log(responseData);
+    } catch (error) {
+        console.error('Error deleting the page:', error);
         throw error;
     }
 }
