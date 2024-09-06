@@ -54,6 +54,7 @@ function manageOtherInputField(selectedOption: string): void {
 }
 
 function replaceDRTemplate(input: string, replacement: string): string {
+    // The string it uses is automatically placed by template at the top of the page when opening a DR
     const templateRegex = /\{\{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA\|[^\}]+\}\}/;
     return input.replace(templateRegex, replacement);
 }
