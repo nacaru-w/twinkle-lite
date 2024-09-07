@@ -1,5 +1,5 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
-import { ProtectionStatus } from '../types/twinkle-types'
+import { APIPageResponse, PageCreationBasicInfo, ProtectionStatus } from '../types/twinkle-types'
 import { ApiDeleteParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 
 export const api = new mw.Api()
@@ -91,14 +91,53 @@ export async function getCreator(): Promise<string | null> {
         format: 'json',
         rvlimit: 1,
     }
-    const apiPromise = api.get(params);
-    const data = await apiPromise
-    const pages = data.query.pages;
+    const response = await api.get(params);
+    const pages = response.query.pages;
     for (let p in pages) {
         return pages[p].revisions[0].user;
     }
 
     return null;
+}
+
+export async function getPageCreationInfo(pagename: string): Promise<PageCreationBasicInfo | null> {
+    const firstEditInfo = await getFirstPageEdit(pagename);
+    if (firstEditInfo) {
+        const obj = {
+            author: firstEditInfo.revisions[0].user,
+            timestamp: firstEditInfo.revisions[0].timestamp
+        }
+        return obj
+    } else {
+        return null
+    }
+}
+
+/**
+ * Returns an object with info of the first edit made to a page
+ * 
+ * @param pageName - the name of the page to query
+ * @returns An object with page info with the following structure:
+ * { pageid: number, ns: number, revisions: any[], title: string }
+ */
+export async function getFirstPageEdit(pageName: string): Promise<APIPageResponse | null> {
+    const params: ApiQueryRevisionsParams = {
+        action: 'query',
+        prop: 'revisions',
+        titles: pageName,
+        rvdir: 'newer',
+        format: 'json',
+        rvlimit: 1
+    }
+
+    const response = await api.get(params);
+    const pages = response.query.pages;
+    for (let p in pages) {
+        return pages[p];
+    }
+
+    return null
+
 }
 
 /**
@@ -249,7 +288,7 @@ export function todayAsTimestamp(): string {
  * @param timeStamp - The timestamp string to be parsed.
  * @returns A formatted date string in the format "day month year" in Spanish locale.
  */
-export function parseTimeStamp(timeStamp: string): string {
+export function parseTimestamp(timeStamp: string): string {
     const options: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'long',
@@ -259,7 +298,41 @@ export function parseTimeStamp(timeStamp: string): string {
     return date.toLocaleDateString('es-ES', options)
 }
 
-export const today: string = parseTimeStamp(todayAsTimestamp());
+export const today: string = parseTimestamp(todayAsTimestamp());
+
+/**
+ * Converts a Date object to ISO timestamp format
+ * 
+ * @param date - A date object
+ * @returns The date object converted to ISO timestamp format (string)
+ */
+export function convertDateToISO(date: Date): string {
+    return date.toISOString();
+}
+
+/**
+ * Takes two ISO timestamps and returns the time difference between them in days and hours
+ * 
+ * @param olderTimestamp - The timestamp corresponding to the oldest time
+ * @param newerTimestamp - The timestamp corresponding to the newest time
+ * @returns The time difference between timestamps as an object
+ */
+export function calculateTimeDifferenceBetweenISO(olderISO: string, newerISO: string): { days: number, hours: number } {
+    const olderTimestamp = new Date(olderISO).getTime();
+    const newerTimestamp = new Date(newerISO).getTime();
+
+    const differenceInMilliseconds = newerTimestamp - olderTimestamp;
+
+    // Convert milliseconds to days and hours
+    const millisecondsInADay = 24 * 60 * 60 * 1000;
+    const millisecondsInAnHour = 60 * 60 * 1000;
+
+    const days = Math.floor(differenceInMilliseconds / millisecondsInADay);
+    const remainingMillisecondsAfterDays = differenceInMilliseconds % millisecondsInADay;
+    const hours = Math.floor(remainingMillisecondsAfterDays / millisecondsInAnHour);
+
+    return { days, hours };
+}
 
 export function finishMorebitsStatus(window: SimpleWindowInstance, statusWindow: SimpleWindowInstance, status: 'finished' | 'error', refresh?: boolean): void {
     let statusState, statusMessage, statusType;
