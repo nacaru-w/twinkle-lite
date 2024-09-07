@@ -23,6 +23,15 @@ export interface WikipediaTemplateDict {
     }
 }
 
+export interface APIPageResponse {
+    pageid: number, ns: number, revisions: any[], title: string
+}
+
+export interface PageCreationBasicInfo {
+    author: string,
+    timestamp: string
+}
+
 // Warnings module
 
 export interface WarningsModuleProcessedList {
