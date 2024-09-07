@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, ListElementData, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimeStamp } from "./../utils/utils";
+import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimestamp } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { ProtectionStatus } from "types/twinkle-types";
 
@@ -54,7 +54,7 @@ function protectionStatusTextBuilder(protectionExpiry: string): string {
         case 'infinity':
             return '(protegido para siempre)'
         default:
-            return `(hasta el ${parseTimeStamp(protectionExpiry)})`
+            return `(hasta el ${parseTimestamp(protectionExpiry)})`
     }
 }
 
@@ -87,7 +87,7 @@ ${input.reason ? input.reason : input.motive}
 /**
  * Fetches and adds protection status to form window
  */
-export async function fetchAndShowProtectionStatus(): Promise<void> {
+async function fetchAndShowProtectionStatus(): Promise<void> {
     // Fetches the current protection status of the article and updates the form accordingly
     const protection: ProtectionStatus = await getProtectionStatus(currentPageName);
     // Displays protection level on page
@@ -144,7 +144,7 @@ export function createPageProtectionFormWindow(): void {
         label: `Nivel actual de protección: `,
     })
 
-    let textAreaAndReasonField = form.append({
+    const textAreaAndReasonField = form.append({
         type: 'field',
         label: 'Opciones:',
     });
