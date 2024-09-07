@@ -1,9 +1,10 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, deletePage, getContent, today } from "../utils/utils";
+import { calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, getContent, getPageCreationInfo, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
 
 const closureOptions: string[] = ['Mantener', 'Borrar', 'Otro'];
+let timeElapsed: { days: number, hours: number };
 
 const DRC = {
     closedDR: {
@@ -25,8 +26,52 @@ const DRC = {
 
 function getClosureOptions(): ListElementData[] {
     return closureOptions.map((e) => {
-        return { type: 'option', value: e, label: e }
+        return { type: 'option', value: e, label: e };
     })
+}
+
+function changeSubmitButtonName(checked: boolean): void {
+    const button = document.querySelector('button.submitButtonProxy');
+    if (button) {
+        button.innerHTML = checked ? 'Posponer CDB' : 'Cerrar CDB';
+    }
+}
+
+function changeSelectMenuStatus(checked: boolean): void {
+    const selectMenu = document.getElementById('CDBResultSelectMenu') as HTMLSelectElement;
+    if (selectMenu) {
+        selectMenu.disabled = checked;
+    }
+}
+
+function showPostponeCheckbox(): void {
+    const box = document.getElementById('DRMPostponeBox');
+    if (box) {
+        box.style.display = 'block';
+    }
+}
+
+function showCreationDateAndTimeElapsed(creationDateAsTimestamp: string): void {
+    const span = document.querySelector("div[name='timeElapsedFromDRCreation'] > span.quickformDescription");
+    if (span) {
+        timeElapsed = calculateTimeDifferenceBetweenISO(creationDateAsTimestamp, convertDateToISO(new Date()));
+        const format = {
+            emoji: timeElapsed.days >= 14 ? '✔️' : '❌',
+            color: timeElapsed.days >= 14 ? 'var(--color-destructive--focus);' : 'var(--color-destructive);',
+        }
+        span.innerHTML = `${format.emoji} CDB abierta el ${parseTimestamp(creationDateAsTimestamp)}: <span style="font-weight: bold; color: ${format.color};">hace ${timeElapsed.days} días y ${timeElapsed.hours} horas</span>`;
+    }
+    if (timeElapsed.days > 14) {
+        showPostponeCheckbox();
+    }
+}
+
+async function fetchCreationDate(): Promise<void> {
+    const creationInfo = await getPageCreationInfo(currentPageName);
+    console.log(creationInfo);
+    if (creationInfo) {
+        showCreationDateAndTimeElapsed(creationInfo?.timestamp);
+    }
 }
 
 function manageOtherInputField(selectedOption: string): void {
@@ -104,10 +149,18 @@ async function editArticle(decision: string): Promise<void> {
 }
 
 async function editArticleTalkPage(decision: string) {
+    // TODO
+}
 
+function confirmIfLessThan14Days(): boolean {
+    if (timeElapsed.days <= 14) {
+        return confirm(`Han pasado solo ${timeElapsed.days} días desde que se abrió la CDB. La política ([[WP:CDB]]) especifica que los debates de las consultas de borrado deben durar 14 días, y su cierre solo se puede producir después de pasado este tiempo. ¿Seguro que quieres cerrarla antes del tiempo establecido?`)
+    }
+    return true
 }
 
 async function submitMessage(e: Event) {
+    if (!confirmIfLessThan14Days()) return;
     const form = e.target;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
 
@@ -138,8 +191,38 @@ export function createDRCFormWindow() {
 
     const form = new Morebits.quickForm(submitMessage);
 
+    const timeElapsedField = form.append({
+        type: 'field',
+        label: 'Estado de la consulta:'
+    })
+
+    timeElapsedField.append({
+        type: 'div',
+        name: 'timeElapsedFromDRCreation',
+        label: 'Cargando fecha de apertura de la CDB...'
+    })
+
+    timeElapsedField.append({
+        type: 'checkbox',
+        id: 'DRMPostponeBox',
+        list:
+            [{
+                name: "postpone",
+                value: "postpone",
+                label: "Posponer CDB",
+                checked: false,
+                tooltip: "Marca esta casilla para posponer la CDB durante otros 14 días",
+                event: (e: any) => {
+                    changeSubmitButtonName(e.target.checked);
+                    changeSelectMenuStatus(e.target.checked);
+                }
+            }],
+        style: 'display: none;'
+    })
+
     form.append({
         type: 'select',
+        id: 'CDBResultSelectMenu',
         name: 'result',
         label: 'Selecciona el resultado de la consulta:',
         list: getClosureOptions(),
@@ -160,12 +243,20 @@ export function createDRCFormWindow() {
         tooltip: 'Añade un comentario aclaratorio que complemente a la decisión tomada. Este aparecerá anexo a la decisión. Puedes usar wikicódigo y no es necesario firmarlo.'
     })
 
-    form.append({
+    const submitButton = form.append({
         type: 'submit',
-        label: 'Aceptar'
+        label: 'Cerrar CBD',
     });
+
+    submitButton.append({
+        type: 'button',
+        label: 'Posponer CDB'
+    })
 
     const result = form.render();
     Window.setContent(result);
     Window.display();
+
+    fetchCreationDate();
 }
+
