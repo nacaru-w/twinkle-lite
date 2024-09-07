@@ -199,7 +199,7 @@ export function createDRCFormWindow() {
     timeElapsedField.append({
         type: 'div',
         name: 'timeElapsedFromDRCreation',
-        label: 'Cargando fecha de apertura de la CDB...'
+        label: '⌛️ Cargando...'
     })
 
     timeElapsedField.append({
