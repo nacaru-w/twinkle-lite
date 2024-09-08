@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { abbreviatedMonths, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, getContent, getPageCreationInfo, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
+import { abbreviatedMonths, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
 
@@ -184,6 +184,18 @@ async function editArticle(decision: string): Promise<void> {
     }
 }
 
+async function addPostponeTemplate() {
+    new Morebits.status("Paso 2", "añadiendo plantilla para posponer la consulta...", "info");
+    await new mw.Api().edit(
+        currentPageName,
+        (revision: any) => ({
+            text: revision.content + "\n\n{{sust:prorrogar}}",
+            summary: "Prorrogando CDB mediante [[WP:TL|Twinkle Lite]]",
+            minor: false
+        })
+    )
+}
+
 async function editArticleTalkPage(decision: string) {
     // TODO
 }
@@ -203,18 +215,29 @@ async function submitMessage(e: Event) {
     const decision: string = input.result !== 'Otro' ? input.result : input.otherField;
     const comment: string | null = input.reason ? input.reason : null;
 
-    createStatusWindow(new Morebits.simpleWindow(400, 350));
+    const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
+    createStatusWindow(statusWindow);
     new Morebits.status("Paso 1", "editando la página de la consulta", "info");
 
     console.log(input);
-
-    try {
-        await editRequestPage(decision, comment);
-        await editArticle(decision);
-    } catch (error) {
-        new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
-        console.log(`Error: ${error}`);
+    debugger;
+    if (input.postpone) {
+        try {
+            await addPostponeTemplate();
+        } catch (error) {
+            finishMorebitsStatus(Window, statusWindow, 'error');
+            console.error(`Error: ${error}`);
+        }
+    } else {
+        try {
+            await editRequestPage(decision, comment);
+            await editArticle(decision);
+        } catch (error) {
+            finishMorebitsStatus(Window, statusWindow, 'error');
+            console.error(`Error: ${error}`);
+        }
     }
+
 
 }
 
