@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { abbreviatedMonths, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
+import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
 
@@ -150,7 +150,7 @@ function extractPageTitleFromWikicode(input: string): string | null {
 
 async function editRequestPage(decision: string, comment: string | null) {
     new Morebits.status("Paso 1", "cerrando la página de la consulta...", "info");
-    await new mw.Api().edit(
+    await api.edit(
         currentPageName,
         (revision: any) => ({
             text: replaceDRTemplate(revision.content, DRC.closedDR.top(decision, comment)) + '\n' + DRC.closedDR.bottom,
@@ -170,7 +170,7 @@ async function editArticle(decision: string): Promise<void> {
             await deletePage(page, true, reason)
         } else {
             new Morebits.status("Paso 2", "editando la página original...", "info");
-            await new mw.Api().edit(
+            await api.edit(
                 page,
                 (revision: any) => ({
                     text: DRC.articlePage.removeTemplate(revision.content),
@@ -186,7 +186,7 @@ async function editArticle(decision: string): Promise<void> {
 
 async function addPostponeTemplate() {
     new Morebits.status("Paso 2", "añadiendo plantilla para posponer la consulta...", "info");
-    await new mw.Api().edit(
+    await api.edit(
         currentPageName,
         (revision: any) => ({
             text: revision.content + "\n\n{{sust:prorrogar}}",
