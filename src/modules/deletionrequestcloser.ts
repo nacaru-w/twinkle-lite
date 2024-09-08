@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, getContent, getPageCreationInfo, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
+import { abbreviatedMonths, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, getContent, getPageCreationInfo, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
 
@@ -33,7 +33,7 @@ function getClosureOptions(): ListElementData[] {
 function changeSubmitButtonName(checked: boolean): void {
     const button = document.querySelector('button.submitButtonProxy');
     if (button) {
-        button.innerHTML = checked ? 'Posponer CDB' : 'Cerrar CDB';
+        button.innerHTML = checked ? 'Prorrogar CDB' : 'Cerrar CDB';
     }
 }
 
@@ -51,7 +51,35 @@ function showPostponeCheckbox(): void {
     }
 }
 
-function showCreationDateAndTimeElapsed(creationDateAsTimestamp: string): void {
+function findLastPostponementDate(text: string): string | null {
+    // Regular expression to match the "Prorrogada para generar más discusión..." and capture the date
+    const prorrogarRegex = /'''Prorrogada para generar más discusión.*?(\d{1,2})\s*(\w+)\s*(\d{4}) \(UTC\)/gi;
+
+    let match: RegExpExecArray | null;
+    let lastDate: Date | null = null;
+
+    // Search for all occurrences of the phrase in the text
+    while ((match = prorrogarRegex.exec(text)) !== null) {
+        const [day, monthName, year] = [match[1], match[2].toLowerCase(), match[3]];
+
+        // Convert month name to a number
+        const month = abbreviatedMonths[monthName];
+        if (!month) continue;
+
+        // Create a date object from the captured values
+        const currentDate = new Date(parseInt(year), month - 1, parseInt(day));
+
+        // Keep the latest date
+        if (!lastDate || currentDate > lastDate) {
+            lastDate = currentDate;
+        }
+    }
+
+    // Return the latest date in ISO format, or null if no templates were found
+    return lastDate ? lastDate.toISOString() : null;
+}
+
+function showCreationDateAndTimeElapsed(creationDateAsTimestamp: string, prorroga: boolean): void {
     const span = document.querySelector("div[name='timeElapsedFromDRCreation'] > span.quickformDescription");
     if (span) {
         timeElapsed = calculateTimeDifferenceBetweenISO(creationDateAsTimestamp, convertDateToISO(new Date()));
@@ -59,18 +87,26 @@ function showCreationDateAndTimeElapsed(creationDateAsTimestamp: string): void {
             emoji: timeElapsed.days >= 14 ? '✔️' : '❌',
             color: timeElapsed.days >= 14 ? 'var(--color-destructive--focus);' : 'var(--color-destructive);',
         }
-        span.innerHTML = `${format.emoji} CDB abierta el ${parseTimestamp(creationDateAsTimestamp)}: <span style="font-weight: bold; color: ${format.color};">hace ${timeElapsed.days} días y ${timeElapsed.hours} horas</span>`;
+        span.innerHTML = `${format.emoji} CDB ${prorroga ? 'prorrogada' : 'abierta'} el ${parseTimestamp(creationDateAsTimestamp)}: <span style="font-weight: bold; color: ${format.color};">hace ${timeElapsed.days} días y ${timeElapsed.hours} horas</span>`;
     }
     if (timeElapsed.days > 14) {
         showPostponeCheckbox();
     }
 }
 
-async function fetchCreationDate(): Promise<void> {
-    const creationInfo = await getPageCreationInfo(currentPageName);
-    console.log(creationInfo);
-    if (creationInfo) {
-        showCreationDateAndTimeElapsed(creationInfo?.timestamp);
+async function fetchCreationOrProrrogationDate(): Promise<void> {
+    const pageContent = await getContent(currentPageName);
+    const lastPostponement = findLastPostponementDate(pageContent);
+    console.log(lastPostponement);
+    debugger;
+    if (lastPostponement) {
+        console.log("última prórroga:", lastPostponement)
+        showCreationDateAndTimeElapsed(lastPostponement, true);
+    } else {
+        const creationInfo = await getPageCreationInfo(currentPageName);
+        if (creationInfo) {
+            showCreationDateAndTimeElapsed(creationInfo?.timestamp, false);
+        }
     }
 }
 
@@ -209,9 +245,9 @@ export function createDRCFormWindow() {
             [{
                 name: "postpone",
                 value: "postpone",
-                label: "Posponer CDB",
+                label: "Prorrogar CDB",
                 checked: false,
-                tooltip: "Marca esta casilla para posponer la CDB durante otros 14 días",
+                tooltip: "Marca esta casilla para prorrogar la CDB durante otros 14 días",
                 event: (e: any) => {
                     changeSubmitButtonName(e.target.checked);
                     changeSelectMenuStatus(e.target.checked);
@@ -250,13 +286,13 @@ export function createDRCFormWindow() {
 
     submitButton.append({
         type: 'button',
-        label: 'Posponer CDB'
+        label: 'Prorrogar CDB'
     })
 
     const result = form.render();
     Window.setContent(result);
     Window.display();
 
-    fetchCreationDate();
+    fetchCreationOrProrrogationDate();
 }
 
