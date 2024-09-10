@@ -29,16 +29,31 @@ export const abbreviatedMonths: { [abbreviation: string]: number } = {
 };
 
 /**
- * 
+ *  Gets the name of a talk page based on the name of the main page
+ * @param mainPageName - The name of the page
+ * @returns the name of the talk page associated to the page that was passed
+ * as argument
  */
-// export function getTalkPageName(pageName: string, namespace: string | number) {
-//     switch (namespace) {
-//         case 0:
-//             return `Discusión:${pageName}`;
-//         case 104:
-//             return 
-//     }
-// }
+export function getTalkPage(mainPageName: string): string {
+    // Define the namespace mappings
+    const namespaces: { [key: string]: string } = {
+        "Plantilla:": "Plantilla_discusión:",
+        "Anexo:": "Anexo_discusión:",
+        "Wikipedia:": "Wikipedia_discusión:",
+        "Ayuda": "Ayuda_discusión:",
+        "Wikiproyecto": "Wikiproyecto_discusión:"
+    };
+
+    // Check if the page is in the non-main namespaces
+    for (const namespace in namespaces) {
+        if (mainPageName.startsWith(namespace)) {
+            return mainPageName.replace(namespace, namespaces[namespace]);
+        }
+    }
+
+    // Default case for normal pages (namespace 0)
+    return "Discusión:" + mainPageName;
+}
 
 /**
  * Queries the mw API to obtain the namespace of a page given its name
