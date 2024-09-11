@@ -1,7 +1,8 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
+import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
+let nominatedPage: string;
 
 const closureOptions: string[] = ['Mantener', 'Borrar', 'Otro'];
 let timeElapsed: { days: number, hours: number };
@@ -164,6 +165,7 @@ async function editArticle(decision: string): Promise<void> {
     const content = await getContent(currentPageName);
     const page = extractPageTitleFromWikicode(content);
     if (page) {
+        nominatedPage = page;
         if (decision == 'Borrar') {
             new Morebits.status("Paso 2", "borrando la página original...", "info");
             const reason = `Según resultado de CDB: [[${currentPageName}]]`
@@ -178,8 +180,6 @@ async function editArticle(decision: string): Promise<void> {
                     minor: false
                 })
             );
-            new Morebits.status("Paso 3", "editando la página de discusión...", "info");
-            // TODO
         }
     }
 }
@@ -196,8 +196,18 @@ async function addPostponeTemplate() {
     )
 }
 
-async function editArticleTalkPage(decision: string) {
-    // TODO
+async function editArticleTalkPage(decision: string): Promise<void> {
+    if (decision == 'Borrar') return;
+    const talkPage = getTalkPage(nominatedPage);
+    new Morebits.status("Paso 3", 'editando la página de discusión...', "info");
+    await api.edit(
+        talkPage,
+        (revision: any) => ({
+            text: DRC.talkPage(decision) + '\n' + revision.content,
+            summary: `Editando página de discusión tras cierre de [[${currentPageName}|consulta de borrado]] mediante [[WP:TL|Twinkle Lite]]`,
+            minor: false
+        })
+    )
 }
 
 function confirmIfLessThan14Days(): boolean {
@@ -232,6 +242,7 @@ async function submitMessage(e: Event) {
         try {
             await editRequestPage(decision, comment);
             await editArticle(decision);
+            await editArticleTalkPage(decision);
         } catch (error) {
             finishMorebitsStatus(Window, statusWindow, 'error');
             console.error(`Error: ${error}`);
