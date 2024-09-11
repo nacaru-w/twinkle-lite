@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, parseTimestamp, today, todayAsTimestamp } from "../utils/utils";
+import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, parseTimestamp, today } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
@@ -234,6 +234,7 @@ async function submitMessage(e: Event) {
     if (input.postpone) {
         try {
             await addPostponeTemplate();
+            finishMorebitsStatus(Window, statusWindow, 'finished', true);
         } catch (error) {
             finishMorebitsStatus(Window, statusWindow, 'error');
             console.error(`Error: ${error}`);
@@ -243,6 +244,7 @@ async function submitMessage(e: Event) {
             await editRequestPage(decision, comment);
             await editArticle(decision);
             await editArticleTalkPage(decision);
+            finishMorebitsStatus(Window, statusWindow, 'finished', true);
         } catch (error) {
             finishMorebitsStatus(Window, statusWindow, 'error');
             console.error(`Error: ${error}`);
