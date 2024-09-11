@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, parseTimestamp, today } from "../utils/utils";
+import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, today } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
@@ -200,14 +200,22 @@ async function editArticleTalkPage(decision: string): Promise<void> {
     if (decision == 'Borrar') return;
     const talkPage = getTalkPage(nominatedPage);
     new Morebits.status("Paso 3", 'editando la página de discusión...', "info");
-    await api.edit(
-        talkPage,
-        (revision: any) => ({
-            text: DRC.talkPage(decision) + '\n' + revision.content,
-            summary: `Editando página de discusión tras cierre de [[${currentPageName}|consulta de borrado]] mediante [[WP:TL|Twinkle Lite]]`,
-            minor: false
-        })
-    )
+    if (await isPageMissing(talkPage)) {
+        await api.create(
+            talkPage,
+            { summary: `Creando página de discusión tras cierre de [[${currentPageName}|consulta de borrado]] mediante [[WP:TL|Twinkle Lite]]` },
+            DRC.talkPage(decision)
+        )
+    } else {
+        await api.edit(
+            talkPage,
+            (revision: any) => ({
+                text: DRC.talkPage(decision) + '\n' + revision.content,
+                summary: `Editando página de discusión tras cierre de [[${currentPageName}|consulta de borrado]] mediante [[WP:TL|Twinkle Lite]]`,
+                minor: false
+            })
+        )
+    }
 }
 
 function confirmIfLessThan14Days(): boolean {
