@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, today } from "../utils/utils";
+import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, today } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
@@ -161,7 +161,7 @@ async function editRequestPage(decision: string, comment: string | null) {
         currentPageName,
         (revision: any) => ({
             text: replaceDRTemplate(revision.content, DRC.closedDR.top(decision, comment)) + '\n' + DRC.closedDR.bottom,
-            summary: `Cierro [[${currentPageName}]] con resultado ${decision.toUpperCase()} mediante [[WP:TL|Twinkle Lite]]`,
+            summary: `Cierro [[${currentPageName}|consulta de borrado]] con resultado ${decision.toUpperCase()}, mediante [[WP:TL|Twinkle Lite]]`,
             minor: false
         })
     )
@@ -176,7 +176,7 @@ async function editArticle(decision: string): Promise<void> {
         nominatedPage = page;
         if (decision == 'Borrar') {
             new Morebits.status("Paso 2", "borrando la página original...", "info");
-            const reason = `Según resultado de CDB: [[${currentPageName}]]`
+            const reason = `Según resultado de CDB: [[${currentPageNameNoUnderscores}]]`
             await deletePage(page, true, reason)
         } else {
             new Morebits.status("Paso 2", "editando la página original...", "info");
@@ -184,7 +184,7 @@ async function editArticle(decision: string): Promise<void> {
                 page,
                 (revision: any) => ({
                     text: DRC.articlePage.removeTemplate(revision.content),
-                    summary: `Elimino plantilla según el resultado de [[${currentPageName}]]: ${decision.toUpperCase()} mediante [[WP:TL|Twinkle Lite]]`,
+                    summary: `Elimino plantilla según el resultado de [[${currentPageName}|la consulta de borrado]]: ${decision.toUpperCase()}; mediante [[WP:TL|Twinkle Lite]]`,
                     minor: false
                 })
             );
