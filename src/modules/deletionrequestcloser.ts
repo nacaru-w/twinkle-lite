@@ -3,6 +3,7 @@ import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateT
 
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
+let DROpeningDate: string;
 
 const closureOptions: string[] = ['Mantener', 'Borrar', 'Otro'];
 let timeElapsed: { days: number, hours: number };
@@ -10,12 +11,18 @@ let timeElapsed: { days: number, hours: number };
 const DRC = {
     closedDR: {
         top: (veredict: string, comment: string | null): string => {
-            return `{{cierracdb-arr}} '''${veredict.toUpperCase}'''. ${comment ? comment + ' ' : ''}~~~~`;
+            return `{{cierracdb-arr}} '''${veredict.toUpperCase()}'''. ${comment ? comment + ' ' : ''}~~~~`;
         },
         bottom: '{{cierracdb-ab}}'
     },
-    talkPage: (veredict: string) => {
-        return `{{cdbpasada|página=${currentPageName}}|fecha=${today}}|resultado='''${veredict}'''}}`
+    talkPage: async (veredict: string) => {
+        if (!DROpeningDate) {
+            const creationInfo = await getPageCreationInfo(currentPageName)
+            if (creationInfo) {
+                DROpeningDate = parseTimestamp(creationInfo?.timestamp);
+            }
+        }
+        return `{{cdbpasada|página=${currentPageName}|fecha=${DROpeningDate}|resultado='''${veredict}'''}}`
     },
     articlePage: {
         removeTemplate: (content: string): string => {
@@ -98,15 +105,14 @@ function showCreationDateAndTimeElapsed(creationDateAsTimestamp: string, prorrog
 async function fetchCreationOrProrrogationDate(): Promise<void> {
     const pageContent = await getContent(currentPageName);
     const lastPostponement = findLastPostponementDate(pageContent);
-    console.log(lastPostponement);
-    debugger;
     if (lastPostponement) {
         console.log("última prórroga:", lastPostponement)
         showCreationDateAndTimeElapsed(lastPostponement, true);
     } else {
         const creationInfo = await getPageCreationInfo(currentPageName);
         if (creationInfo) {
-            showCreationDateAndTimeElapsed(creationInfo?.timestamp, false);
+            DROpeningDate = creationInfo.timestamp;
+            showCreationDateAndTimeElapsed(creationInfo.timestamp, false);
         }
     }
 }
@@ -164,6 +170,8 @@ async function editRequestPage(decision: string, comment: string | null) {
 async function editArticle(decision: string): Promise<void> {
     const content = await getContent(currentPageName);
     const page = extractPageTitleFromWikicode(content);
+    console.log(page);
+    debugger;
     if (page) {
         nominatedPage = page;
         if (decision == 'Borrar') {
@@ -185,7 +193,7 @@ async function editArticle(decision: string): Promise<void> {
 }
 
 async function addPostponeTemplate() {
-    new Morebits.status("Paso 2", "añadiendo plantilla para posponer la consulta...", "info");
+    new Morebits.status("Paso 1", "añadiendo plantilla para posponer la consulta...", "info");
     await api.edit(
         currentPageName,
         (revision: any) => ({
@@ -200,17 +208,18 @@ async function editArticleTalkPage(decision: string): Promise<void> {
     if (decision == 'Borrar') return;
     const talkPage = getTalkPage(nominatedPage);
     new Morebits.status("Paso 3", 'editando la página de discusión...', "info");
+    const template = await DRC.talkPage(decision)
     if (await isPageMissing(talkPage)) {
         await api.create(
             talkPage,
             { summary: `Creando página de discusión tras cierre de [[${currentPageName}|consulta de borrado]] mediante [[WP:TL|Twinkle Lite]]` },
-            DRC.talkPage(decision)
+            template
         )
     } else {
         await api.edit(
             talkPage,
             (revision: any) => ({
-                text: DRC.talkPage(decision) + '\n' + revision.content,
+                text: template + '\n' + revision.content,
                 summary: `Editando página de discusión tras cierre de [[${currentPageName}|consulta de borrado]] mediante [[WP:TL|Twinkle Lite]]`,
                 minor: false
             })
@@ -235,10 +244,8 @@ async function submitMessage(e: Event) {
 
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
     createStatusWindow(statusWindow);
-    new Morebits.status("Paso 1", "editando la página de la consulta", "info");
 
     console.log(input);
-    debugger;
     if (input.postpone) {
         try {
             await addPostponeTemplate();
