@@ -56,3 +56,24 @@ export function createButton(
         });
     }
 }
+
+export function createBlockAppealsButton(appealBox: Element) {
+    console.log('creating block appeals button')
+    mw.loader.using(['oojs-ui-core', 'oojs-ui-widgets']).done(() => {
+        // Create the button using OOUI
+        const button = new OO.ui.ButtonWidget({
+            label: 'Resolver apelación de bloqueo',
+            flags: [
+                'primary',
+                'progressive'
+            ]
+        });
+
+        button.on('click', () => {
+            // TODO: should call the morebits function that creates the form
+        })
+
+        appealBox.prepend(button.$element[0])
+    });
+
+}

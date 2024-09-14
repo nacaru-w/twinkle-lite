@@ -1,5 +1,5 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
-import { createButton, createHideButton } from "./utils/DOMutils";
+import { createBlockAppealsButton, createButton, createHideButton } from "./utils/DOMutils";
 import { currentAction, currentNamespace, currentPageName, diffNewId } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
@@ -40,6 +40,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			}
 			const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
 			if (DRCportletLink) {
+				// TODO: should also check if user is sysop
 				DRCportletLink.onclick = createDRCFormWindow;
 			}
 		}
@@ -60,6 +61,15 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			if (WportletLink) {
 				WportletLink.onclick = createWarningsFormWindow;
 			}
+
+			if (currentNamespace === 3) {
+				const appealRequest = document.querySelector('.block-appeal');
+				if (appealRequest) {
+					// TODO: should also check if user is sysop
+					createBlockAppealsButton(appealRequest);
+				}
+			}
+
 		}
 
 		if (
@@ -94,7 +104,6 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		})
 	};
 
-	console.log("test");
 	loadTwinkleLite();
 
 } else {
