@@ -1,6 +1,6 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
-import { createBlockAppealsButton, createButton, createHideButton } from "./utils/DOMutils";
-import { currentAction, currentNamespace, currentPageName, diffNewId } from "./utils/utils";
+import { createBlockAppealsButton, createButton, createDRCButton, createHideButton } from "./utils/DOMutils";
+import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, diffNewId } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
 import { createTagsFormWindow } from "./modules/tags";
@@ -23,7 +23,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		callback();
 	};
 
-	const initializeTwinkleLite = () => {
+	const initializeTwinkleLite = async () => {
 
 		if (+currentNamespace >= 0 || mw.config.get('wgArticleId')) {
 			const DRMportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
@@ -38,11 +38,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			if (PPportletLink) {
 				PPportletLink.onclick = createPageProtectionFormWindow;
 			}
-			const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
-			if (DRCportletLink) {
-				// TODO: should also check if user is sysop
-				DRCportletLink.onclick = createDRCFormWindow;
-			}
+
 		}
 
 		if (currentNamespace === 0 || currentNamespace === 1 || currentNamespace === 104 || currentNamespace === 105) {
@@ -69,7 +65,21 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 					createBlockAppealsButton(appealRequest);
 				}
 			}
+		}
 
+		if (currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Consultas_de_borrado/')) {
+			const openDeletionRequest = await checkIfOpenDR(currentPageName);
+			if (openDeletionRequest) {
+				const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
+				if (DRCportletLink) {
+					// TODO: should also check if user is sysop
+					DRCportletLink.onclick = createDRCFormWindow;
+				}
+				const mwContentElement = document.querySelector('.mw-content-ltr')
+				if (mwContentElement) {
+					createDRCButton(mwContentElement);
+				}
+			}
 		}
 
 		if (
