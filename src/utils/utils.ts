@@ -12,6 +12,8 @@ export const currentNamespace: string | number = mw.config.get('wgNamespaceNumbe
 export const currentAction = mw.config.get('wgAction');
 export const currentSkin = mw.config.get('skin');
 export const diffNewId = mw.config.get('wgDiffNewId');
+export const userFlags: string[] = mw.config.get('wgUserGroups');
+export const isCurrentUserSysop: boolean = userFlags.includes('sysop');
 
 export const abbreviatedMonths: { [abbreviation: string]: number } = {
     ene: 1,
@@ -390,4 +392,9 @@ export function finishMorebitsStatus(window: SimpleWindowInstance, statusWindow:
         }, 2500);
     }
 
+}
+
+export async function checkIfOpenDR(pagename: string): Promise<boolean> {
+    const content = await getContent(pagename);
+    return !content.includes('{{cierracdb-arr}}')
 }

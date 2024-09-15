@@ -1,3 +1,4 @@
+import { createDRCFormWindow } from "./../modules/deletionrequestcloser";
 import { currentPageName, diffNewId } from "./../utils/utils";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
@@ -57,23 +58,36 @@ export function createButton(
     }
 }
 
+export function oouiButton(label: string, onclickFn: any) {
+    const button = new OO.ui.ButtonWidget({
+        label: label,
+        flags: [
+            'primary',
+            'progressive'
+        ]
+    });
+    button.on('click', onclickFn)
+    return button
+}
+
 export function createBlockAppealsButton(appealBox: Element) {
-    console.log('creating block appeals button')
+    const container = document.createElement('div');
+    container.style.textAlign = 'center';
     mw.loader.using(['oojs-ui-core', 'oojs-ui-widgets']).done(() => {
-        // Create the button using OOUI
-        const button = new OO.ui.ButtonWidget({
-            label: 'Resolver apelación de bloqueo',
-            flags: [
-                'primary',
-                'progressive'
-            ]
-        });
-
-        button.on('click', () => {
-            // TODO: should call the morebits function that creates the form
-        })
-
-        appealBox.prepend(button.$element[0])
+        const button = oouiButton('Resolver apelación de bloqueo', () => { })
+        container.append(button.$element[0])
+        appealBox.prepend(container)
     });
 
+}
+
+export function createDRCButton(textBox: Element) {
+    const container = document.createElement('div');
+    container.style.textAlign = 'center';
+    mw.loader.using(['oojs-ui-core', 'oojs-ui-widgets']).done(() => {
+        // Create the button using OOUI
+        const button = oouiButton('Cerrar consulta de borrado', createDRCFormWindow)
+        container.append(button.$element[0])
+        textBox.prepend(container)
+    });
 }

@@ -17,6 +17,7 @@ interface Window {
 declare const mw: {
     config: {
         get(key: string): string;
+        get(key: 'wgUserGroups'): string[];
     };
     Api: {
         new(): {
