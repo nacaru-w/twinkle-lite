@@ -1,3 +1,4 @@
+import { createBlockAppealsWindow } from "./../modules/blockappeals";
 import { createDRCFormWindow } from "./../modules/deletionrequestcloser";
 import { currentPageName, diffNewId } from "./../utils/utils";
 
@@ -74,7 +75,7 @@ export function createBlockAppealsButton(appealBox: Element) {
     const container = document.createElement('div');
     container.style.textAlign = 'center';
     mw.loader.using(['oojs-ui-core', 'oojs-ui-widgets']).done(() => {
-        const button = oouiButton('Resolver apelación de bloqueo', () => { })
+        const button = oouiButton('Resolver apelación de bloqueo', createBlockAppealsWindow)
         container.append(button.$element[0])
         appealBox.prepend(container)
     });
