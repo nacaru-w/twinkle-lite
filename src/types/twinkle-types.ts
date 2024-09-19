@@ -110,3 +110,9 @@ export interface TagTemplateListElement {
 export interface TwinkleLiteWindow extends Window {
     TwinkleLite?: boolean
 }
+
+export interface BlockInfoObject {
+    timestamp: string,
+    expiry: string,
+    reason?: string
+}

@@ -1,6 +1,6 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
-import { APIPageResponse, PageCreationBasicInfo, ProtectionStatus } from '../types/twinkle-types'
-import { ApiDeleteParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+import { APIPageResponse, BlockInfoObject, PageCreationBasicInfo, ProtectionStatus } from '../types/twinkle-types'
+import { ApiDeleteParams, ApiQueryBlocksParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 
 export const api = new mw.Api()
 
@@ -397,4 +397,21 @@ export function finishMorebitsStatus(window: SimpleWindowInstance, statusWindow:
 export async function checkIfOpenDR(pagename: string): Promise<boolean> {
     const content = await getContent(pagename);
     return !content.includes('{{cierracdb-arr}}')
+}
+
+export async function getBlockInfo(username: string): Promise<BlockInfoObject | null> {
+    const params: ApiQueryBlocksParams = {
+        action: "query",
+        list: "blocks",
+        bklimit: 1,
+        bkprop: ["timestamp", "expiry", "reason", "range", "flags"].join('|') as any,
+        format: "json"
+    }
+    const response = await api.get(params);
+    const blocks = response?.query?.blocks
+    if (blocks.length) {
+        return blocks[0];
+    } else {
+        return null
+    }
 }
