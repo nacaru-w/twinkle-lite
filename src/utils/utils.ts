@@ -400,17 +400,24 @@ export async function checkIfOpenDR(pagename: string): Promise<boolean> {
 }
 
 export async function getBlockInfo(username: string): Promise<BlockInfoObject | null> {
+    // TODO: implementar rango de IP con bkip, véase https://www.mediawiki.org/wiki/API:Blocks
     const params: ApiQueryBlocksParams = {
         action: "query",
         list: "blocks",
+        bkusers: username,
         bklimit: 1,
         bkprop: ["timestamp", "expiry", "reason", "range", "flags"].join('|') as any,
         format: "json"
     }
     const response = await api.get(params);
-    const blocks = response?.query?.blocks
+    const blocks = response?.query?.blocks;
     if (blocks.length) {
-        return blocks[0];
+        console.log("hola")
+        return {
+            blockStart: blocks[0].timestamp,
+            blockEnd: blocks[0].expiry,
+            reason: blocks[0].reason,
+        }
     } else {
         return null
     }
