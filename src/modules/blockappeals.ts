@@ -1,6 +1,9 @@
 import { SimpleWindowInstance } from "types/morebits-types";
+import { calculateTimeDifferenceBetweenISO, getBlockInfo, relevantUserName } from "./../utils/utils";
+import { BlockInfoObject } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
+let blockInfoObject: BlockInfoObject | null;
 
 function submitMessage(e: Event) {
     console.log(e)
@@ -14,6 +17,26 @@ function getResolutionOptions() {
     })
 }
 
+async function fetchAndShowBlockStatus() {
+    blockInfoObject = await getBlockInfo(relevantUserName);
+    console.log(blockInfoObject)
+    const blockStatusDiv = document.querySelector("#blockStatus");
+
+    if (blockStatusDiv) {
+        if (blockInfoObject) {
+            if (blockInfoObject.blockEnd == 'infinity') {
+                blockStatusDiv.innerHTML = 'El usuario está bloqueado para siempre'
+            } else {
+                const timeUntilUnblock = calculateTimeDifferenceBetweenISO(blockInfoObject.blockStart, blockInfoObject.blockEnd)
+                blockStatusDiv.innerHTML = `El bloqueo acabará en ${timeUntilUnblock.days} y ${timeUntilUnblock.hours}`
+            }
+        } else {
+            // TODO: implementar rango de IP
+            blockStatusDiv.innerHTML = 'El usuario no está bloqueado o su bloqueo es de rango de IP';
+        }
+    }
+}
+
 export function createBlockAppealsWindow() {
     Window = new Morebits.simpleWindow(620, 530);
 
@@ -22,6 +45,12 @@ export function createBlockAppealsWindow() {
     Window.addFooterLink('Guía para apelar bloqueos', 'Ayuda:Guía para apelar bloqueos');
 
     const form = new Morebits.quickForm(submitMessage);
+
+    form.append({
+        type: 'div',
+        id: 'blockStatus',
+        label: '⌛️ Cargando estado de bloqueo del usuario...'
+    })
 
     const resolutionDiv = form.append({
         type: 'field',
@@ -48,5 +77,8 @@ export function createBlockAppealsWindow() {
     const result = form.render();
     Window.setContent(result);
     Window.display();
+
+
+    fetchAndShowBlockStatus();
 
 }
