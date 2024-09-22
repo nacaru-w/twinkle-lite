@@ -112,7 +112,7 @@ export interface TwinkleLiteWindow extends Window {
 }
 
 export interface BlockInfoObject {
-    timestamp: string,
-    expiry: string,
+    blockStart: string,
+    blockEnd: string,
     reason?: string
 }
