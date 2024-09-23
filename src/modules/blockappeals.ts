@@ -1,5 +1,5 @@
 import { SimpleWindowInstance } from "types/morebits-types";
-import { calculateTimeDifferenceBetweenISO, getBlockInfo, relevantUserName } from "./../utils/utils";
+import { calculateTimeDifferenceBetweenISO, convertDateToISO, getBlockInfo, relevantUserName } from "./../utils/utils";
 import { BlockInfoObject } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
@@ -27,8 +27,10 @@ async function fetchAndShowBlockStatus() {
             if (blockInfoObject.blockEnd == 'infinity') {
                 blockStatusDiv.innerHTML = 'El usuario está bloqueado para siempre'
             } else {
-                const timeUntilUnblock = calculateTimeDifferenceBetweenISO(blockInfoObject.blockStart, blockInfoObject.blockEnd)
-                blockStatusDiv.innerHTML = `El bloqueo acabará en ${timeUntilUnblock.days} y ${timeUntilUnblock.hours}`
+                console.log(blockInfoObject);
+                const currentTimeInISO = convertDateToISO(new Date());
+                const timeUntilUnblock = calculateTimeDifferenceBetweenISO(currentTimeInISO, blockInfoObject.blockEnd);
+                blockStatusDiv.innerHTML = `El bloqueo acabará en ${timeUntilUnblock.days} días y ${timeUntilUnblock.hours} horas.`
             }
         } else {
             // TODO: implementar rango de IP
@@ -37,12 +39,19 @@ async function fetchAndShowBlockStatus() {
     }
 }
 
+function modifyFooterLink() {
+    const element = document.querySelector('span.morebits-dialog-footerlinks> a') as HTMLAnchorElement;
+    element.href = `https://es.wikipedia.org/w/index.php?title=Especial:Registro&page=${relevantUserName}&type=block`;
+}
+
 export function createBlockAppealsWindow() {
     Window = new Morebits.simpleWindow(620, 530);
 
     Window.setScriptName('Twinkle Lite');
     Window.setTitle('Revisar apelación de bloqueo');
-    Window.addFooterLink('Guía para apelar bloqueos', 'Ayuda:Guía para apelar bloqueos');
+    Window.addFooterLink('Historial de bloqueos del usuario', '');
+
+    modifyFooterLink();
 
     const form = new Morebits.quickForm(submitMessage);
 
