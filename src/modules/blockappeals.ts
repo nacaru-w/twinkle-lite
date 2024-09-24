@@ -27,7 +27,6 @@ async function fetchAndShowBlockStatus() {
             if (blockInfoObject.blockEnd == 'infinity') {
                 blockStatusDiv.innerHTML = 'El usuario está bloqueado para siempre'
             } else {
-                console.log(blockInfoObject);
                 const currentTimeInISO = convertDateToISO(new Date());
                 const timeUntilUnblock = calculateTimeDifferenceBetweenISO(currentTimeInISO, blockInfoObject.blockEnd);
                 blockStatusDiv.innerHTML = `El bloqueo acabará en ${timeUntilUnblock.days} días y ${timeUntilUnblock.hours} horas.`
