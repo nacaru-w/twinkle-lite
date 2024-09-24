@@ -1,4 +1,4 @@
-import { SimpleWindowInstance } from "types/morebits-types";
+import { QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { calculateTimeDifferenceBetweenISO, convertDateToISO, getBlockInfo, relevantUserName } from "./../utils/utils";
 import { BlockInfoObject } from "types/twinkle-types";
 
@@ -6,7 +6,11 @@ let Window: SimpleWindowInstance;
 let blockInfoObject: BlockInfoObject | null;
 
 function submitMessage(e: Event) {
-    console.log(e)
+    const form = e.target;
+    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
+
+    console.log(input);
+
 }
 
 const resolutionOptions: string[] = ['Desbloquear', 'Mantener bloqueo', 'Extender bloqueo'];
@@ -69,18 +73,24 @@ export function createBlockAppealsWindow() {
     resolutionDiv.append({
         type: 'select',
         id: 'resolutionSelect',
-        name: 'resolutionSelect',
+        name: 'resolution',
         label: 'Selecciona el resultado de la resolución:',
         list: getResolutionOptions()
     })
 
     resolutionDiv.append({
         type: 'textarea',
-        id: 'resolutionTextarea',
-        name: 'resolutionTextarea',
+        id: 'reasonTextArea',
+        name: 'reason',
         label: 'Describe detalladamente la resolución:',
-        tooltip: 'Puedes usar Wikicódigo, pero no es necesario que añades la firma, esta aparecerá de forma automática.'
+        tooltip: 'Puedes usar Wikicódigo, pero no es necesario que añades la firma, esta aparecerá de forma automática.',
+        required: true
     })
+
+    form.append({
+        type: 'submit',
+        label: 'Aceptar',
+    });
 
     const result = form.render();
     Window.setContent(result);
