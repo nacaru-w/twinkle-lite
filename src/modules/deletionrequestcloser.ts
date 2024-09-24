@@ -97,7 +97,7 @@ function showCreationDateAndTimeElapsed(creationDateAsTimestamp: string, prorrog
         }
         span.innerHTML = `${format.emoji} CDB ${prorroga ? 'prorrogada' : 'abierta'} el ${parseTimestamp(creationDateAsTimestamp)}: <span style="font-weight: bold; color: ${format.color};">hace ${timeElapsed.days} días y ${timeElapsed.hours} horas</span>`;
     }
-    if (timeElapsed.days > 14) {
+    if (timeElapsed.days >= 14) {
         showPostponeCheckbox();
     }
 }
@@ -330,15 +330,10 @@ export function createDRCFormWindow() {
         tooltip: 'Añade un comentario aclaratorio que complemente a la decisión tomada. Este aparecerá anexo a la decisión. Puedes usar wikicódigo y no es necesario firmarlo.'
     })
 
-    const submitButton = form.append({
+    form.append({
         type: 'submit',
         label: 'Cerrar CBD',
     });
-
-    submitButton.append({
-        type: 'button',
-        label: 'Prorrogar CDB'
-    })
 
     const result = form.render();
     Window.setContent(result);
