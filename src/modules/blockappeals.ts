@@ -1,17 +1,9 @@
 import { QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { calculateTimeDifferenceBetweenISO, convertDateToISO, getBlockInfo, relevantUserName } from "./../utils/utils";
+import { calculateTimeDifferenceBetweenISO, convertDateToISO, currentPageName, getBlockInfo, getContent, relevantUserName } from "./../utils/utils";
 import { BlockInfoObject } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
 let blockInfoObject: BlockInfoObject | null;
-
-function submitMessage(e: Event) {
-    const form = e.target;
-    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
-
-    console.log(input);
-
-}
 
 const resolutionOptions: string[] = ['Rechazo', 'Aprobación'];
 
@@ -23,7 +15,6 @@ function getResolutionOptions() {
 
 async function fetchAndShowBlockStatus() {
     blockInfoObject = await getBlockInfo(relevantUserName);
-    console.log(blockInfoObject)
     const blockStatusDiv = document.querySelector("#blockStatus");
 
     if (blockStatusDiv) {
@@ -45,6 +36,38 @@ async function fetchAndShowBlockStatus() {
 function modifyFooterLink() {
     const element = document.querySelector('span.morebits-dialog-footerlinks> a') as HTMLAnchorElement;
     element.href = `https://es.wikipedia.org/w/index.php?title=Especial:Registro&page=${relevantUserName}&type=block`;
+}
+
+function fetchAppeal(pageContent: string): string | null {
+    // Regular expression to match both {{desbloquear|...}} and {{desbloquear|1=...}} patterns
+    const desbloquearPattern = /{{\s*desbloquear\s*\|\s*(?:1=)?\s*([^}]*)}}/i;
+
+    // Find the first match of the pattern in the page content
+    const match = desbloquearPattern.exec(pageContent);
+
+    // Return the extracted content if found, otherwise return null
+    return match ? match[1].trim() : null;
+}
+
+function prepareAppealResolutionTemplate(appeal: string, explanation: string, resolution: string): string {
+    return `{{Desbloqueo revisado|${appeal}|${explanation}|${resolution.toLowerCase()}}}`
+}
+
+async function submitMessage(e: Event) {
+    const form = e.target;
+    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
+
+    const content = await getContent(currentPageName);
+
+    console.log(input);
+
+    const appeal = fetchAppeal(content)
+    console.log("appeal", appeal)
+
+    if (appeal) {
+        console.log("Template:", prepareAppealResolutionTemplate(appeal, input.reason, input.resolution))
+    }
+
 }
 
 export function createBlockAppealsWindow() {
