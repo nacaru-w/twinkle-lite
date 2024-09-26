@@ -13,7 +13,7 @@ function submitMessage(e: Event) {
 
 }
 
-const resolutionOptions: string[] = ['Desbloquear', 'Mantener bloqueo', 'Extender bloqueo'];
+const resolutionOptions: string[] = ['Rechazo', 'Aprobación'];
 
 function getResolutionOptions() {
     return resolutionOptions.map((e) => {
