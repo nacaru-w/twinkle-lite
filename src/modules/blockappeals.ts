@@ -1,5 +1,5 @@
 import { QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { calculateTimeDifferenceBetweenISO, convertDateToISO, currentPageName, getBlockInfo, getContent, relevantUserName } from "./../utils/utils";
+import { api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, finishMorebitsStatus, getBlockInfo, getContent, relevantUserName } from "./../utils/utils";
 import { BlockInfoObject } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
@@ -50,23 +50,49 @@ function fetchAppeal(pageContent: string): string | null {
 }
 
 function prepareAppealResolutionTemplate(appeal: string, explanation: string, resolution: string): string {
-    return `{{Desbloqueo revisado|${appeal}|${explanation}|${resolution.toLowerCase()}}}`
+    return `{{Desbloqueo revisado|${appeal}|${explanation} ~~~~|${resolution.toLowerCase()}}}`
 }
+
+function substitutePageContent(template: string) {
+    // TODO, the function should find the current "desbloquear" template and replace it with the new one
+}
+
+async function makeEdit(template: string, resolution: string) {
+    new Morebits.status("Paso 1", "cerrando la petición de desbloqueo...", "info");
+    await api.edit(
+        currentPageName,
+        (revision: any) => ({
+            text: "", /* call substitutePageContent function with template */
+            summary: `Cierro petición de desbloqueo con resultado: ${resolution.toLowerCase()}`,
+            minor: false
+        })
+    )
+}
+
 
 async function submitMessage(e: Event) {
     const form = e.target;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
 
+    const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
+    createStatusWindow(statusWindow);
+
     const content = await getContent(currentPageName);
 
     console.log(input);
 
-    const appeal = fetchAppeal(content)
-    console.log("appeal", appeal)
+    const appeal = fetchAppeal(content);
 
     if (appeal) {
-        console.log("Template:", prepareAppealResolutionTemplate(appeal, input.reason, input.resolution))
+        const filledTemplate = prepareAppealResolutionTemplate(appeal, input.reason, input.resolution);
+        try {
+            await makeEdit(filledTemplate, input.resolution);
+        } catch (error) {
+            finishMorebitsStatus(Window, statusWindow, 'error');
+            console.error(error);
+        }
     }
+
 
 }
 
