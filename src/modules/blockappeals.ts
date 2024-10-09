@@ -53,17 +53,24 @@ function prepareAppealResolutionTemplate(appeal: string, explanation: string, re
     return `{{Desbloqueo revisado|${appeal}|${explanation} ~~~~|${resolution.toLowerCase()}}}`
 }
 
-function substitutePageContent(template: string) {
-    // TODO, the function should find the current "desbloquear" template and replace it with the new one
+function substitutePageContent(text: string, newTemplate: string): string {
+    // Regular expression to match the {{desbloquear}} template and its contents
+    const desbloquearRegex = /\{\{desbloquear\|.*?\}\}/g;
+
+    // Replace the matched template with the new template
+    const updatedText = text.replace(desbloquearRegex, newTemplate);
+
+    // Return the updated text
+    return updatedText;
 }
 
-async function makeEdit(template: string, resolution: string) {
+async function makeEdit(pageContent: string, newTemplate: string, resolution: string) {
     new Morebits.status("Paso 1", "cerrando la petición de desbloqueo...", "info");
     await api.edit(
         currentPageName,
         (revision: any) => ({
-            text: "", /* call substitutePageContent function with template */
-            summary: `Cierro petición de desbloqueo con resultado: ${resolution.toLowerCase()}`,
+            text: substitutePageContent(pageContent, newTemplate),
+            summary: `Cierro petición de desbloqueo con resultado: ${resolution.toLowerCase()} mediante [[WP:TL|Twinkle Lite]]`,
             minor: false
         })
     )
@@ -86,7 +93,8 @@ async function submitMessage(e: Event) {
     if (appeal) {
         const filledTemplate = prepareAppealResolutionTemplate(appeal, input.reason, input.resolution);
         try {
-            await makeEdit(filledTemplate, input.resolution);
+            await makeEdit(content, filledTemplate, input.resolution);
+            finishMorebitsStatus(Window, statusWindow, 'finished', true);
         } catch (error) {
             finishMorebitsStatus(Window, statusWindow, 'error');
             console.error(error);

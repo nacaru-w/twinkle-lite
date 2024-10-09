@@ -1,6 +1,6 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
 import { createBlockAppealsButton, createButton, createDRCButton, createHideButton } from "./utils/DOMutils";
-import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, diffNewId } from "./utils/utils";
+import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, diffNewId, isCurrentUserSysop } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
 import { createTagsFormWindow } from "./modules/tags";
@@ -58,7 +58,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 				WportletLink.onclick = createWarningsFormWindow;
 			}
 
-			if (currentNamespace === 3) {
+			if (currentNamespace === 3 || /* Only testing, remove later */ currentNamespace === 2) {
 				const appealRequest = document.querySelector('.block-appeal');
 				if (appealRequest) {
 					// TODO: should also check if user is sysop
@@ -67,7 +67,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			}
 		}
 
-		if (currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Consultas_de_borrado/')) {
+		if (/* isCurrentUserSysop && */ currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Consultas_de_borrado/')) {
 			const openDeletionRequest = await checkIfOpenDR(currentPageName);
 			if (openDeletionRequest) {
 				const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
