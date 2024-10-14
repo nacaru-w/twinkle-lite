@@ -8,6 +8,7 @@ import { createReportsFormWindow } from "./modules/reports";
 import { createWarningsFormWindow } from "./modules/warnings";
 import { createHideFormWindow } from "./modules/hide";
 import { createDRCFormWindow } from "./modules/deletionrequestcloser";
+import { createFastBlockerButton } from "./modules/fastblocker";
 
 // Let's check first whether the script has been already loaded through global variable
 if (!window.IS_TWINKLE_LITE_LOADED) {
@@ -80,6 +81,10 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 					createDRCButton(mwContentElement);
 				}
 			}
+		}
+
+		if (/* TODO: isCurrentUserSysop */ true) {
+			createFastBlockerButton();
 		}
 
 		if (
