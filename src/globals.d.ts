@@ -34,14 +34,18 @@ declare const mw: {
     loader: {
         using(string);
         load(string, string);
-    }
+    };
     hook(hookType: string): {
         add(addedFunction: any)
-    }
+    };
+    notify(string)
 };
 
 declare const Morebits: {
     status: StatusConstructor
     simpleWindow: SimpleWindowConstructor;
     quickForm: QuickForm;
+    ip: {
+        get64: Get64;
+    };
 };
