@@ -220,7 +220,7 @@ function submitBlock(e: any) {
     });
 }
 
-export function createUserToolButton() {
+export function createFastBlockerButton() {
     mw.hook('wikipage.content').add(function (obj: any) {
         obj.find('a.mw-usertoollinks-block').each(function (element: any) {
             const newElement = document.createElement('span');
