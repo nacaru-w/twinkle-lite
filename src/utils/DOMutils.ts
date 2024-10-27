@@ -3,17 +3,19 @@ import { createDRCFormWindow } from "./../modules/deletionrequestcloser";
 import { currentPageName, diffNewId } from "./../utils/utils";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
-    const parentElement = document.querySelector('.mw-diff-undo')?.parentElement;
-    if (parentElement) {
-        const hideButton = document.createElement('span');
-        const tooltip: string = "Solicita que esta edición se oculte en el TAB";
-        hideButton.innerHTML = ` (<a class="TL-hide-button" title="${tooltip}">ocultar</a>)`;
-        parentElement.appendChild(hideButton);
+    if (!document.querySelector('.TL-hide-button')) {
+        const parentElement = document.querySelector('.mw-diff-undo')?.parentElement;
+        if (parentElement) {
+            const hideButton = document.createElement('span');
+            const tooltip: string = "Solicita que esta edición se oculte en el TAB";
+            hideButton.innerHTML = ` (<a class="TL-hide-button" title="${tooltip}">ocultar</a>)`;
+            parentElement.appendChild(hideButton);
 
-        const hideLink = document.querySelector('.TL-hide-button');
-        hideLink?.addEventListener('click', () => {
-            callbackFn(diffNewId);
-        });
+            const hideLink = document.querySelector('.TL-hide-button');
+            hideLink?.addEventListener('click', () => {
+                callbackFn(diffNewId);
+            });
+        }
     }
 }
 
