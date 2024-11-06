@@ -1,6 +1,6 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
 import { createBlockAppealsButton, createButton, createDRCButton, createHideButton } from "./utils/DOMutils";
-import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, diffNewId, isCurrentUserSysop } from "./utils/utils";
+import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, currentUser, diffNewId, isCurrentUserSysop } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
 import { createTagsFormWindow } from "./modules/tags";
@@ -9,6 +9,7 @@ import { createWarningsFormWindow } from "./modules/warnings";
 import { createHideFormWindow } from "./modules/hide";
 import { createDRCFormWindow } from "./modules/deletionrequestcloser";
 import { createFastBlockerButton } from "./modules/fastblocker";
+import { createConfigWindow } from "./modules/config";
 
 // Let's check first whether the script has been already loaded through global variable
 if (!window.IS_TWINKLE_LITE_LOADED) {
@@ -106,6 +107,13 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			mw.hook('wikipage.content').add(() => {
 				createHideButton(createHideFormWindow);
 			})
+		}
+
+		if (currentNamespace == 2 && currentPageName.endsWith(currentUser)) {
+			const configLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Configuración de TL', 'TL-button', 'Configuración de Twinkle Lite')
+			if (configLink) {
+				configLink.onclick = createConfigWindow;
+			}
 		}
 
 	};
