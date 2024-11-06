@@ -1,4 +1,5 @@
 import { QuickForm, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
+import { isCurrentUserSysop } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 
@@ -17,18 +18,52 @@ export function createConfigWindow() {
 
     const tagsField: QuickFormElementInstance = form.append({
         type: 'field',
-        label: 'Módulo de plantillado de artículos'
+        label: 'Módulo de plantillado de artículos',
+        id: 'tags-box'
     });
+
+    tagsField.append({
+        type: 'checkbox',
+        name: 'tagsMenu',
+        list: [{
+            value: 'tags',
+            label: 'Activa la opción «Añadir plantilla» en el menú de acciones',
+            name: 'tagsActionsMenuCheckbox'
+        }]
+    })
 
     const DRCField: QuickFormElementInstance = form.append({
         type: 'field',
-        label: 'Módulo de cerrado de consultas de borrado'
+        label: 'Módulo de cerrado de consultas de borrado',
+        id: 'drc-box'
     });
+
+    DRCField.append({
+        type: 'checkbox',
+        name: 'drcMenu',
+        list: [{
+            value: 'tags',
+            label: 'Activa la opción «Cerrar CDB» en el menú de acciones al estar en la página de una consulta de borrado (solo bibliotecarios)',
+            name: 'DRCActionsMenuCheckbox',
+            disabled: !isCurrentUserSysop
+        }]
+    })
 
     const DRMField: QuickFormElementInstance = form.append({
         type: 'field',
-        label: 'Módulo de apertura de consultas de borrado'
+        label: 'Módulo de apertura de consultas de borrado',
+        id: 'drm-box'
     });
+
+    DRMField.append({
+        type: 'checkbox',
+        name: 'drmMenu',
+        list: [{
+            value: 'tags',
+            label: 'Activa la opción «Abrir CDB» en el menú de acciones',
+            name: 'DRMActionsMenuCheckbox'
+        }]
+    })
 
     const fastBlockerField: QuickFormElementInstance = form.append({
         type: 'field',
