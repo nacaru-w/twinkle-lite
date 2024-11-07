@@ -32,23 +32,6 @@ export function createConfigWindow() {
         }]
     })
 
-    const DRCField: QuickFormElementInstance = form.append({
-        type: 'field',
-        label: 'Módulo de cerrado de consultas de borrado',
-        id: 'drc-box'
-    });
-
-    DRCField.append({
-        type: 'checkbox',
-        name: 'drcMenu',
-        list: [{
-            value: 'tags',
-            label: 'Activa la opción «Cerrar CDB» en el menú de acciones al estar en la página de una consulta de borrado (solo bibliotecarios)',
-            name: 'DRCActionsMenuCheckbox',
-            disabled: !isCurrentUserSysop
-        }]
-    })
-
     const DRMField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Módulo de apertura de consultas de borrado',
@@ -64,16 +47,6 @@ export function createConfigWindow() {
             name: 'DRMActionsMenuCheckbox'
         }]
     })
-
-    const fastBlockerField: QuickFormElementInstance = form.append({
-        type: 'field',
-        label: 'Módulo de bloqueado rápido'
-    });
-
-    const blockAppealsField: QuickFormElementInstance = form.append({
-        type: 'field',
-        label: 'Módulo de resolución de peticiones de desbloqueo'
-    });
 
     const hideField: QuickFormElementInstance = form.append({
         type: 'field',
@@ -99,6 +72,57 @@ export function createConfigWindow() {
         type: 'field',
         label: 'Módulo de advertencias'
     });
+
+    const fastBlockerField: QuickFormElementInstance = form.append({
+        type: 'field',
+        label: 'Módulo de bloqueado rápido'
+    });
+
+    fastBlockerField.append({
+        type: 'checkbox',
+        name: 'fbMenu',
+        list: [{
+            value: 'fast-blocker',
+            label: 'Activa el botón «bloqueo rápido» en historiales y la lista de seguimiento (solo bibliotecarios)',
+            name: 'FBButtonMenuCheckbox',
+            disabled: !isCurrentUserSysop
+        }]
+    })
+
+    const DRCField: QuickFormElementInstance = form.append({
+        type: 'field',
+        label: 'Módulo de cerrado de consultas de borrado',
+        id: 'drc-box'
+    });
+
+    DRCField.append({
+        type: 'checkbox',
+        name: 'drcMenu',
+        list: [
+            {
+                value: 'tags-option',
+                label: 'Muestra un botón «Cerrar CDB» en páginas en las de consultas de borrado (solo bibliotecarios)',
+                name: 'DRCActionsMenuCheckbox',
+                disabled: !isCurrentUserSysop
+            },
+        ]
+    })
+
+    const blockAppealsField: QuickFormElementInstance = form.append({
+        type: 'field',
+        label: 'Módulo de resolución de peticiones de desbloqueo'
+    });
+
+    blockAppealsField.append({
+        type: 'checkbox',
+        name: 'baMenu',
+        list: [{
+            value: 'block-appeals',
+            label: 'Muestra un botón en las páginas de usuario en las que se encuentra una solicitud de desbloqueo (solo bibliotecarios)',
+            name: 'BAButtonMenuCheckbox',
+            disabled: !isCurrentUserSysop
+        }]
+    })
 
     const result = form.render();
     Window.setContent(result);
