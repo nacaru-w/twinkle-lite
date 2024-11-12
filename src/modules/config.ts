@@ -42,7 +42,7 @@ export function createConfigWindow() {
         type: 'checkbox',
         name: 'drmMenu',
         list: [{
-            value: 'tags',
+            value: 'DRM',
             label: 'Activa la opción «Abrir CDB» en el menú de acciones',
             name: 'DRMActionsMenuCheckbox'
         }]
@@ -53,25 +53,91 @@ export function createConfigWindow() {
         label: 'Módulo de ocultado de ediciones'
     });
 
+    hideField.append({
+        type: 'checkbox',
+        name: 'hideMenu',
+        list: [{
+            value: 'hide',
+            label: 'Activa la opción de ocultar ediciones en páginas de diffs',
+            name: 'HideDiffPageCheckbox'
+        }]
+    })
+
     const pageProtectionField: QuickFormElementInstance = form.append({
         type: 'field',
-        label: 'Módulo de solicitud de protección de páginas'
+        label: 'Módulo de solicitud de protección de páginas',
     });
 
-    const reportsField: QuickFormElementInstance = form.append({
-        type: 'field',
-        label: 'Módulo de denuncias'
-    });
+    pageProtectionField.append({
+        type: 'checkbox',
+        name: 'PPMenu',
+        list: [{
+            value: 'PP',
+            label: 'Activa la opción «Pedir protección» en el menú de acciones',
+            name: 'PPActionMenuCheckbox'
+        }]
+    })
+
 
     const speedyDeletionField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Módulo de solicitud de borrado rápido'
     });
 
-    const warningsModule: QuickFormElementInstance = form.append({
+    speedyDeletionField.append({
+        type: 'checkbox',
+        name: 'speedyDeletionMenu',
+        list: [{
+            value: 'speedy-actions',
+            label: 'Activa la opción «Borrado rápido» en el menú de acciones',
+            name: 'SDActionsMenuCheckbox'
+        }]
+    })
+
+
+    const reportsField: QuickFormElementInstance = form.append({
+        type: 'field',
+        label: 'Módulo de denuncias'
+    });
+
+    reportsField.append({
+        type: 'checkbox',
+        name: 'reportsMenu',
+        list: [
+            {
+                value: 'reports-actions',
+                label: 'Activa la opción «Denunciar usuario» en el menú de acciones en páginas de usuario',
+                name: 'ReportsActionsMenuCheckbox'
+            },
+            {
+                value: 'reports-usertoollinks',
+                label: 'Activa la opción «denunciar» en la lista de diffs en páginas de historial, cambios recientes y similares',
+                name: 'ReportsUserToolLinksMenuCheckbox'
+            }
+        ]
+    })
+
+    const warningsModuleField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Módulo de advertencias'
     });
+
+    warningsModuleField.append({
+        type: 'checkbox',
+        name: 'warningsMenu',
+        list: [
+            {
+                value: 'warnings-actions',
+                label: 'Activa la opción «Avisar usuario» en el menú de acciones',
+                name: 'WarningsActionsMenuCheckbox'
+            },
+            {
+                value: 'warnings-usertoollinks',
+                label: 'Activa la opción «denunciar» en en la lista de diffs en páginas de historial, cambios recientes y similares',
+                name: 'WarningsUserToolLinksMenuCheckbox'
+            }
+        ]
+    })
 
     const fastBlockerField: QuickFormElementInstance = form.append({
         type: 'field',
