@@ -190,6 +190,11 @@ export function createConfigWindow() {
         }]
     })
 
+    form.append({
+        type: 'submit',
+        label: 'Aplicar configuración',
+    });
+
     const result = form.render();
     Window.setContent(result);
     Window.display();
