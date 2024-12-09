@@ -1,9 +1,32 @@
 import { QuickForm, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { isCurrentUserSysop } from "./../utils/utils";
+import { currentUser, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 
-function submitMessage(e: Event) {
+async function createConfigPage(input: any) {
+    await new mw.Api().create(
+        `Usuario:${currentUser}/twinkle-lite-prefs`,
+        { summary: `Creando página de configuración de [[WP:TL|Twinkle Lite]]` },
+        JSON.stringify(input)
+    )
+}
+
+async function submitMessage(e: Event) {
+    const form = e.target as HTMLFormElement;
+    const input = Morebits.quickForm.getInputData(form);
+
+    console.log(input)
+
+    try {
+        const configPageMissing = await isPageMissing(`Usuario:${currentUser}/twinkle-lite-prefs.js`);
+        if (configPageMissing) {
+            await createConfigPage(input)
+        } else {
+            console.log("editamos")
+        }
+    } catch (error) {
+
+    }
 
 }
 
