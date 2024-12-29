@@ -116,3 +116,15 @@ export interface BlockInfoObject {
     blockEnd: string,
     reason?: string
 }
+
+export interface Settings {
+    tagsActionsMenuCheckbox: boolean,
+    DRMActionsMenuCheckbox: boolean,
+    HideDiffPageCheckbox: boolean,
+    PPActionMenuCheckbox: boolean,
+    SDActionsMenuCheckbox: boolean,
+    ReportsActionsMenuCheckbox: boolean,
+    ReportsUserToolLinksMenuCheckbox: boolean,
+    WarningsActionsMenuCheckbox: boolean,
+    WarningsUserToolLinksMenuCheckbox: boolean,
+}
