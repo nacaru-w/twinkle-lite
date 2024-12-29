@@ -1,14 +1,38 @@
 import { QuickForm, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { currentUser, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
+import { currentUser, getContent, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
+import { Settings } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
+let config: Settings | null = null;
 
-async function createConfigPage(input: any) {
+async function createConfigPage(settings: Settings) {
     await new mw.Api().create(
-        `Usuario:${currentUser}/twinkle-lite-prefs`,
+        `Usuario:${currentUser}/twinkle-lite-settings.json`,
         { summary: `Creando página de configuración de [[WP:TL|Twinkle Lite]]` },
-        JSON.stringify(input)
+        JSON.stringify(settings)
     )
+}
+
+async function editConfigPage(settings: Settings) {
+    await new mw.Api().edit(
+        `Usuario:${currentUser}/twinkle-lite-settings.json`,
+        () => {
+            return {
+                text: JSON.stringify(settings),
+                summary: `Editando página de configuración de [[WP:TL|Twinkle Lite]]`,
+                minor: false
+            }
+        }
+    )
+}
+
+function saveSettingsToLocalStorage(settings: Settings) {
+    try {
+        const serializedSettings = JSON.stringify(settings);
+        localStorage.setItem("TwinkleLiteUserSettings", serializedSettings);
+    } catch (error) {
+        console.error("Hubo un error guardando las preferencias de configuración en el localStorage:", error)
+    }
 }
 
 async function submitMessage(e: Event) {
@@ -18,19 +42,22 @@ async function submitMessage(e: Event) {
     console.log(input)
 
     try {
-        const configPageMissing = await isPageMissing(`Usuario:${currentUser}/twinkle-lite-prefs.js`);
+        debugger;
+        const configPageMissing = await isPageMissing(`Usuario:${currentUser}/twinkle-lite-settings.json`);
         if (configPageMissing) {
-            await createConfigPage(input)
+            await createConfigPage(input);
         } else {
-            console.log("editamos")
+            await editConfigPage(input);
         }
-    } catch (error) {
-
+        saveSettingsToLocalStorage(input);
+    } catch (error: any) {
+        console.error(error)
     }
 
 }
 
-export function createConfigWindow() {
+export function createConfigWindow(settings: Settings | null) {
+    console.log(settings);
     Window = new Morebits.simpleWindow(620, 530);
 
     Window.setScriptName('Twinkle Lite');
