@@ -1,5 +1,5 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
-import { APIPageResponse, BlockInfoObject, PageCreationBasicInfo, ProtectionStatus } from '../types/twinkle-types'
+import { APIPageResponse, BlockInfoObject, PageCreationBasicInfo, ProtectionStatus, Settings } from '../types/twinkle-types'
 import { ApiDeleteParams, ApiQueryBlocksParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 
 export const api = new mw.Api()
@@ -251,10 +251,10 @@ export async function getProtectionStatus(pageName: string): Promise<ProtectionS
  * Fetches the text content of a specified page using the MediaWiki API.
  * 
  * @param pageName - The name of the page to fetch content for.
- * @returns A promise that resolves to the page content as a string, or undefined if not found.
+ * @returns A promise that resolves to the page content as a string, or null if not found.
  * @throws An error if the API request fails.
  */
-export async function getContent(pageName: string): Promise<string> {
+export async function getContent(pageName: string): Promise<string | null> {
     const params: ApiQueryRevisionsParams = {
         action: 'query',
         prop: 'revisions',
@@ -269,7 +269,10 @@ export async function getContent(pageName: string): Promise<string> {
 
     try {
         const data = await apiPromise;
-        return data.query.pages[0].revisions[0].slots?.main?.content;
+        if (data.query?.pages[0]?.missing) {
+            return null
+        }
+        return data.query?.pages[0]?.revisions[0]?.slots?.main?.content;
     } catch (error) {
         console.error('Error fetching page content:', error);
         throw error;
@@ -394,9 +397,11 @@ export function finishMorebitsStatus(window: SimpleWindowInstance, statusWindow:
 
 }
 
-export async function checkIfOpenDR(pagename: string): Promise<boolean> {
+export async function checkIfOpenDR(pagename: string): Promise<boolean | void> {
     const content = await getContent(pagename);
-    return !content.includes('{{cierracdb-arr}}')
+    if (content) {
+        return !content.includes('{{cierracdb-arr}}')
+    }
 }
 
 export async function getBlockInfo(username: string): Promise<BlockInfoObject | null> {
@@ -421,4 +426,22 @@ export async function getBlockInfo(username: string): Promise<BlockInfoObject | 
     } else {
         return null
     }
+}
+
+export async function getConfigPage(): Promise<Settings | null> {
+    const localStorageSettings: string | null = localStorage.getItem("TwinkleLiteUserSettings");
+    if (localStorageSettings) {
+        return JSON.parse(localStorageSettings);
+    } else {
+        try {
+            const onWikiSettings = await getContent(`Usuario:${currentUser}/twinkle-lite-settings.json`)
+            if (onWikiSettings) {
+                return JSON.parse(onWikiSettings);
+            }
+        } catch (error) {
+            console.error("Hubo un error cargando las preferencias", error);
+            return null
+        }
+    }
+    return null
 }
