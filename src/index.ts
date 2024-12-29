@@ -1,6 +1,6 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
 import { createBlockAppealsButton, createButton, createDRCButton, createHideButton } from "./utils/DOMutils";
-import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, currentUser, diffNewId, isCurrentUserSysop } from "./utils/utils";
+import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, currentUser, diffNewId, getConfigPage, isCurrentUserSysop } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
 import { createTagsFormWindow } from "./modules/tags";
@@ -26,6 +26,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 	};
 
 	const initializeTwinkleLite = async () => {
+		const settings = await getConfigPage();
 
 		if (+currentNamespace >= 0 || mw.config.get('wgArticleId')) {
 			const DRMportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
@@ -112,7 +113,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		if (currentNamespace == 2 && currentPageName.endsWith(currentUser)) {
 			const configLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Configuración de TL', 'TL-button', 'Configuración de Twinkle Lite')
 			if (configLink) {
-				configLink.onclick = createConfigWindow;
+				configLink.onclick = () => createConfigWindow(settings);
 			}
 		}
 
