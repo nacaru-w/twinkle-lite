@@ -127,4 +127,8 @@ export interface Settings {
     ReportsUserToolLinksMenuCheckbox: boolean,
     WarningsActionsMenuCheckbox: boolean,
     WarningsUserToolLinksMenuCheckbox: boolean,
+    FBButtonMenuCheckbox: boolean,
+    DRCPageMenuCheckbox: boolean,
+    DRCActionsMenuCheckbox: boolean,
+    BAButtonMenuCheckbox: boolean,
 }
