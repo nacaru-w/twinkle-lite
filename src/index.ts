@@ -29,43 +29,58 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		const settings = await getConfigPage();
 
 		if (+currentNamespace >= 0 || mw.config.get('wgArticleId')) {
-			const DRMportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
-			if (DRMportletLink) {
-				DRMportletLink.onclick = createDeletionRequestMarkerFormWindow;
-			}
-			const SDportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Borrado rápido', 'TL-button', 'Solicita el borrado rápido de la página');
-			if (SDportletLink) {
-				SDportletLink.onclick = createSpeedyDeletionFormWindow;
-			}
-			const PPportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
-			if (PPportletLink) {
-				PPportletLink.onclick = createPageProtectionFormWindow;
+			if (settings?.DRMActionsMenuCheckbox ?? true) {
+				const DRMportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
+				if (DRMportletLink) {
+					DRMportletLink.onclick = createDeletionRequestMarkerFormWindow;
+				}
 			}
 
+			if (settings?.SDActionsMenuCheckbox ?? true) {
+				const SDportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Borrado rápido', 'TL-button', 'Solicita el borrado rápido de la página');
+				if (SDportletLink) {
+					SDportletLink.onclick = createSpeedyDeletionFormWindow;
+				}
+			}
+
+			if (settings?.PPActionMenuCheckbox ?? true) {
+				const PPportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
+				if (PPportletLink) {
+					PPportletLink.onclick = createPageProtectionFormWindow;
+				}
+			}
 		}
 
 		if (currentNamespace === 0 || currentNamespace === 1 || currentNamespace === 104 || currentNamespace === 105) {
-			const TportleltLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
-			if (TportleltLink) {
-				TportleltLink.onclick = createTagsFormWindow;
+			if (settings?.tagsActionsMenuCheckbox ?? true) {
+				const TportleltLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
+				if (TportleltLink) {
+					TportleltLink.onclick = createTagsFormWindow;
+				}
 			}
 		}
 
 		if (currentNamespace === 2 || currentNamespace === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
-			const RportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Denunciar usuario', 'TL-button', 'Informa de un problema en relación con el usuario');
-			if (RportletLink) {
-				RportletLink.onclick = createReportsFormWindow;
-			}
-			const WportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
-			if (WportletLink) {
-				WportletLink.onclick = createWarningsFormWindow;
+			if (settings?.ReportsActionsMenuCheckbox ?? true) {
+				const RportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Denunciar usuario', 'TL-button', 'Informa de un problema en relación con el usuario');
+				if (RportletLink) {
+					RportletLink.onclick = createReportsFormWindow;
+				}
 			}
 
-			if (currentNamespace === 3 || /* Only testing, remove later */ currentNamespace === 2) {
-				const appealRequest = document.querySelector('.block-appeal');
-				if (appealRequest) {
-					// TODO: should also check if user is sysop
-					createBlockAppealsButton(appealRequest);
+			if (settings?.WarningsActionsMenuCheckbox ?? true) {
+				const WportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
+				if (WportletLink) {
+					WportletLink.onclick = createWarningsFormWindow;
+				}
+			}
+
+			if (settings?.BAButtonMenuCheckbox ?? true) {
+				if (/* isCurrentUserSysop && */ currentNamespace === 3 || currentNamespace === 2) {
+					const appealRequest = document.querySelector('.block-appeal');
+					if (appealRequest) {
+						createBlockAppealsButton(appealRequest);
+					}
 				}
 			}
 		}
@@ -73,20 +88,27 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		if (/* isCurrentUserSysop && */ currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Consultas_de_borrado/')) {
 			const openDeletionRequest = await checkIfOpenDR(currentPageName);
 			if (openDeletionRequest) {
-				const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
-				if (DRCportletLink) {
-					// TODO: should also check if user is sysop
-					DRCportletLink.onclick = createDRCFormWindow;
+				if (settings?.DRCActionsMenuCheckbox ?? true) {
+					const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
+					if (DRCportletLink) {
+						// TODO: should also check if user is sysop
+						DRCportletLink.onclick = createDRCFormWindow;
+					}
 				}
-				const mwContentElement = document.querySelector('.mw-content-ltr')
-				if (mwContentElement) {
-					createDRCButton(mwContentElement);
+
+				if (settings?.DRCPageMenuCheckbox ?? true) {
+					const mwContentElement = document.querySelector('.mw-content-ltr')
+					if (mwContentElement) {
+						createDRCButton(mwContentElement);
+					}
 				}
 			}
 		}
 
 		if (/* TODO: isCurrentUserSysop */ true) {
-			createFastBlockerButton();
+			if (settings?.FBButtonMenuCheckbox ?? true) {
+				createFastBlockerButton();
+			}
 		}
 
 		if (
@@ -98,15 +120,21 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		) {
 			mw.hook('wikipage.content').add(() => {
 				if (document.querySelectorAll('a.mw-userlink').length > 0 && !document.getElementById('report-button')) {
-					createButton('report-button', 'denunciar', '#924141', createReportsFormWindow);
-					createButton('warning-button', 'aviso', 'teal', createWarningsFormWindow);
+					if (settings?.ReportsUserToolLinksMenuCheckbox ?? true) {
+						createButton('report-button', 'denunciar', '#924141', createReportsFormWindow);
+					}
+					if (settings?.WarningsUserToolLinksMenuCheckbox ?? true) {
+						createButton('warning-button', 'aviso', 'teal', createWarningsFormWindow);
+					}
 				}
 			})
 		}
 
 		if (diffNewId && !document.querySelector('.TL-hide-button')) {
 			mw.hook('wikipage.content').add(() => {
-				createHideButton(createHideFormWindow);
+				if (settings?.HideDiffPageCheckbox ?? true) {
+					createHideButton(createHideFormWindow);
+				}
 			})
 		}
 
