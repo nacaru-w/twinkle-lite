@@ -1,5 +1,5 @@
 import { QuickForm, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { currentUser, getContent, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
+import { createStatusWindow, currentUser, finishMorebitsStatus, getContent, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
 import { Settings } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
@@ -39,10 +39,11 @@ async function submitMessage(e: Event) {
     const form = e.target as HTMLFormElement;
     const input = Morebits.quickForm.getInputData(form);
 
-    console.log(input)
+    const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
+    createStatusWindow(statusWindow);
+    new Morebits.status("⌛", "Actualizando configuración...", "info");
 
     try {
-        debugger;
         const configPageMissing = await isPageMissing(`Usuario:${currentUser}/twinkle-lite-settings.json`);
         if (configPageMissing) {
             await createConfigPage(input);
@@ -50,18 +51,19 @@ async function submitMessage(e: Event) {
             await editConfigPage(input);
         }
         saveSettingsToLocalStorage(input);
+        finishMorebitsStatus(Window, statusWindow, 'finished', true);
     } catch (error: any) {
         console.error(error)
+        finishMorebitsStatus(Window, statusWindow, 'error');
     }
 
 }
 
 export function createConfigWindow(settings: Settings | null) {
-    console.log(settings);
     Window = new Morebits.simpleWindow(620, 530);
 
     Window.setScriptName('Twinkle Lite');
-    Window.setTitle('Preferencias de Twinkle Lite');
+    Window.setTitle('Configuración de Twinkle Lite');
     Window.addFooterLink('Documentación de Twinkle Lite', 'WP:TL')
 
     const form = new Morebits.quickForm(submitMessage);
@@ -78,7 +80,8 @@ export function createConfigWindow(settings: Settings | null) {
         list: [{
             value: 'tags',
             label: 'Activa la opción «Añadir plantilla» en el menú de acciones',
-            name: 'tagsActionsMenuCheckbox'
+            name: 'tagsActionsMenuCheckbox',
+            checked: settings?.tagsActionsMenuCheckbox ?? true
         }]
     })
 
@@ -94,7 +97,8 @@ export function createConfigWindow(settings: Settings | null) {
         list: [{
             value: 'DRM',
             label: 'Activa la opción «Abrir CDB» en el menú de acciones',
-            name: 'DRMActionsMenuCheckbox'
+            name: 'DRMActionsMenuCheckbox',
+            checked: settings?.DRMActionsMenuCheckbox ?? true
         }]
     })
 
@@ -109,7 +113,8 @@ export function createConfigWindow(settings: Settings | null) {
         list: [{
             value: 'hide',
             label: 'Activa la opción de ocultar ediciones en páginas de diffs',
-            name: 'HideDiffPageCheckbox'
+            name: 'HideDiffPageCheckbox',
+            checked: settings?.HideDiffPageCheckbox ?? true
         }]
     })
 
@@ -124,7 +129,8 @@ export function createConfigWindow(settings: Settings | null) {
         list: [{
             value: 'PP',
             label: 'Activa la opción «Pedir protección» en el menú de acciones',
-            name: 'PPActionMenuCheckbox'
+            name: 'PPActionMenuCheckbox',
+            checked: settings?.PPActionMenuCheckbox ?? true
         }]
     })
 
@@ -140,7 +146,8 @@ export function createConfigWindow(settings: Settings | null) {
         list: [{
             value: 'speedy-actions',
             label: 'Activa la opción «Borrado rápido» en el menú de acciones',
-            name: 'SDActionsMenuCheckbox'
+            name: 'SDActionsMenuCheckbox',
+            checked: settings?.SDActionsMenuCheckbox ?? true
         }]
     })
 
@@ -157,12 +164,14 @@ export function createConfigWindow(settings: Settings | null) {
             {
                 value: 'reports-actions',
                 label: 'Activa la opción «Denunciar usuario» en el menú de acciones en páginas de usuario',
-                name: 'ReportsActionsMenuCheckbox'
+                name: 'ReportsActionsMenuCheckbox',
+                checked: settings?.ReportsActionsMenuCheckbox ?? true
             },
             {
                 value: 'reports-usertoollinks',
                 label: 'Activa la opción «denunciar» en la lista de diffs en páginas de historial, cambios recientes y similares',
-                name: 'ReportsUserToolLinksMenuCheckbox'
+                name: 'ReportsUserToolLinksMenuCheckbox',
+                checked: settings?.ReportsUserToolLinksMenuCheckbox ?? true
             }
         ]
     })
@@ -179,19 +188,21 @@ export function createConfigWindow(settings: Settings | null) {
             {
                 value: 'warnings-actions',
                 label: 'Activa la opción «Avisar usuario» en el menú de acciones',
-                name: 'WarningsActionsMenuCheckbox'
+                name: 'WarningsActionsMenuCheckbox',
+                checked: settings?.WarningsActionsMenuCheckbox ?? true
             },
             {
                 value: 'warnings-usertoollinks',
                 label: 'Activa la opción «denunciar» en en la lista de diffs en páginas de historial, cambios recientes y similares',
-                name: 'WarningsUserToolLinksMenuCheckbox'
+                name: 'WarningsUserToolLinksMenuCheckbox',
+                checked: settings?.WarningsUserToolLinksMenuCheckbox ?? true
             }
         ]
     })
 
     const fastBlockerField: QuickFormElementInstance = form.append({
         type: 'field',
-        label: 'Módulo de bloqueado rápido'
+        label: 'Módulo de bloqueado rápido (solo bibliotecarios)'
     });
 
     fastBlockerField.append({
@@ -199,15 +210,16 @@ export function createConfigWindow(settings: Settings | null) {
         name: 'fbMenu',
         list: [{
             value: 'fast-blocker',
-            label: 'Activa el botón «bloqueo rápido» en historiales y la lista de seguimiento (solo bibliotecarios)',
+            label: 'Activa el botón «bloqueo rápido» en historiales y la lista de seguimiento',
             name: 'FBButtonMenuCheckbox',
-            disabled: !isCurrentUserSysop
+            disabled: !isCurrentUserSysop,
+            checked: settings?.FBButtonMenuCheckbox ?? true
         }]
     })
 
     const DRCField: QuickFormElementInstance = form.append({
         type: 'field',
-        label: 'Módulo de cerrado de consultas de borrado',
+        label: 'Módulo de cerrado de consultas de borrado (solo bibliotecarios)',
         id: 'drc-box'
     });
 
@@ -217,16 +229,24 @@ export function createConfigWindow(settings: Settings | null) {
         list: [
             {
                 value: 'tags-option',
-                label: 'Muestra un botón «Cerrar CDB» en páginas en las de consultas de borrado (solo bibliotecarios)',
+                label: 'Muestra un botón «Cerrar CDB» en páginas en las de consultas de borrado',
+                name: 'DRCPageMenuCheckbox',
+                disabled: !isCurrentUserSysop,
+                checked: settings?.DRCPageMenuCheckbox ?? true
+            },
+            {
+                value: 'tags-actions',
+                label: 'Muestra la opción «Cerrar CDB» en el menú de acciones en las de consultas de borrado',
                 name: 'DRCActionsMenuCheckbox',
-                disabled: !isCurrentUserSysop
+                disabled: !isCurrentUserSysop,
+                checked: settings?.DRCActionsMenuCheckbox ?? true
             },
         ]
     })
 
     const blockAppealsField: QuickFormElementInstance = form.append({
         type: 'field',
-        label: 'Módulo de resolución de peticiones de desbloqueo'
+        label: 'Módulo de resolución de peticiones de desbloqueo (solo bibliotecarios)'
     });
 
     blockAppealsField.append({
@@ -234,9 +254,10 @@ export function createConfigWindow(settings: Settings | null) {
         name: 'baMenu',
         list: [{
             value: 'block-appeals',
-            label: 'Muestra un botón en las páginas de usuario en las que se encuentra una solicitud de desbloqueo (solo bibliotecarios)',
+            label: 'Muestra un botón en las páginas de usuario en las que se encuentra una solicitud de desbloqueo',
             name: 'BAButtonMenuCheckbox',
-            disabled: !isCurrentUserSysop
+            disabled: !isCurrentUserSysop,
+            checked: settings?.BAButtonMenuCheckbox ?? true
         }]
     })
 
