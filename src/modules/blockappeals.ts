@@ -1,11 +1,11 @@
 import { QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, finishMorebitsStatus, getBlockInfo, getContent, relevantUserName } from "./../utils/utils";
-import { BlockInfoObject } from "types/twinkle-types";
+import { BlockAppealResolution, BlockInfoObject } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
 let blockInfoObject: BlockInfoObject | null;
 
-const resolutionOptions: string[] = ['Rechazo', 'Aprobación'];
+const resolutionOptions: BlockAppealResolution[] = ['Rechazo', 'Aprobación'];
 
 function getResolutionOptions() {
     return resolutionOptions.map((e) => {
@@ -38,7 +38,7 @@ function modifyFooterLink() {
     element.href = `https://es.wikipedia.org/w/index.php?title=Especial:Registro&page=${relevantUserName}&type=block`;
 }
 
-function fetchAppeal(pageContent: string): string | null {
+export function fetchAppeal(pageContent: string): string | null {
     // Regular expression to match both {{desbloquear|...}} and {{desbloquear|1=...}} patterns
     const desbloquearPattern = /{{\s*desbloquear\s*\|\s*(?:1=)?\s*([^}]*)}}/i;
 
@@ -49,7 +49,8 @@ function fetchAppeal(pageContent: string): string | null {
     return match ? match[1].trim() : null;
 }
 
-function prepareAppealResolutionTemplate(appeal: string, explanation: string, resolution: string): string {
+
+export function prepareAppealResolutionTemplate(appeal: string, explanation: string, resolution: BlockAppealResolution): string {
     return `{{Desbloqueo revisado|${appeal}|${explanation} ~~~~|${resolution.toLowerCase()}}}`
 }
 
@@ -64,7 +65,7 @@ function substitutePageContent(text: string, newTemplate: string): string {
     return updatedText;
 }
 
-async function makeEdit(pageContent: string, newTemplate: string, resolution: string) {
+async function makeEdit(pageContent: string, newTemplate: string, resolution: BlockAppealResolution) {
     new Morebits.status("Paso 1", "cerrando la petición de desbloqueo...", "info");
     await api.edit(
         currentPageName,
@@ -86,21 +87,21 @@ async function submitMessage(e: Event) {
 
     const content = await getContent(currentPageName);
 
-    console.log(input);
+    if (content) {
+        const appeal = fetchAppeal(content);
 
-    const appeal = fetchAppeal(content);
-
-    if (appeal) {
-        const filledTemplate = prepareAppealResolutionTemplate(appeal, input.reason, input.resolution);
-        try {
-            await makeEdit(content, filledTemplate, input.resolution);
-            finishMorebitsStatus(Window, statusWindow, 'finished', true);
-        } catch (error) {
-            finishMorebitsStatus(Window, statusWindow, 'error');
-            console.error(error);
+        if (appeal) {
+            const filledTemplate = prepareAppealResolutionTemplate(appeal, input.reason, input.resolution);
+            try {
+                await makeEdit(content, filledTemplate, input.resolution);
+                finishMorebitsStatus(Window, statusWindow, 'finished', true);
+            } catch (error) {
+                finishMorebitsStatus(Window, statusWindow, 'error');
+                console.error(error);
+            }
         }
-    }
 
+    }
 
 }
 
