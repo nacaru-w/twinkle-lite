@@ -13,8 +13,10 @@
     },
 };
 
-import { calculateTimeDifferenceBetweenISO, getTalkPage, parseTimestamp, stripTalkPagePrefix } from "./../src/utils/utils"
-import { fetchAppeal, prepareAppealResolutionTemplate } from './../src/modules/blockappeals'
+import { calculateTimeDifferenceBetweenISO, getTalkPage, parseTimestamp, stripTalkPagePrefix, abbreviatedMonths } from "./../src/utils/utils"
+import { fetchAppeal, prepareAppealResolutionTemplate, substitutePageContent } from './../src/modules/blockappeals'
+import { extractPageTitleFromWikicode, replaceDRTemplate } from './../src/modules/deletionrequestcloser'
+import { makeDiffMessage } from './../src/modules/hide'
 import { BlockAppealResolution } from "../src/types/twinkle-types";
 
 describe('Util functions', () => {
@@ -135,7 +137,7 @@ describe('Util functions', () => {
 })
 
 describe('Block appeals functions', () => {
-    test("properly formats the appeal resolution template", () => {
+    test("prepareAppealResolutionTemplate formats the appeal resolution template", () => {
         const cases: { appeal: string; explanation: string; resolution: BlockAppealResolution; expected: string }[] = [
             {
                 appeal: "Creo que el bloqueo fue un error.",
@@ -199,7 +201,7 @@ describe('Block appeals functions', () => {
 
     test("fetchAppeal extracts appeal from template with parameter '1='", () => {
         const content = `
-            En esta página de discusión, se debate el bloqueo de un usuario.
+            En esta página de discusión, se debate el {{small|bloqueo}} de un usuario.
             {{desbloquear|1=Creo que mi bloqueo no fue apropiado debido a las circunstancias presentadas.}}
             Los administradores revisarán este caso con más detalle.
         `;
@@ -207,15 +209,15 @@ describe('Block appeals functions', () => {
         expect(fetchAppeal(content)).toBe(expected);
     });
 
-    // test("fetchAppeal handles appeal with nested templates", () => {
-    //     const content = `
-    //         Página de discusión del usuario bloqueado. 
-    //         {{desbloquear|El bloqueo fue incorrecto. Véase {{diff|12345}} para más contexto.}}
-    //         Se espera que los administradores tomen una decisión justa.
-    //     `;
-    //     const expected = "El bloqueo fue incorrecto. Véase {{diff|12345}} para más contexto.";
-    //     expect(fetchAppeal(content)).toBe(expected);
-    // });
+    test("fetchAppeal handles appeal with nested templates", () => {
+        const content = `
+            Página de discusión del usuario bloqueado. Tiene otras {{plantillas|algo}}.
+            {{desbloquear|El bloqueo fue incorrecto. Véase {{diff|12345}} para más contexto.}}
+            Se espera que los administradores tomen una decisión justa. {{small|Hola}} qué tal.
+        `;
+        const expected = "El bloqueo fue incorrecto. Véase {{diff|12345}} para más contexto.";
+        expect(fetchAppeal(content)).toBe(expected);
+    });
 
     test("fetchAppeal returns null if no desbloquear template is present", () => {
         const content = `
@@ -225,20 +227,20 @@ describe('Block appeals functions', () => {
         expect(fetchAppeal(content)).toBeNull();
     });
 
-    // test("fetchAppeal returns null if desbloquear template is empty", () => {
-    //     const content = `
-    //         Este usuario ha dejado una solicitud de desbloqueo, pero no ha proporcionado detalles.
-    //         {{desbloquear|}}
-    //         Los administradores esperarán más información antes de proceder.
-    //     `;
-    //     expect(fetchAppeal(content)).toBeNull();
-    // });
+    test("fetchAppeal returns null if desbloquear template is empty", () => {
+        const content = `
+            Este usuario ha dejado una solicitud de desbloqueo, pero no ha proporcionado detalles.
+            {{desbloquear|}}
+            Los administradores esperarán más información antes de proceder.
+        `;
+        expect(fetchAppeal(content)).toBeNull();
+    });
 
     test("fetchAppeal ignores case in template name", () => {
         const content = `
             Este es un caso especial donde el usuario usó mayúsculas en la plantilla.
             {{DESBLOQUEAR|Por favor, revise mi caso porque no hubo una advertencia previa.}}
-            Se ha solicitado una revisión.
+            Se ha solicitado una {{small|revisión}}.
         `;
         const expected = "Por favor, revise mi caso porque no hubo una advertencia previa.";
         expect(fetchAppeal(content)).toBe(expected);
@@ -252,6 +254,331 @@ describe('Block appeals functions', () => {
         `;
         const expected = "Necesito participar en la discusión para resolver un conflicto.";
         expect(fetchAppeal(content)).toBe(expected);
+    });
+
+    test("substitutePageContent replaces a simple desbloquear template on a Wikipedia talk page", () => {
+        const content = `
+            == Bloqueo reciente ==
+            {{Aviso de bloqueo|usuario=Ejemplo|motivo=Ediciones disruptivas}}
+            Hola, este es un mensaje automático para informarte que has sido bloqueado.
+    
+            {{desbloquear|Considero que mi bloqueo es injusto debido a que fue realizado sin advertencias previas.}}
+            Espero que los administradores revisen esta solicitud.
+    
+            --~~~~
+        `;
+        const newTemplate = `{{Desbloqueo revisado|Considero que mi bloqueo es injusto debido a que fue realizado sin advertencias previas.|Motivo revisado para el desbloqueo o rechazo|rechazo|{{safesubst:TESParam}}}}`;
+        const expected = `
+            == Bloqueo reciente ==
+            {{Aviso de bloqueo|usuario=Ejemplo|motivo=Ediciones disruptivas}}
+            Hola, este es un mensaje automático para informarte que has sido bloqueado.
+    
+            {{Desbloqueo revisado|Considero que mi bloqueo es injusto debido a que fue realizado sin advertencias previas.|Motivo revisado para el desbloqueo o rechazo|rechazo|{{safesubst:TESParam}}}}
+            Espero que los administradores revisen esta solicitud.
+    
+            --~~~~
+        `;
+        expect(substitutePageContent(content, newTemplate)).toBe(expected);
+    });
+
+    test("substitutePageContent handles nested templates on a Wikipedia talk page", () => {
+        const content = `
+            == Bloqueo injustificado ==
+            Hola, quisiera apelar mi bloqueo. Creo que no fue correcto. 
+    
+            {{desbloquear|El bloqueo fue incorrecto. Véase {{diff|12345}} para más contexto.}}
+            Muchas gracias por su atención.
+    
+            {{Aviso de discusión archivada}}
+        `;
+        const newTemplate = `{{Desbloqueo revisado|El bloqueo fue incorrecto. Véase {{diff|12345}} para más contexto.|Motivo revisado para el desbloqueo o rechazo|aprobación|{{safesubst:TESParam}}}}`;
+        const expected = `
+            == Bloqueo injustificado ==
+            Hola, quisiera apelar mi bloqueo. Creo que no fue correcto. 
+    
+            {{Desbloqueo revisado|El bloqueo fue incorrecto. Véase {{diff|12345}} para más contexto.|Motivo revisado para el desbloqueo o rechazo|aprobación|{{safesubst:TESParam}}}}
+            Muchas gracias por su atención.
+    
+            {{Aviso de discusión archivada}}
+        `;
+        expect(substitutePageContent(content, newTemplate)).toBe(expected);
+    });
+
+    test("substitutePageContent handles '1=' prefix correctly on a Wikipedia talk page", () => {
+        const content = `
+            == Solicitud de desbloqueo ==
+            {{Aviso de solicitud|usuario=Ejemplo|estado=pendiente}}
+            Hola, me gustaría que reconsideren mi bloqueo.
+    
+            {{desbloquear|1=Creo que fue un error bloquearme por una edición no intencional.}}
+            Espero una respuesta.
+    
+            --~~~~
+        `;
+        const newTemplate = `{{Desbloqueo revisado|Creo que fue un error bloquearme por una edición no intencional.|Motivo revisado para el desbloqueo o rechazo|rechazo|{{safesubst:TESParam}}}}`;
+        const expected = `
+            == Solicitud de desbloqueo ==
+            {{Aviso de solicitud|usuario=Ejemplo|estado=pendiente}}
+            Hola, me gustaría que reconsideren mi bloqueo.
+    
+            {{Desbloqueo revisado|Creo que fue un error bloquearme por una edición no intencional.|Motivo revisado para el desbloqueo o rechazo|rechazo|{{safesubst:TESParam}}}}
+            Espero una respuesta.
+    
+            --~~~~
+        `;
+        expect(substitutePageContent(content, newTemplate)).toBe(expected);
+    });
+
+    test("substitutePageContent replaces only the first desbloquear template if multiple exist on a Wikipedia talk page", () => {
+        const content = `
+            == Discusión de desbloqueo ==
+            Hola, este mensaje es para solicitar el desbloqueo de mi cuenta.
+    
+            {{desbloquear|Esta es la primera solicitud.}}
+            Comentario adicional.
+    
+            {{desbloquear|Segunda solicitud con otro contexto.}}
+            Más detalles aquí.
+    
+            --~~~~
+        `;
+        const newTemplate = `{{Desbloqueo revisado|Esta es la primera solicitud.|Motivo revisado para el desbloqueo o rechazo|aprobación|{{safesubst:TESParam}}}}`;
+        const expected = `
+            == Discusión de desbloqueo ==
+            Hola, este mensaje es para solicitar el desbloqueo de mi cuenta.
+    
+            {{Desbloqueo revisado|Esta es la primera solicitud.|Motivo revisado para el desbloqueo o rechazo|aprobación|{{safesubst:TESParam}}}}
+            Comentario adicional.
+    
+            {{desbloquear|Segunda solicitud con otro contexto.}}
+            Más detalles aquí.
+    
+            --~~~~
+        `;
+        expect(substitutePageContent(content, newTemplate)).toBe(expected);
+    });
+
+    test("substitutePageContent handles complex headers and nested content on a Wikipedia talk page", () => {
+        const content = `
+            == [[Usuario:Ejemplo|Ejemplo]] ==
+            Hola administradores, quisiera solicitar mi desbloqueo.
+    
+            {{desbloquear|El bloqueo no fue apropiado porque mis ediciones seguían las normas. Véase {{diff|67890}}.}}
+            Espero que esto sea considerado.
+    
+            == Otra sección ==
+            Comentarios adicionales aquí.
+        `;
+        const newTemplate = `{{Desbloqueo revisado|El bloqueo no fue apropiado porque mis ediciones seguían las normas. Véase {{diff|67890}}.|Motivo revisado para el desbloqueo o rechazo|rechazo|{{safesubst:TESParam}}}}`;
+        const expected = `
+            == [[Usuario:Ejemplo|Ejemplo]] ==
+            Hola administradores, quisiera solicitar mi desbloqueo.
+    
+            {{Desbloqueo revisado|El bloqueo no fue apropiado porque mis ediciones seguían las normas. Véase {{diff|67890}}.|Motivo revisado para el desbloqueo o rechazo|rechazo|{{safesubst:TESParam}}}}
+            Espero que esto sea considerado.
+    
+            == Otra sección ==
+            Comentarios adicionales aquí.
+        `;
+        expect(substitutePageContent(content, newTemplate)).toBe(expected);
+    });
+
+})
+
+describe('Deletion request closer functions', () => {
+
+    test("replaceDRTemplate replaces the DR template with replacement text", () => {
+        const input = `
+    === [[Facultad de Matemáticas (Universidad de La Laguna)]] ===
+    {{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA|O|11|diciembre}}
+    
+    :{{a|Facultad de Matemáticas (Universidad de La Laguna)}}
+    :{{busca fuentes|Facultad de Matemáticas (Universidad de La Laguna)}}
+        `;
+        const replacement = `{{cierracdb-arr}} '''MANTENER'''. [[Usuario:Crystallizedcarbon|Crystallizedcarbon]] ([[Usuario Discusión:Crystallizedcarbon|discusión]]) 12:34 19 mar 2021 (UTC)`;
+
+        const expectedOutput = `
+    === [[Facultad de Matemáticas (Universidad de La Laguna)]] ===
+    {{cierracdb-arr}} '''MANTENER'''. [[Usuario:Crystallizedcarbon|Crystallizedcarbon]] ([[Usuario Discusión:Crystallizedcarbon|discusión]]) 12:34 19 mar 2021 (UTC)
+    
+    :{{a|Facultad de Matemáticas (Universidad de La Laguna)}}
+    :{{busca fuentes|Facultad de Matemáticas (Universidad de La Laguna)}}
+        `;
+
+        expect(replaceDRTemplate(input, replacement)).toBe(expectedOutput);
+    });
+
+    test("replaceDRTemplate returns input unchanged if no DR template is found", () => {
+        const input = `
+    === [[Facultad de Matemáticas (Universidad de La Laguna)]] ===
+    Some content without the DR template.
+    
+    :{{a|Facultad de Matemáticas (Universidad de La Laguna)}}
+    :{{busca fuentes|Facultad de Matemáticas (Universidad de La Laguna)}}
+        `;
+        const replacement = `{{cierracdb-arr}} '''MANTENER'''. [[Usuario:Crystallizedcarbon|Crystallizedcarbon]] ([[Usuario Discusión:Crystallizedcarbon|discusión]]) 12:34 19 mar 2021 (UTC)`;
+
+        // Input should remain unchanged because the template is not present
+        expect(replaceDRTemplate(input, replacement)).toBe(input);
+    });
+
+    test("replaceDRTemplate handles edge case with unusual characters in template", () => {
+        const input = `
+    === [[Facultad de Matemáticas (Universidad de La Laguna)]] ===
+    {{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA|Q|22|febrero}}
+    
+    More content and other DR templates like {{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA|X|4|junio}}
+    
+    :{{a|Facultad de Matemáticas (Universidad de La Laguna)}}
+    :{{busca fuentes|Facultad de Matemáticas (Universidad de La Laguna)}}
+        `;
+        const replacement = `{{cierracdb-arr}} '''MANTENER'''. [[Usuario:Crystallizedcarbon|Crystallizedcarbon]] ([[Usuario Discusión:Crystallizedcarbon|discusión]]) 12:34 19 mar 2021 (UTC)`;
+
+        const expectedOutput = `
+    === [[Facultad de Matemáticas (Universidad de La Laguna)]] ===
+    {{cierracdb-arr}} '''MANTENER'''. [[Usuario:Crystallizedcarbon|Crystallizedcarbon]] ([[Usuario Discusión:Crystallizedcarbon|discusión]]) 12:34 19 mar 2021 (UTC)
+    
+    More content and other DR templates like {{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA|X|4|junio}}
+    
+    :{{a|Facultad de Matemáticas (Universidad de La Laguna)}}
+    :{{busca fuentes|Facultad de Matemáticas (Universidad de La Laguna)}}
+        `;
+
+        expect(replaceDRTemplate(input, replacement)).toBe(expectedOutput);
+    });
+
+    test("replaceDRTemplate returns the same if input is empty", () => {
+        const input = '';
+        const replacement = `{{cierracdb-arr}} '''MANTENER'''. [[Usuario:Crystallizedcarbon|Crystallizedcarbon]] ([[Usuario Discusión:Crystallizedcarbon|discusión]]) 12:34 19 mar 2021 (UTC)`;
+
+        expect(replaceDRTemplate(input, replacement)).toBe(input);
+    });
+
+    test("extractPageTitleFromWikicode extracts title from page with discussion content", () => {
+        const input = `
+            === [[Facultad de Matemáticas (Universidad de La Laguna)]] ===
+            {{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA|O|11|diciembre}}
+            :{{a|Facultad de Matemáticas (Universidad de La Laguna)}}
+            :{{busca fuentes|Facultad de Matemáticas (Universidad de La Laguna)}}
+            Tal como en otros casos, no hay información relevante sobre la facultad que no pueda ocupar unas líneas en la página que hay sobre de la universidad...
+            [[Usuario:Abajo estaba el pez|Abajo estaba el pez]]
+        `;
+        const expected = "Facultad de Matemáticas (Universidad de La Laguna)";
+        expect(extractPageTitleFromWikicode(input)).toBe(expected);
+    });
+
+    test("extractPageTitleFromWikicode handles page with discussion and multiple templates", () => {
+        const input = `
+            === [[Biografía de Albert Einstein]] ===
+            {{comentario}} Este artículo es interesante, pero necesita más fuentes para su veracidad.
+            :{{busca fuentes|Biografía de Albert Einstein}}
+            :{{a|Albert Einstein}}
+            Este es un tema fascinante que debe ser tratado de forma rigurosa.
+            [[Usuario:EinsteinFan|Fan de Einstein]] 14:22 19 ene 2024 (UTC)
+        `;
+        const expected = "Biografía de Albert Einstein";
+        expect(extractPageTitleFromWikicode(input)).toBe(expected);
+    });
+
+    test("extractPageTitleFromWikicode extracts title from page with content and timestamp", () => {
+        const input = `
+            === [[Desarrollo de la Teoría de la Relatividad]] ===
+            {{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA|A|10|noviembre}}
+            El concepto de relatividad de Einstein fue revolucionario...
+            [[Usuario:PhysicsGuru|Physics Guru]] 09:30 01 dic 2024 (UTC)
+        `;
+        const expected = "Desarrollo de la Teoría de la Relatividad";
+        expect(extractPageTitleFromWikicode(input)).toBe(expected);
+    });
+
+    test("extractPageTitleFromWikicode extracts title from page with internal links and comments", () => {
+        const input = `
+            === [[Historia de la Computación]] ===
+            {{comentario}} La computación ha evolucionado significativamente desde sus inicios.
+            :{{a|Historia de la Computación}}
+            :{{busca fuentes|Historia de la Computación}}
+            El avance de la tecnología en este campo ha sido vertiginoso...
+            [[Usuario:TechHistorian|Tech Historian]] 16:45 05 feb 2024 (UTC)
+        `;
+        const expected = "Historia de la Computación";
+        expect(extractPageTitleFromWikicode(input)).toBe(expected);
+    });
+
+    test("extractPageTitleFromWikicode handles complex page titles and surrounding content", () => {
+        const input = `
+            === [[Historia de las Matemáticas en la Antigüedad]] ===
+            {{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA|X|12|enero}}
+            Este artículo cubre los orígenes de las matemáticas en diferentes civilizaciones antiguas.
+            [[Usuario:MathHistorian|Math Historian]] 10:00 22 abr 2024 (UTC)
+        `;
+        const expected = "Historia de las Matemáticas en la Antigüedad";
+        expect(extractPageTitleFromWikicode(input)).toBe(expected);
+    });
+
+    test("extractPageTitleFromWikicode returns null for text without page title", () => {
+        const input = `
+            Esto es solo un texto de ejemplo sin ningún enlace a una página.
+            Algunas ideas sobre diferentes temas que podrían ser tratados en artículos de Wikipedia...
+        `;
+        expect(extractPageTitleFromWikicode(input)).toBeNull();
+    });
+
+    test("extractPageTitleFromWikicode handles page with mixed content", () => {
+        const input = `
+            === [[Cultura y Sociedad del Renacimiento]] ===
+            El Renacimiento fue una época de gran florecimiento cultural...
+            {{comentario}} Este artículo necesita más referencias y contexto histórico.
+            [[Usuario:HistoricalExpert|Historical Expert]] 11:05 02 mar 2025 (UTC)
+        `;
+        const expected = "Cultura y Sociedad del Renacimiento";
+        expect(extractPageTitleFromWikicode(input)).toBe(expected);
+    });
+
+    test("extractPageTitleFromWikicode extracts title from page with multiple sections", () => {
+        const input = `
+            === [[Evolución de las Especies]] ===
+            En este artículo se exploran las diferentes teorías sobre la evolución de las especies.
+            :{{busca fuentes|Evolución de las Especies}}
+            :{{a|Charles Darwin}}
+            [[Usuario:BioHistorian|Bio Historian]] 18:50 23 mar 2024 (UTC)
+        `;
+        const expected = "Evolución de las Especies";
+        expect(extractPageTitleFromWikicode(input)).toBe(expected);
+    });
+
+})
+
+describe('Hide functions', () => {
+    test("makeDiffMessage formats the diff list into a bullet-pointed message", () => {
+        const inputList = ["145743992", "123456789", "987654321"];
+        const expected = `
+* [[Especial:Diff/145743992]]
+* [[Especial:Diff/123456789]]
+* [[Especial:Diff/987654321]]
+        `.trim();
+        expect(makeDiffMessage(inputList)).toBe(expected);
+    });
+
+    test("makeDiffMessage handles a list with only one diff ID", () => {
+        const inputList = ["145743992"];
+        const expected = "* [[Especial:Diff/145743992]]";
+        expect(makeDiffMessage(inputList)).toBe(expected);
+    });
+
+    test("makeDiffMessage handles an empty list", () => {
+        const inputList: string[] = [];
+        const expected = "";
+        expect(makeDiffMessage(inputList)).toBe(expected);
+    });
+
+    test("makeDiffMessage formats the diff list with internal links correctly", () => {
+        const inputList = ["987654321", "112233445", "998877665"];
+        const expected = `
+* [[Especial:Diff/987654321]]
+* [[Especial:Diff/112233445]]
+* [[Especial:Diff/998877665]]
+        `.trim();
+        expect(makeDiffMessage(inputList)).toBe(expected);
     });
 
 })
