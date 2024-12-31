@@ -39,14 +39,55 @@ function modifyFooterLink() {
 }
 
 export function fetchAppeal(pageContent: string): string | null {
-    // Regular expression to match both {{desbloquear|...}} and {{desbloquear|1=...}} patterns
-    const desbloquearPattern = /{{\s*desbloquear\s*\|\s*(?:1=)?\s*([^}]*)}}/i;
+    // Regular expression to match the beginning of the {{desbloquear}} template
+    const desbloquearStartPattern = /{{\s*desbloquear\s*\|/i;
+    const match = desbloquearStartPattern.exec(pageContent);
 
-    // Find the first match of the pattern in the page content
-    const match = desbloquearPattern.exec(pageContent);
+    // If no match is found, return null
+    if (!match) {
+        return null;
+    }
 
-    // Return the extracted content if found, otherwise return null
-    return match ? match[1].trim() : null;
+    // Start reading after the match
+    const startIndex = match.index + match[0].length;
+    let braceCount = 1; // Starts at 1 because we've already identified the opening {{
+    let result = '';
+    let i = startIndex;
+
+    // Process the content character by character
+    while (i < pageContent.length) {
+        const char = pageContent[i];
+        const nextTwoChars = pageContent.slice(i, i + 2);
+
+        if (nextTwoChars === '{{') {
+            // Increment brace count for an opening brace
+            braceCount++;
+            result += '{{';
+            i += 2;
+        } else if (nextTwoChars === '}}') {
+            // Decrement brace count for a closing brace
+            braceCount--;
+            if (braceCount === 0) {
+                // If brace count reaches zero, stop parsing
+                i += 2;
+                break;
+            }
+            result += '}}';
+            i += 2;
+        } else {
+            // Append current character to the result
+            result += char;
+            i++;
+        }
+    }
+
+    // Trim the result and handle optional "1=" prefix
+    result = result.trim();
+    if (result.startsWith('1=')) {
+        result = result.slice(2).trim(); // Remove "1=" and any leading whitespace
+    }
+
+    return result || null;
 }
 
 
@@ -54,15 +95,49 @@ export function prepareAppealResolutionTemplate(appeal: string, explanation: str
     return `{{Desbloqueo revisado|${appeal}|${explanation} ~~~~|${resolution.toLowerCase()}}}`
 }
 
-function substitutePageContent(text: string, newTemplate: string): string {
-    // Regular expression to match the {{desbloquear}} template and its contents
-    const desbloquearRegex = /\{\{desbloquear\|.*?\}\}/g;
+export function substitutePageContent(text: string, newTemplate: string): string {
+    // Regular expression to find the beginning of the {{desbloquear}} template
+    const desbloquearStartPattern = /{{\s*desbloquear\s*\|/i;
+    const match = desbloquearStartPattern.exec(text);
 
-    // Replace the matched template with the new template
-    const updatedText = text.replace(desbloquearRegex, newTemplate);
+    // If no match is found, return the original text
+    if (!match) {
+        return text;
+    }
 
-    // Return the updated text
-    return updatedText;
+    // Start reading after the match
+    const startIndex = match.index;
+    let braceCount = 1; // Starts at 1 because we've matched the opening {{
+    let i = match.index + match[0].length;
+
+    // Parse the template content
+    while (i < text.length) {
+        const nextTwoChars = text.slice(i, i + 2);
+
+        if (nextTwoChars === '{{') {
+            // Increment brace count for an opening brace
+            braceCount++;
+            i += 2;
+        } else if (nextTwoChars === '}}') {
+            // Decrement brace count for a closing brace
+            braceCount--;
+            i += 2;
+
+            // If brace count reaches zero, we've found the end of the template
+            if (braceCount === 0) {
+                break;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    // Extract the portion before and after the template
+    const beforeTemplate = text.slice(0, startIndex);
+    const afterTemplate = text.slice(i);
+
+    // Return the updated text with the new template
+    return beforeTemplate + newTemplate + afterTemplate;
 }
 
 async function makeEdit(pageContent: string, newTemplate: string, resolution: BlockAppealResolution) {

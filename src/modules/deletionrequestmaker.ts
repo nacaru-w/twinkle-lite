@@ -60,8 +60,8 @@ async function createDeletionRequestPage(category: string, reason: string) {
             buildDeletionTemplate(category, reason)
         );
     } else {
-        const content: string = await getContent(`Wikipedia:Consultas de borrado/${currentPageName}`);
-        if (content.includes('{{archivo borrar cabecera') || content.includes('{{cierracdb-arr}}')) {
+        const content: string | null = await getContent(`Wikipedia:Consultas de borrado/${currentPageName}`);
+        if (content && (content.includes('{{archivo borrar cabecera') || content.includes('{{cierracdb-arr}}'))) {
             const confirmMessage = `Parece que ya se había creado una consulta de borrado para ${currentPageNameNoUnderscores} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`;
             if (confirm(confirmMessage)) {
                 return new mw.Api().create(

@@ -59,7 +59,7 @@ function showPostponeCheckbox(): void {
     }
 }
 
-function findLastPostponementDate(text: string): string | null {
+export function findLastPostponementDate(text: string): string | null {
     // Regular expression to match the "Prorrogada para generar más discusión..." and capture the date
     const prorrogarRegex = /'''Prorrogada para generar más discusión.*?(\d{1,2})\s*(\w+)\s*(\d{4}) \(UTC\)/gi;
 
@@ -104,15 +104,17 @@ function showCreationDateAndTimeElapsed(creationDateAsTimestamp: string, prorrog
 
 async function fetchCreationOrProrrogationDate(): Promise<void> {
     const pageContent = await getContent(currentPageName);
-    const lastPostponement = findLastPostponementDate(pageContent);
-    if (lastPostponement) {
-        console.log("última prórroga:", lastPostponement)
-        showCreationDateAndTimeElapsed(lastPostponement, true);
-    } else {
-        const creationInfo = await getPageCreationInfo(currentPageName);
-        if (creationInfo) {
-            DROpeningDate = creationInfo.timestamp;
-            showCreationDateAndTimeElapsed(creationInfo.timestamp, false);
+    if (pageContent) {
+        const lastPostponement = findLastPostponementDate(pageContent);
+        if (lastPostponement) {
+            console.log("última prórroga:", lastPostponement)
+            showCreationDateAndTimeElapsed(lastPostponement, true);
+        } else {
+            const creationInfo = await getPageCreationInfo(currentPageName);
+            if (creationInfo) {
+                DROpeningDate = creationInfo.timestamp;
+                showCreationDateAndTimeElapsed(creationInfo.timestamp, false);
+            }
         }
     }
 }
@@ -141,13 +143,13 @@ function manageOtherInputField(selectedOption: string): void {
     }
 }
 
-function replaceDRTemplate(input: string, replacement: string): string {
+export function replaceDRTemplate(input: string, replacement: string): string {
     // The string it uses is automatically placed by template at the top of the page when opening a DR
     const templateRegex = /\{\{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA\|[^\}]+\}\}/;
     return input.replace(templateRegex, replacement);
 }
 
-function extractPageTitleFromWikicode(input: string): string | null {
+export function extractPageTitleFromWikicode(input: string): string | null {
     // Regular expression to match the pattern with variable "=" and capture the content inside the square brackets
     const match = input.match(/=+\s*\[\[(.+?)\]\]\s*=+/);
 
@@ -169,25 +171,27 @@ async function editRequestPage(decision: string, comment: string | null) {
 
 async function editArticle(decision: string): Promise<void> {
     const content = await getContent(currentPageName);
-    const page = extractPageTitleFromWikicode(content);
-    console.log(page);
-    debugger;
-    if (page) {
-        nominatedPage = page;
-        if (decision == 'Borrar') {
-            new Morebits.status("Paso 2", "borrando la página original...", "info");
-            const reason = `Según resultado de CDB: [[${currentPageNameNoUnderscores}]]`
-            await deletePage(page, true, reason)
-        } else {
-            new Morebits.status("Paso 2", "editando la página original...", "info");
-            await api.edit(
-                page,
-                (revision: any) => ({
-                    text: DRC.articlePage.removeTemplate(revision.content),
-                    summary: `Elimino plantilla según el resultado de [[${currentPageName}|la consulta de borrado]]: ${decision.toUpperCase()}; mediante [[WP:TL|Twinkle Lite]]`,
-                    minor: false
-                })
-            );
+    if (content) {
+        const page = extractPageTitleFromWikicode(content);
+        console.log(page);
+        debugger;
+        if (page) {
+            nominatedPage = page;
+            if (decision == 'Borrar') {
+                new Morebits.status("Paso 2", "borrando la página original...", "info");
+                const reason = `Según resultado de CDB: [[${currentPageNameNoUnderscores}]]`
+                await deletePage(page, true, reason)
+            } else {
+                new Morebits.status("Paso 2", "editando la página original...", "info");
+                await api.edit(
+                    page,
+                    (revision: any) => ({
+                        text: DRC.articlePage.removeTemplate(revision.content),
+                        summary: `Elimino plantilla según el resultado de [[${currentPageName}|la consulta de borrado]]: ${decision.toUpperCase()}; mediante [[WP:TL|Twinkle Lite]]`,
+                        minor: false
+                    })
+                );
+            }
         }
     }
 }

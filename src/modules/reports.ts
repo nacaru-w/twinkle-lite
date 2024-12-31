@@ -148,14 +148,17 @@ function buildRegex(reportTitle: string): RegExp {
 // Creates the hash to be used in the link to the appropriate board on the notified user's talk page
 // Does so by examining the content of the board and counting the amount of similar titles
 // It then returns the appropriate hash number corresponding to the id of the report's title
-async function createHash(board: string, reportTitle: string): Promise<string> {
+async function createHash(board: string, reportTitle: string): Promise<string | void> {
     const boardContent = await getContent(board);
-    const regex = buildRegex(reportTitle);
-    const otherOccurrences = boardContent.match(regex);
-    if (otherOccurrences && otherOccurrences.length > 1) {
-        return `${reportTitle}_${otherOccurrences.length}`;
+    if (boardContent) {
+        const regex = buildRegex(reportTitle);
+        const otherOccurrences = boardContent.match(regex);
+        if (otherOccurrences && otherOccurrences.length > 1) {
+            return `${reportTitle}_${otherOccurrences.length}`;
+        }
+        return reportTitle;
     }
-    return reportTitle;
+    return alert("Ha habido un error, inténtalo de nuevo maś tarde");
 }
 
 
@@ -202,7 +205,7 @@ function postsMessage(input: QuickFormInputObject): Promise<ApiEditPageParams> |
         .then(async function (mustCreateNewTalkPage) {
             const title: string = (input.motive == "Otro" ? input.otherreason : input.motive) as string;
             const motive: string = input.motive as string;
-            const hash: string = await createHash(reportMotiveDict[motive].link, title);
+            const hash = await createHash(reportMotiveDict[motive].link, title);
             const notificationString = `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${reportMotiveDict[motive].link}#${motive == "Vandalismo en curso" ? reportedUser : hash}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`;
             if (mustCreateNewTalkPage) {
                 return new mw.Api().create(

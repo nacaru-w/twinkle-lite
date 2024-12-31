@@ -108,7 +108,7 @@ function makeDiffList(diffIDs: string): string[] {
  * @param inputList - An array of diff IDs to be included in the message.
  * @returns A formatted string listing the diffs as bullet points with internal links.
  */
-function makeDiffMessage(inputList: string[]): string {
+export function makeDiffMessage(inputList: string[]): string {
     let iterations = inputList.length;
     let message = '';
     for (let diff of inputList) {

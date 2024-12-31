@@ -251,8 +251,8 @@ function submitMessage(e: Event) {
  */
 async function checkExistingDeletionTemplate(): Promise<boolean> {
     const regex: RegExp = /{{(?:sust:)?(?:destruir|d|db-ul|db-user|speedy|borrar|db|delete|eliminar|aviso\sborrar)\|.+?}}/i
-    const content: string = await getContent(currentPageName);
-    if (content.match(regex)) {
+    const content: string | null = await getContent(currentPageName);
+    if (content && content.match(regex)) {
         return true
     }
     return false
