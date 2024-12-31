@@ -42,8 +42,8 @@ export function getTalkPage(mainPageName: string): string {
         "Plantilla:": "Plantilla_discusión:",
         "Anexo:": "Anexo_discusión:",
         "Wikipedia:": "Wikipedia_discusión:",
-        "Ayuda": "Ayuda_discusión:",
-        "Wikiproyecto": "Wikiproyecto_discusión:"
+        "Ayuda:": "Ayuda_discusión:",
+        "Wikiproyecto:": "Wikiproyecto_discusión:"
     };
 
     // Check if the page is in the non-main namespaces
