@@ -19,6 +19,9 @@
 ## Module: Tags
 * Fixed bug whereby the script created the wrong talk page when adding tags to anexo pages.
 
+## Module: Hide
+* Fixed a bug whereby the «Hide» button would appear twice sometimes.
+
 # v.3.1.0
 
 ## Module: Speedy deletion
