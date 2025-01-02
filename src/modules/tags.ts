@@ -415,6 +415,7 @@ async function makeEdit(templates: templateParamsDictionary, input: QuickFormInp
 function paramAssigner(paramList: string[], input: QuickFormInputObject): templateParamsDictionary {
     const templatesWithParams: templateParamsDictionary = {};
     for (const element of paramList) {
+        templatesWithParams[element] = {}
         for (const [key, value] of Object.entries(input)) {
             if (key.includes('_param') && key.includes(element)) {
                 templatesWithParams[element] = {

@@ -43,8 +43,8 @@ export interface WarningsModuleProcessedList {
 
 export interface templateParamsDictionary {
     [key: string]: {
-        param: string;
-        paramValue: QuickFormInputValue
+        param?: string;
+        paramValue?: QuickFormInputValue
     }
 }
 

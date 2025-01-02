@@ -1,3 +1,8 @@
+# v.4.1.0
+
+## Module: Tags
+* Fixed a bug whereby the tags with no parameters would not be added to the page.
+
 # v.4.0.0
 
 ## Global enhancements
