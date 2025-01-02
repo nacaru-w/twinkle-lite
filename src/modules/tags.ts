@@ -358,7 +358,7 @@ function groupTemplates(templateList: string[]): string[] {
  * @param templateList - Array of selected template names.
  * @returns The grouped warning template string, or false if no grouped template exists.
  */
-function createGroupedWarning(templateList: any[] /* TODO */): string | false {
+function createGroupedWarning(templateList: any[]): string | false {
     const groupedTemplate = templateList.find(element => element.includes("problemas artículo|"))
     if (groupedTemplate) {
         const groupedWwarning = groupedTemplate.replace("problemas artículo", `aviso PA|${relevantPageNameNoUnderscores}`);

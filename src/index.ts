@@ -85,13 +85,12 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			}
 		}
 
-		if (/* isCurrentUserSysop && */ currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Consultas_de_borrado/')) {
+		if (isCurrentUserSysop && currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Consultas_de_borrado/')) {
 			const openDeletionRequest = await checkIfOpenDR(currentPageName);
 			if (openDeletionRequest) {
 				if (settings?.DRCActionsMenuCheckbox ?? true) {
 					const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
 					if (DRCportletLink) {
-						// TODO: should also check if user is sysop
 						DRCportletLink.onclick = createDRCFormWindow;
 					}
 				}
@@ -105,7 +104,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			}
 		}
 
-		if (/* TODO: isCurrentUserSysop */ true) {
+		if (isCurrentUserSysop) {
 			if (settings?.FBButtonMenuCheckbox ?? true) {
 				createFastBlockerButton();
 			}

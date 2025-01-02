@@ -404,7 +404,7 @@ export async function checkIfOpenDR(pagename: string): Promise<boolean | void> {
 }
 
 export async function getBlockInfo(username: string): Promise<BlockInfoObject | null> {
-    // TODO: implementar rango de IP con bkip, véase https://www.mediawiki.org/wiki/API:Blocks
+    // TODO: implement IP range with bkip, see https://www.mediawiki.org/wiki/API:Blocks
     const params: ApiQueryBlocksParams = {
         action: "query",
         list: "blocks",

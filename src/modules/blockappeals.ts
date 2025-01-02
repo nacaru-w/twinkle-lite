@@ -27,7 +27,7 @@ async function fetchAndShowBlockStatus() {
                 blockStatusDiv.innerHTML = `El bloqueo acabará en ${timeUntilUnblock.days} días y ${timeUntilUnblock.hours} horas.`
             }
         } else {
-            // TODO: implementar rango de IP
+            // TODO: implement IP range
             blockStatusDiv.innerHTML = 'El usuario no está bloqueado o su bloqueo es de rango de IP';
         }
     }
