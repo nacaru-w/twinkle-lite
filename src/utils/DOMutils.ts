@@ -87,6 +87,7 @@ export function createBlockAppealsButton(appealBox: Element) {
 export function createDRCButton(textBox: Element) {
     const container = document.createElement('div');
     container.style.textAlign = 'center';
+    container.style.marginBlock = '0.5em';
     mw.loader.using(['oojs-ui-core', 'oojs-ui-widgets']).done(() => {
         // Create the button using OOUI
         const button = oouiButton('Cerrar consulta de borrado', createDRCFormWindow)
