@@ -299,7 +299,6 @@ export async function deletePage(pageName: string, deleteTalk: boolean, reason?:
 
     try {
         const responseData = await api.postWithToken('csrf', params)
-        console.log(responseData);
     } catch (error) {
         console.error('Error deleting the page:', error);
         throw error;
@@ -417,7 +416,6 @@ export async function getBlockInfo(username: string): Promise<BlockInfoObject | 
     const response = await api.get(params);
     const blocks = response?.query?.blocks;
     if (blocks.length) {
-        console.log("hola")
         return {
             blockStart: blocks[0].timestamp,
             blockEnd: blocks[0].expiry,

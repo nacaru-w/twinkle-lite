@@ -107,7 +107,6 @@ async function fetchCreationOrProrrogationDate(): Promise<void> {
     if (pageContent) {
         const lastPostponement = findLastPostponementDate(pageContent);
         if (lastPostponement) {
-            console.log("última prórroga:", lastPostponement)
             showCreationDateAndTimeElapsed(lastPostponement, true);
         } else {
             const creationInfo = await getPageCreationInfo(currentPageName);
@@ -120,7 +119,6 @@ async function fetchCreationOrProrrogationDate(): Promise<void> {
 }
 
 function manageOtherInputField(selectedOption: string): void {
-    console.log(selectedOption)
     const field = document.getElementById('otherField');
     const fieldParent = field?.parentElement
 
@@ -173,8 +171,6 @@ async function editArticle(decision: string): Promise<void> {
     const content = await getContent(currentPageName);
     if (content) {
         const page = extractPageTitleFromWikicode(content);
-        console.log(page);
-        debugger;
         if (page) {
             nominatedPage = page;
             if (decision == 'Borrar') {
@@ -249,7 +245,6 @@ async function submitMessage(e: Event) {
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
     createStatusWindow(statusWindow);
 
-    console.log(input);
     if (input.postpone) {
         try {
             await addPostponeTemplate();

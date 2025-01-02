@@ -129,7 +129,6 @@ function buildMessage(moreDiffs: string, reason: string): string {
 
     if (moreDiffs) {
         diffList = makeDiffList(moreDiffs);
-        console.log(diffList);
     } else {
         diffList.push(diffID);
     }

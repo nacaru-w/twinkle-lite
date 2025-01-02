@@ -94,7 +94,6 @@ function getLastBlocks(username: string): Promise<string> {
     };
     let api = new mw.Api().get(params);
     let blockInfo = api.then(function (data) {
-        console.log(data);
         let logevents = data.query.logevents;
         if (logevents.length === 0) {
             return 'No constan bloqueos.';
