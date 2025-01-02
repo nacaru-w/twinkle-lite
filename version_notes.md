@@ -1,4 +1,26 @@
+# v.4.0.0
+
+## Global enhancements
+* A refactoring of the entire project from Javascript to TypeScript has been carried out.
+* Testing with Jest has been added to the project.
+
+## Module: Config
+* A new module has been added allowing users to customize which Twinkle Lite options show up.
+
+## Module: Deletion request closer
+* A new sysop-exclusive module has been added to quicken the proccess of closing a deletion request (not compatible with beta deletion requests).
+
+## Module: Block appeals
+* A new sysop-exclusive module has been added to more easily proccess block appeals.
+
+## Module: fast blocker
+* The fast-blocker script has been integrated as part of Twinkle Lite.
+
+## Module: Tags
+* Fixed bug whereby the script created the wrong talk page when adding tags to anexo pages.
+
 # v.3.1.0
+
 ## Module: Speedy deletion
 * Fixed a bug whereby the script would find the creator of the main page when adding deletion templates to talk pages.
 
