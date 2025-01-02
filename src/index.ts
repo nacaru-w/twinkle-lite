@@ -76,7 +76,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			}
 
 			if (settings?.BAButtonMenuCheckbox ?? true) {
-				if (/* isCurrentUserSysop && */ currentNamespace === 3 || currentNamespace === 2) {
+				if (isCurrentUserSysop && currentNamespace === 3 || currentNamespace === 2) {
 					const appealRequest = document.querySelector('.block-appeal');
 					if (appealRequest) {
 						createBlockAppealsButton(appealRequest);
