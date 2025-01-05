@@ -3,6 +3,9 @@
 ## Module: Tags
 * Fixed a bug whereby the tags with no parameters would not be added to the page.
 
+## Module: Speedy deletion
+* Deletion templates added to template namespace pages will now be surrounded by `<noinclude>` tags.
+
 # v.4.0.0
 
 ## Global enhancements
