@@ -264,9 +264,15 @@ async function checkExistingDeletionTemplate(): Promise<boolean> {
  * @returns A function that takes a revision and returns an edit request payload.
  */
 function editBuilder(data: QuickFormInputObject): any {
+    let template;
+    if (currentNamespace == 10) {
+        template = `<noinclude>{{destruir|${allCriteria(data)}}} \n</noinclude>`
+    } else {
+        template = `{{destruir|${allCriteria(data)}}} \n`
+    }
     return (revision: any) => {
         return {
-            text: `{{destruir|${allCriteria(data)}}} \n` + revision.content,
+            text: template + revision.content,
             summary: `Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]]${data?.originalArticleName ? `. Artículo existente de mayor calidad: [[${data.originalArticleName}]]` : ''}`,
             minor: false
         }
