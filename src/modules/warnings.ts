@@ -315,6 +315,7 @@ function extractParamsFromInput(input: QuickFormInputObject): string[] {
 function paramAssigner(paramList: string[], input: QuickFormInputObject): templateParamsDictionary {
     let finalObj: templateParamsDictionary = {}
     for (const element of paramList) {
+        finalObj[element] = {};
         for (const [key, value] of Object.entries(input)) {
             if (key.includes('_param') && key.includes(element)) {
                 finalObj[element] = {
