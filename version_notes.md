@@ -6,6 +6,11 @@
 ## Module: Speedy deletion
 * Deletion templates added to template namespace pages will now be surrounded by `<noinclude>` tags.
 
+# v.4.0.2 (hotfix)
+
+## Module: Warnings
+* Fixed a bug whereby the warnings with no parameters would not be added to the page
+
 # v.4.0.0
 
 ## Global enhancements
