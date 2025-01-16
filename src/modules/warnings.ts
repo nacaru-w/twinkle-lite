@@ -440,8 +440,14 @@ export function createWarningsFormWindow(warnedUserFromDOM: string | null): void
 function submitMessage(e: Event) {
     const form = e.target as HTMLFormElement;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
-
     let templateList: string[] = extractParamsFromInput(input);
+
+    // Prevent the user from submitting if no templates were selected
+    if (templateList.length == 0) {
+        alert("Selecciona al menos una plantilla");
+        return;
+    }
+
     let templateParams: templateParamsDictionary = paramAssigner(templateList, input);
 
     // Prevent the user from warning themselves
