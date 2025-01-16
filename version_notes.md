@@ -6,6 +6,9 @@
 ## Module: Speedy deletion
 * Deletion templates added to template namespace pages will now be surrounded by `<noinclude>` tags.
 
+## Module: Warnings
+* Users will now not be allowed to submit the form if no templates were selected.
+
 # v.4.0.2 (hotfix)
 
 ## Module: Warnings
