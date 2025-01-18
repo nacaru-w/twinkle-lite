@@ -44,11 +44,17 @@ export function createButton(
                         let username;
                         // Always using the special page name logic
                         if (currentPageName === "Especial:PáginasNuevas") {
-                            username = firstParentElement.parentElement!.querySelector('bdi')!.innerText;
+                            username = element.closest('.mw-usertoollinks')!.parentElement?.querySelector('.mw-userlink, .history-user .mw-userlink')
+                                ?.textContent
+                                ?.trim();
                         } else {
-                            username = firstParentElement.parentElement!.parentElement!.querySelector('bdi')!.innerText;
+                            username = element.closest('.mw-usertoollinks')!.parentElement?.parentElement?.querySelector('.mw-userlink, .history-user .mw-userlink')
+                                ?.textContent
+                                ?.trim();
                         }
-                        callbackFn(username);
+                        if (username) {
+                            callbackFn(username);
+                        }
                     });
                     newElement.append(elementChild);
                     const firstParentNode = element.parentNode;
