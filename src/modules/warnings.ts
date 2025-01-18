@@ -345,7 +345,7 @@ export function createWarningsFormWindow(warnedUserFromDOM: string | null): void
     // Initialize the Morebits window
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
-    Window.setTitle('Avisar al usuario');
+    Window.setTitle(`Avisar al usuario ${warnedUser}`);
     Window.addFooterLink('Plantillas de aviso a usuario', 'Wikipedia:Plantillas de aviso a usuario');
 
     const form: QuickFormElementInstance = new Morebits.quickForm(submitMessage);
