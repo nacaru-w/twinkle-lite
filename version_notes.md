@@ -8,6 +8,8 @@
 
 ## Module: Warnings
 * Users will now not be allowed to submit the form if no templates were selected.
+* Fixed a bug whereby the relevant username was not being properly fetched from the dom when using the userlinks option.
+* The name of the warned person is now displayed on the form window title
 
 # v.4.0.2 (hotfix)
 
