@@ -9,7 +9,15 @@
 ## Module: Warnings
 * Users will now not be allowed to submit the form if no templates were selected.
 * Fixed a bug whereby the relevant username was not being properly fetched from the dom when using the userlinks option.
-* The name of the warned person is now displayed on the form window title
+* Fixed a bug where templates with no paremeter were not properly being added by the script. 
+* The name of the warned person will now be displayed on the form window title.
+
+## Module: Deletion request closer
+* A message will appear warning users that beta requests are not processed by Twinkle Lite when trying to close one of them through the DRC module.
+
+## Module: Deletion request maker
+* A new option allowing users to open requests in beta mode has been added.
+* The script will now properly build cbd2 templates when creating a second request.
 
 # v.4.0.2 (hotfix)
 
