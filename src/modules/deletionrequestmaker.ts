@@ -41,8 +41,8 @@ function getCategoryOptions(): ListElementData[] {
  * @param reason - The reason provided for the deletion request.
  * @returns A Wikicode string representing the deletion template.
  */
-function buildDeletionTemplate(category: string, reason: string) {
-    return `{{sust:cdb2|pg={{sust:SUBPAGENAME}}|cat=${category}|texto=${reason}|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}}} ~~~~`
+function buildDeletionTemplate(category: string, reason: string, isBeta: boolean) {
+    return `{{sust:${isBeta ? 'cdb2024' : 'cdb2'}|pg=:${currentPageName}|cat=${category}|texto=${reason}${isBeta ? '' : '|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}'}}} ~~~~`
 }
 
 /**
@@ -52,12 +52,12 @@ function buildDeletionTemplate(category: string, reason: string) {
  * @param reason - The reason provided for the deletion request.
  * @returns A promise that resolves when the deletion request page is created or the process is interrupted.
  */
-async function createDeletionRequestPage(category: string, reason: string) {
+async function createDeletionRequestPage(category: string, reason: string, isBeta: boolean) {
     const missingPage: boolean = await isPageMissing(`Wikipedia:Consultas de borrado/${currentPageName}`);
     if (missingPage) {
         return new mw.Api().create(`Wikipedia:Consultas de borrado/${currentPageName}`,
             { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
-            buildDeletionTemplate(category, reason)
+            buildDeletionTemplate(category, reason, isBeta)
         );
     } else {
         const content: string | null = await getContent(`Wikipedia:Consultas de borrado/${currentPageName}`);
@@ -67,7 +67,7 @@ async function createDeletionRequestPage(category: string, reason: string) {
                 return new mw.Api().create(
                     `Wikipedia:Consultas de borrado/${currentPageName}_(segunda_consulta)`,
                     { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
-                    buildDeletionTemplate(category, reason)
+                    buildDeletionTemplate(category, reason, isBeta)
                 )
             } else {
                 new Morebits.status("Proceso interrumpido", "acción abortada por el usuario... actualizando página", "error")
@@ -159,7 +159,7 @@ function submitMessage(e: Event) {
             createStatusWindow(statusWindow);
             new Morebits.status("Paso 1", "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
 
-            createDeletionRequestPage(input.category, input.reason)
+            createDeletionRequestPage(input.category, input.reason, input.beta)
                 .then(function () {
                     new Morebits.status("Paso 2", "colocando plantilla en la(s) página(s) nominada(s)...", "info");
                     return new mw.Api().edit(
@@ -234,6 +234,19 @@ export function createDeletionRequestMarkerFormWindow(): void {
                 label: "Notificar al creador de la página",
                 checked: true,
                 tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador advirtiéndole del posible borrado de su artículo"
+            }],
+        style: "padding-left: 1em;"
+    })
+
+    form.append({
+        type: 'checkbox',
+        list:
+            [{
+                name: "beta",
+                value: "beta",
+                label: "Abrir como consulta beta",
+                checked: false,
+                tooltip: "Marca esta casilla para que Twinkle Lite abra la consulta en modo BETA (aún en pruebas). Twinkle Lite no podrá usarse para cerrar consultas de este tipo."
             }],
         style: "padding-left: 1em;"
     })
