@@ -4,6 +4,7 @@ import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateT
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
 let DROpeningDate: string;
+let requestPageContent: string;
 
 const closureOptions: string[] = ['Mantener', 'Borrar', 'Otro'];
 let timeElapsed: { days: number, hours: number };
@@ -234,11 +235,24 @@ function confirmIfLessThan14Days(): boolean {
     return true
 }
 
+async function isCDBBeta(): Promise<boolean> {
+    const content = await getContent(currentPageName);
+    if (content) {
+        const regex = /\{\{\s*actualCdb[\s:|}]/i;
+        return regex.test(content);
+    }
+    return false
+}
+
 async function submitMessage(e: Event) {
     if (!confirmIfLessThan14Days()) return;
     const form = e.target;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
 
+    if (await isCDBBeta() && !input.postpone) {
+        alert("Lo siento, pero parece que esta consulta se ha abierto mediante la plantilla de apertura de CDB de tipo BETA y por tanto debe de cerrarse manualmente.")
+        return;
+    }
     const decision: string = input.result !== 'Otro' ? input.result : input.otherField;
     const comment: string | null = input.reason ? input.reason : null;
 
