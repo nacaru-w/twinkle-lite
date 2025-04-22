@@ -117,7 +117,15 @@ const templateDict: WikipediaTemplateDict = {
         ]
     },
     "aviso nombre inapropiado": {
-        description: "nombres de usuario que van contra la política de nombres de usuario"
+        description: "nombres de usuario que van contra la política de nombres de usuario",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso nombre inapropiado-1',
+                label: 'Tipo de nombre inapropiado',
+                tooltip: 'Para especificar el problema del nombre del usuario. Opciones admitidas: «confuso», «publicitario», «insultante» o «difamatorio»'
+            }
+        ]
     },
     "aviso prueba1": {
         description: "usuarios que han realizado ediciones no apropiadas",
