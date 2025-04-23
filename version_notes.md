@@ -1,3 +1,8 @@
+# v.4.2.0
+
+## Module: Reports
+* Fixed a bug whereby the script would incorrectly notify a non-existing user when several users were included in the report.
+
 # v.4.1.0
 
 ## Module: Tags
