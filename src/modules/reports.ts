@@ -198,10 +198,10 @@ function buildEditOnNoticeboard(input: QuickFormInputObject, usernames: string[]
     }
 }
 
-function postsMessage(input: QuickFormInputObject): Promise<ApiEditPageParams> | undefined {
+function postsMessage(input: QuickFormInputObject, usernames: string[]): Promise<ApiEditPageParams> | undefined {
     if (!input.notify) return;
     new Morebits.status("Paso 3", `avisando al usuario reportado...`, "info");
-    return isPageMissing(`Usuario_discusión:${input.usernamefield}`)
+    return isPageMissing(`Usuario_discusión:${usernames[0]}`)
         .then(async function (mustCreateNewTalkPage) {
             const title: string = (input.motive == "Otro" ? input.otherreason : input.motive) as string;
             const motive: string = input.motive as string;
@@ -209,14 +209,14 @@ function postsMessage(input: QuickFormInputObject): Promise<ApiEditPageParams> |
             const notificationString = `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${reportMotiveDict[motive].link}#${motive == "Vandalismo en curso" ? reportedUser : hash}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`;
             if (mustCreateNewTalkPage) {
                 return new mw.Api().create(
-                    `Usuario_discusión:${input.usernamefield}`,
+                    `Usuario_discusión:${usernames[0]}`,
                     { summary: `Aviso al usuario de su denuncia por [[${reportMotiveDict[motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                     `\n== ${title} ==\n` +
                     notificationString
                 );
             } else {
                 return new mw.Api().edit(
-                    `Usuario_discusión:${input.usernamefield}`,
+                    `Usuario_discusión:${usernames[0]}`,
                     function (revision) {
                         return {
                             text: revision.content + `\n== ${title} ==\n` + notificationString,
@@ -254,7 +254,7 @@ function submitMessage(e: Event) {
             buildEditOnNoticeboard(input, usernames, articles)
         )
             .then(() => {
-                return postsMessage(input);
+                return postsMessage(input, usernames);
             })
             .then(() => {
                 if (currentPageName.includes(`_discusión:${reportedUser}`)) {
