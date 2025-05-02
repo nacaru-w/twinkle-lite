@@ -10,6 +10,7 @@ import { createHideFormWindow } from "./modules/hide";
 import { createDRCFormWindow } from "./modules/deletionrequestcloser";
 import { createFastBlockerButton } from "./modules/fastblocker";
 import { createConfigWindow } from "./modules/config";
+import { createMTSFormWindow } from "./modules/movetosandbox";
 
 // Let's check first whether the script has been already loaded through global variable
 if (!window.IS_TWINKLE_LITE_LOADED) {
@@ -141,6 +142,14 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			const configLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Configuración de TL', 'TL-button', 'Configuración de Twinkle Lite')
 			if (configLink) {
 				configLink.onclick = () => createConfigWindow(settings);
+			}
+		}
+
+		// Move to sandbox module option
+		if (currentNamespace == 0 || currentNamespace == 1 || currentNamespace == 104 || currentNamespace == 105) {
+			const mtsLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Mover al taller del usuario', 'TL-button', 'Mover esta página la taller del usuario');
+			if (mtsLink) {
+				mtsLink.onclick = () => createMTSFormWindow();
 			}
 		}
 
