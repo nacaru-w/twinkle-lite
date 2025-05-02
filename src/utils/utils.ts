@@ -1,6 +1,6 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
 import { APIPageResponse, BlockInfoObject, PageCreationBasicInfo, ProtectionStatus, Settings } from '../types/twinkle-types'
-import { ApiDeleteParams, ApiQueryBlocksParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+import { ApiDeleteParams, ApiMoveParams, ApiQueryBlocksParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 
 export const api = new mw.Api()
 
@@ -443,3 +443,23 @@ export async function getConfigPage(): Promise<Settings | null> {
     }
     return null
 }
+
+export async function movePage(original: string, destination: string, leaveRedirect: boolean, moveTalk: boolean) {
+    const params: ApiMoveParams = {
+        action: 'move',
+        from: original,
+        to: destination,
+        reason: 'API Test',
+        movetalk: moveTalk,
+        noredirect: !leaveRedirect,
+        format: 'json'
+    }
+
+    try {
+        const response = await api.postWithToken('csrf', params);
+        return response;
+    } catch (error) {
+        console.error('Error moving the page:', error);
+        return null
+    }
+} 
