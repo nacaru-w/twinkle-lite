@@ -3,17 +3,25 @@ import { createStatusWindow, currentPageName, finishMorebitsStatus, getContent, 
 
 let Window: SimpleWindowInstance;
 let creator: string | null;
+let destinationPage: string;
 let step = 0;
 
 export async function createMTSFormWindow() {
+    creator = await getCreator();
+
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
-    Window.setTitle('Trasladar artículo al taller del usuario');
+    Window.setTitle(`Trasladar artículo al taller del usuario ${creator}`);
     Window.addFooterLink('Talleres de usuario', 'Ayuda:Taller')
 
     const form: QuickFormElementInstance = new Morebits.quickForm(submitMessage);
 
-    creator = await getCreator();
+    form.append({
+        type: 'textarea',
+        name: 'reason',
+        label: 'Añade un comentario (opcional)',
+        tooltip: 'Añade un comentario explicando las razones que aparecerá junto al mensaje dejado en la página de discusión del usuario.'
+    })
 
     form.append({
         type: 'submit',
@@ -30,12 +38,14 @@ async function movePageToSandbox() {
 
     const sandbox = `Usuario:${creator}/Taller`;
     const isSandboxEmpty = await isPageMissing(sandbox);
+    destinationPage = isSandboxEmpty ? sandbox : `${sandbox}/${currentPageName}`
 
-    await movePage(currentPageName,
-        isSandboxEmpty ? sandbox : `${sandbox}/${currentPageName}`,
-        false,
-        false
-    );
+    await movePage(currentPageName, {
+        destination: destinationPage,
+        leaveRedirect: false,
+        moveTalk: false,
+        watch: true
+    });
 }
 
 async function postMessageOnTalkPage() {
