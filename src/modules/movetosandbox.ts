@@ -6,6 +6,20 @@ let creator: string | null;
 let destinationPage: string;
 let step = 0;
 
+/**
+ * Adds the disable attribute to the reason textarea element
+ * 
+ * @param disable - whether the area should be set to disabled or not
+ */
+function toggleTextAreaDisable(disable: boolean) {
+    const textarea = document.querySelector("textarea[name='reason']");
+    if (disable) {
+        textarea?.setAttribute("disabled", 'true');
+    } else {
+        textarea?.removeAttribute("disabled");
+    }
+}
+
 export async function createMTSFormWindow() {
     creator = await getCreator();
 
@@ -15,6 +29,29 @@ export async function createMTSFormWindow() {
     Window.addFooterLink('Talleres de usuario', 'Ayuda:Taller')
 
     const form: QuickFormElementInstance = new Morebits.quickForm(submitMessage);
+
+    const textAreaAndReasonField = form.append({
+        type: 'field',
+        label: 'Opciones:',
+    });
+
+    textAreaAndReasonField.append({
+        type: 'checkbox',
+        list: [{
+            name: "notify",
+            value: "notify",
+            label: "Dejar un mensaje en la página de discusión del creador",
+            checked: true,
+            tooltip: "Marca esta casilla para que Twinkle Lite deje un mensaje automático en la página de discusión del creador avisándole del traslado."
+        }],
+        event: (e: Event) => {
+            const target = e.target as HTMLInputElement;
+            if (target) {
+                const notify = target.checked;
+                toggleTextAreaDisable(!notify);
+            }
+        }
+    })
 
     form.append({
         type: 'textarea',
@@ -95,7 +132,7 @@ async function submitMessage(e: Event) {
 
     try {
         await movePageToSandbox();
-        await postMessageOnTalkPage(moveReason);
+        if (input.notify) await postMessageOnTalkPage(moveReason);
         finishMorebitsStatus(Window, statusWindow, 'finished', true);
     } catch (error) {
         finishMorebitsStatus(Window, statusWindow, 'error');
