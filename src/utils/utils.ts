@@ -1,6 +1,7 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
 import { APIPageResponse, BlockInfoObject, MovePageOptions, PageCreationBasicInfo, ProtectionStatus, Settings } from '../types/twinkle-types'
 import { ApiDeleteParams, ApiMoveParams, ApiQueryBlocksParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+import { ApiResponse } from 'types-mediawiki/mw/Api';
 
 export const api = new mw.Api()
 
@@ -464,4 +465,13 @@ export async function movePage(original: string, options: MovePageOptions) {
         console.error('Error moving the page:', error);
         return null
     }
-} 
+}
+
+export async function createPage(page: string, content: string, summary: string): Promise<ApiResponse> {
+    const response = await api.create(
+        page,
+        { summary: summary },
+        content
+    )
+    return response
+}
