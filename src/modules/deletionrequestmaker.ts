@@ -42,7 +42,7 @@ function getCategoryOptions(): ListElementData[] {
  * @returns A Wikicode string representing the deletion template.
  */
 function buildDeletionTemplate(category: string, reason: string, isBeta: boolean) {
-    return `{{sust:${isBeta ? 'cdb2024' : 'cdb2'}|pg=:${currentPageName}|cat=${category}|texto=${reason}${isBeta ? '' : '|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}'}}} ~~~~`
+    return `{{sust:${isBeta ? 'cdb2024' : 'cdb2'}|pg=${currentPageName}|cat=${category}|texto=${reason}${isBeta ? '' : '|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}'}}} ~~~~`
 }
 
 /**
