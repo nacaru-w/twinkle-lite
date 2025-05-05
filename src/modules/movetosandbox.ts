@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { createPage, createStatusWindow, currentPageName, finishMorebitsStatus, getContent, getCreator, isPageMissing, movePage } from "./../utils/utils";
+import { createPage, createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing, movePage } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let creator: string | null;
@@ -96,8 +96,9 @@ async function movePageToSandbox() {
  * @param moveReason - the reason why the page was moved as described in the form
  */
 async function postMessageOnTalkPage(moveReason: string) {
-    step += 1;
+    if (creator == currentUser) return;
 
+    step += 1;
     new Morebits.status(`Paso ${step}`, "publicando un mensaje en la página de discusión del creador...", "info");
     const summaryMessage = `Avisando al usuario del traslado de su artículo ${currentPageName} al [[${destinationPage}|taller]] mediante [[WP:TL]]`;
     const talkPageTemplate = `{{Aviso traslado al taller|${currentPageName}|${destinationPage.endsWith('/Taller') ? '' : currentPageName}|razón=${moveReason}}}`;
