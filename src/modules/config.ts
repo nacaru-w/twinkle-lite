@@ -200,6 +200,24 @@ export function createConfigWindow(settings: Settings | null) {
         ]
     })
 
+    const mtsModuleField: QuickFormElementInstance = form.append({
+        type: 'field',
+        label: 'Módulo de traslado al taller del usuario'
+    })
+
+    mtsModuleField.append({
+        type: 'checkbox',
+        name: 'mtsMenu',
+        list: [
+            {
+                value: 'mts-actions',
+                label: 'Activa la opción «Trasladar al taller del usuario» en el menú de acciones',
+                name: 'MTSActionsMenuCheckbox',
+                checked: settings?.MTSActionsMenuCheckbox ?? true
+            }
+        ]
+    })
+
     const fastBlockerField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Módulo de bloqueado rápido (solo bibliotecarios)'
