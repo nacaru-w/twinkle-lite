@@ -1,5 +1,8 @@
 # v.4.2.0
 
+## Module: Move to sandbox
+* A new module has been developed. It allows users to easily move a page to a user's sandbox so that they can continue working on it. It is meant to be used with newly published articles that have enciclopedic potential but still need to be worked on.
+
 ## Module: Reports
 * Fixed a bug whereby the script would incorrectly notify a non-existing user when several users were included in the report.
 
