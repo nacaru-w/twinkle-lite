@@ -183,6 +183,46 @@ const templateDict: WikipediaTemplateDict = {
             }
         ]
     },
+    "aviso spam1": {
+        description: "usuarios con ediciones que podrían considerarse spam",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso spam1-1',
+                label: 'Artículo en el que se llevó a cabo el spam'
+            }
+        ]
+    },
+    "aviso spam2": {
+        description: "usuarios que han dejado spam en varias ocasiones",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso spam2-1',
+                label: 'Artículo en el que se llevó a cabo el spam'
+            }
+        ]
+    },
+    "aviso spam3": {
+        description: "usuarios que llevan a cabo spam de forma reiterada",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso spam3-1',
+                label: 'Artículo en el que se llevó a cabo el spam'
+            }
+        ]
+    },
+    "aviso spam4": {
+        description: "usuarios que han llevado a cabo spam, último aviso previo al bloqueo",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso spam4-1',
+                label: 'Artículo en el que se llevó a cabo el spam'
+            }
+        ]
+    },
     "aviso topónimos de España": {
         description: "usuarios que no han tenido en cuenta WP:TOES",
         subgroup: [
