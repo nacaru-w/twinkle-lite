@@ -131,6 +131,7 @@ export interface Settings {
     DRCPageMenuCheckbox: boolean,
     DRCActionsMenuCheckbox: boolean,
     BAButtonMenuCheckbox: boolean,
+    MTSActionsMenuCheckbox: boolean
 }
 
 export type BlockAppealResolution = 'Rechazo' | 'Aprobación';
