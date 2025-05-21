@@ -43,9 +43,13 @@ export interface WarningsModuleProcessedList {
 
 export interface templateParamsDictionary {
     [key: string]: {
-        param?: string;
-        paramValue?: QuickFormInputValue
+        params?: ParamObject[]
     }
+}
+
+export interface ParamObject {
+    paramName: string;
+    paramValue: QuickFormInputValue
 }
 
 // Speedy deletion module

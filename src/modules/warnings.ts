@@ -190,6 +190,11 @@ const templateDict: WikipediaTemplateDict = {
                 type: 'input',
                 name: '_param-aviso spam1-1',
                 label: 'Artículo en el que se llevó a cabo el spam'
+            },
+            {
+                type: 'input',
+                name: '_param-aviso spam1-2',
+                label: 'Artículo en el que se llevó a cabo el spam 2'
             }
         ]
     },
@@ -340,13 +345,21 @@ function listBuilder(list: WikipediaTemplateDict) {
  * @returns A formatted string with the template and its parameters.
  */
 function templateBuilder(paramObj: templateParamsDictionary): string {
-    let finalString = '';
+    debugger;
+    let allTemplatesString = ''
     for (const element in paramObj) {
-        const parameter = paramObj[element]?.param ? `|${paramObj[element].param}=` : '';
-        const parameterValue = paramObj[element]?.paramValue || '';
-        finalString += `{{sust:${element}${parameter}${parameterValue}}}\n`;
+        let finalString = `{{sust:${element}`;
+        if (paramObj[element]?.params) {
+            for (let param of paramObj[element]?.params) {
+                const templatedParameter = `|${param.paramName}=${param.paramValue}`
+                finalString += templatedParameter;
+            }
+        }
+        finalString += '}}\n'
+        allTemplatesString += finalString
     }
-    return finalString;
+
+    return allTemplatesString;
 }
 
 function extractParamsFromInput(input: QuickFormInputObject): string[] {
@@ -360,16 +373,19 @@ function extractParamsFromInput(input: QuickFormInputObject): string[] {
     return temporaryTemplateList
 }
 
-function paramAssigner(paramList: string[], input: QuickFormInputObject): templateParamsDictionary {
+function paramAssigner(templateList: string[], input: QuickFormInputObject): templateParamsDictionary {
     let finalObj: templateParamsDictionary = {}
-    for (const element of paramList) {
+    for (const element of templateList) {
         finalObj[element] = {};
         for (const [key, value] of Object.entries(input)) {
             if (key.includes('_param') && key.includes(element)) {
-                finalObj[element] = {
-                    "param": key.split('-').pop()!,
+                if (!finalObj[element].params) {
+                    finalObj[element].params = []
+                }
+                finalObj[element].params.push({
+                    "paramName": key.split('-').pop()!,
                     "paramValue": value
-                };
+                })
             }
         }
     }
@@ -497,7 +513,6 @@ function submitMessage(e: Event) {
     }
 
     let templateParams: templateParamsDictionary = paramAssigner(templateList, input);
-
     // Prevent the user from warning themselves
     if (warnedUser == currentUser) {
         alert("No puedes dejarte un aviso a ti mismo");
