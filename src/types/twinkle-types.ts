@@ -144,5 +144,6 @@ export interface MovePageOptions {
     destination: string,
     leaveRedirect?: boolean,
     moveTalk?: boolean,
-    watch?: boolean
+    watch?: boolean,
+    reason?: string,
 }
