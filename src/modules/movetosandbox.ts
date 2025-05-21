@@ -87,7 +87,8 @@ async function movePageToSandbox() {
         destination: destinationPage,
         leaveRedirect: false,
         moveTalk: false,
-        watch: true
+        watch: true,
+        reason: 'Traslado para que el usuario pueda seguir trabajando en el artículo (mediante [[WP:TL|Twinkle Lite]])'
     });
 }
 
