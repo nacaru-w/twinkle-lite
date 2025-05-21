@@ -287,7 +287,7 @@ export async function getContent(pageName: string): Promise<string | null> {
  * @param deleteTalk - A boolean indicating if the associated talk page must be deleted too
  */
 export async function deletePage(pageName: string, deleteTalk: boolean, reason?: string): Promise<void> {
-    let params: ApiDeleteParams = {
+    let params: any = {
         action: 'delete',
         title: pageName,
         format: 'json',
@@ -447,11 +447,11 @@ export async function getConfigPage(): Promise<Settings | null> {
 
 export async function movePage(original: string, options: MovePageOptions) {
 
-    const params: ApiMoveParams = {
+    const params: any = {
         action: 'move',
         from: original,
         to: options.destination,
-        reason: 'API Test',
+        reason: options.reason || 'Traslado realizado con [[WP:Twinkle Lite|Twinkle Lite]]',
         movetalk: options.moveTalk || true,
         noredirect: !options.leaveRedirect || true,
         watchlist: options.watch ? 'watch' : undefined,
