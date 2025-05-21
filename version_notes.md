@@ -1,3 +1,13 @@
+# v.4.2.1
+
+## Module: Move to sandbox
+* Added explanatory reason for move
+* Page title without underscores
+
+## Module: Warnings
+* Added spam warning templates to catalogue
+* Added possibility of adding more than one parameter to templates
+
 # v.4.2.0
 
 ## Module: Move to sandbox
