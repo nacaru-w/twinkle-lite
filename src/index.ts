@@ -151,7 +151,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		if (currentNamespace == 0 || currentNamespace == 1 || currentNamespace == 104 || currentNamespace == 105) {
 			if (settings?.MTSActionsMenuCheckbox ?? true) {
 
-				const mtsLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Mover al taller del usuario', 'TL-button', 'Mover esta página la taller del usuario');
+				const mtsLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Mover al taller del usuario', 'TL-button', 'Mover esta página al taller del usuario');
 				if (mtsLink) {
 					mtsLink.onclick = () => createMTSFormWindow();
 				}
