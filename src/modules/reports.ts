@@ -233,6 +233,10 @@ function submitMessage(e: Event) {
     const form = e.target;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
     const chosenMotive = input.motive as string;
+    const usernameElements: HTMLInputElement[] = Array.from(document.querySelectorAll('input[name=usernamefield]')) as HTMLInputElement[]
+    const usernames = usernameElements.map((o) => o.value)
+    const articleElements: HTMLInputElement[] = Array.from(document.querySelectorAll('input[name=articlefieldbox]')) as HTMLInputElement[]
+    const articles = articleElements.map((o) => o.value)
 
     if (!input.reason && !reportMotiveDict[chosenMotive].optionalReason) {
         alert("No se ha establecido un motivo.");
@@ -240,14 +244,13 @@ function submitMessage(e: Event) {
         alert("No se ha establecido un título para la denuncia");
     } else if (input.usernamefield == '') {
         alert("No se ha establecido un usuario");
+    } else if (input.motive == 'Guerra de ediciones' && !articles[0]) {
+        alert('Debe incluirse al menos un artículo en la denuncia')
     } else {
         const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
         createStatusWindow(statusWindow);
         new Morebits.status("Paso 1", `obteniendo datos del formulario...`, "info");
-        const usernameElements: HTMLInputElement[] = Array.from(document.querySelectorAll('input[name=usernamefield]')) as HTMLInputElement[]
-        const usernames = usernameElements.map((o) => o.value)
-        const articleElements: HTMLInputElement[] = Array.from(document.querySelectorAll('input[name=articlefieldbox]')) as HTMLInputElement[]
-        const articles = articleElements.map((o) => o.value)
+
         new Morebits.status("Paso 2", "creando denuncia en el tablón...", "info");
         new mw.Api().edit(
             reportMotiveDict[chosenMotive].link,
