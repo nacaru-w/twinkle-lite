@@ -112,6 +112,7 @@ export interface ListElementData {
     label?: string;
     value?: string;
     tooltip?: string
+    list?: any,
     checked?: boolean;
     disabled?: boolean;
     required?: boolean;
