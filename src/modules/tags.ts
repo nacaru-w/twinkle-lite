@@ -76,7 +76,14 @@ const tagTemplateDict: TagTemplateDict = {
                 type: 'input',
                 name: '_param-en desarrollo-1',
                 label: 'Nombre del editor',
-                tooltip: 'Escribe el nombre del usuario que está desarrollando el artículo, no utilices ningún tipo de Wikicódigo'
+                tooltip: 'Escribe el nombre del usuario que está desarrollando el artículo, no utilices ningún tipo de Wikicódigo',
+                required: true
+            },
+            {
+                type: 'input',
+                name: '_param-en desarrollo-wikiproyecto',
+                label: 'Nombre del wikiproyecto',
+                tooltip: '(Opcional) Escribe el nombre del wikiproyecto al que está sociado el desarrollo de este artículo'
             }
         ],
         sust: true
@@ -121,6 +128,12 @@ const tagTemplateDict: TagTemplateDict = {
                 name: '_param-fusionar-1',
                 label: 'Artículo objetivo',
                 tooltip: 'Escribe el nombre del artículo con el que quieres fusionar esta página. No uses Wikicódigo.'
+            },
+            {
+                type: 'input',
+                name: '_param-fusionar-discusión',
+                label: 'Discusión',
+                tooltip: '(Opcional) Artículo en cuya discusión se está tratando la fusión. No es necesario incluir corchetes. Ejemplo «Discusión:Francia»'
             }
         ],
         sust: true
@@ -171,6 +184,12 @@ const tagTemplateDict: TagTemplateDict = {
                 label: 'Razón del sesgo',
                 tooltip: 'Describe brevemente la razón del sesgo. Es importante, también, desarrollarla más exhaustivamente en la PD',
                 required: true
+            },
+            {
+                type: 'input',
+                name: `_param-no neutralidad-en`,
+                label: 'Sección del artículo',
+                tooltip: '(Opcional) Describe brevemente en qué sección del artículo se encuentra la información posiblemente no neutral',
             }
         ],
         groupable: true
@@ -245,13 +264,25 @@ const tagTemplateDict: TagTemplateDict = {
         sust: true
     },
     "renombrar": {
-        description: "para proponer un renombrado de una página",
+        description: "para proponer un cambio de nombre de una página",
         subgroup: [
             {
                 type: 'input',
                 name: '_param-renombrar-1',
                 label: 'Nuevo nombre sugerido',
                 required: true
+            },
+            {
+                type: 'input',
+                name: '_param-renombrar-2',
+                label: 'Motivo',
+                tooltip: '(Opcional) Motivo por el que se propone el renombramiento'
+            },
+            {
+                type: 'input',
+                name: '_param-renombrar-3',
+                label: 'Sección',
+                tooltip: '(Opcional) Sección de la discusión en la que se está debatiendo el renombramiento. Ejemplo: «Discusión:Artículo_X#Cambio_de_nombre»'
             }
         ],
         sust: true
@@ -273,7 +304,14 @@ const tagTemplateDict: TagTemplateDict = {
                 label: 'Código ISO del idioma (opcional)',
                 tooltip: 'Añade el código ISO del idioma del que procede la traducción. Ejemplo: «en» para artículos que proceden de la Wikipedia en inglés o «fr» si vienen de frwiki',
                 required: false
-            }
+            },
+            {
+                type: 'input',
+                name: '_param-traducción-art',
+                label: 'Título del articulo original (opcional)',
+                tooltip: 'Añade el título del artículo en la Wikipedia de origen',
+                required: false
+            },
         ]
     },
     "traducción incompleta": {
@@ -373,17 +411,26 @@ function createGroupedWarning(templateList: any[]): string | false {
  * @returns The final template string to be added to the page.
  */
 function templateBuilder(templateObj: templateParamsDictionary): string {
-    let finalString = '';
+    let allTemplatesString = '';
     for (const element in templateObj) {
         let needsSust = tagTemplateDict[element]?.sust ? true : false; // Check whether the template uses sust or not (TP templates don't)
         if (element.includes('problemas artículo|')) {
             needsSust = true;
         }
-        const parameter = templateObj[element]?.param ? `|${templateObj[element].param}=` : '';
-        const parameterValue = templateObj[element]?.paramValue || '';
-        finalString += `{{${needsSust ? 'sust:' : ''}${element}${parameter}${parameterValue}}}\n`;
+        let finalString = `{{${needsSust ? 'sust:' : ''}${element}`;
+
+        if (templateObj[element]?.params) {
+            for (let param of templateObj[element]?.params) {
+                const templatedParameter = `|${param.paramName}=${param.paramValue}`
+                finalString += templatedParameter;
+            }
+        }
+
+        finalString += '}}\n'
+        allTemplatesString += finalString
+
     }
-    return finalString;
+    return allTemplatesString;
 }
 
 /**
@@ -417,11 +464,14 @@ function paramAssigner(paramList: string[], input: QuickFormInputObject): templa
     for (const element of paramList) {
         templatesWithParams[element] = {}
         for (const [key, value] of Object.entries(input)) {
-            if (key.includes('_param') && key.includes(element)) {
-                templatesWithParams[element] = {
-                    "param": key.split('-').pop()!,
-                    "paramValue": value
+            if (key.includes('_param') && key.includes(element) && value) {
+                if (!templatesWithParams[element].params) {
+                    templatesWithParams[element].params = []
                 }
+                templatesWithParams[element].params.push({
+                    "paramName": key.split('-').pop()!,
+                    "paramValue": value
+                })
             }
         }
     }
