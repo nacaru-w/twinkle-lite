@@ -23,22 +23,28 @@ declare const mw: {
         new(): {
             get(params: any): Promise<any>;
             edit(url: string, revisionCallback: (revision: Revision) => EditParams): Promise<any>;
-            create(title: string, params: { summary: string }, content),
-            postWithToken(type: string, params: { [param]: string })
+            create(title: string, params: { summary: string }, content: any): any;
+            postWithToken(type: string, params: Record<string, any>): Promise<any>;
         };
     };
     util: {
-        isIPAddress(user: string, blockAllowed: boolean);
-        addPortletLink(menu: string, link: string, label: string, identifier: string, tooltip: string)
+        isIPAddress(user: string, blockAllowed: boolean): boolean;
+        addPortletLink(
+            menu: string,
+            link: string,
+            label: string,
+            identifier: string,
+            tooltip: string
+        ): any;
     };
     loader: {
-        using(string);
-        load(string, string);
+        using(module: string | string[]): Promise<void>;
+        load(module: string, type: string): void;
     };
     hook(hookType: string): {
-        add(addedFunction: any)
+        add(callback: (...args: any[]) => void): void;
     };
-    notify(string)
+    notify(message: string): void;
 };
 
 declare const Morebits: {
