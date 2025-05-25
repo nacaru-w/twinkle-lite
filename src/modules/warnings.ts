@@ -58,6 +58,15 @@ const templateDict: WikipediaTemplateDict = {
                 name: '_param-aviso copyvio-1',
                 label: 'Artículo en el que hay copyvio',
                 tooltip: 'Escribe el nombre del artículo en el que se han vulnerado derechos de autor. No uses corchetes, el enlace se añadirá automáticamente'
+            },
+            {
+                type: 'checkbox',
+                list:
+                    [{
+                        name: '_param-aviso copyvio-plagio',
+                        label: 'El artículo posee contenido plagiado',
+                        tooltip: 'Marca esta casilla si hay indicios de que el contenido ha sido plagiado. Se recomienda que vaya acompañada de la plantilla {{plagio}} en el artículo'
+                    }],
             }
         ]
     },
@@ -113,6 +122,12 @@ const templateDict: WikipediaTemplateDict = {
                 name: '_param-aviso noesunforo2-1',
                 label: 'Artículo en el que se realizó la edición',
                 tooltip: 'Escribe el nombre del artículo en el que se cometió la prueba de edición. No uses corchetes, el enlace se añadirá automáticamente'
+            },
+            {
+                type: 'input',
+                name: '_param-aviso noesunforo2-2',
+                label: 'Texto personalizado',
+                tooltip: 'Un texto personalizado que aparece al final final. De no rellenarse, aparecerá simplemente «gracias»'
             }
         ]
     },
@@ -194,7 +209,8 @@ const templateDict: WikipediaTemplateDict = {
             {
                 type: 'input',
                 name: '_param-aviso spam1-2',
-                label: 'Artículo en el que se llevó a cabo el spam 2'
+                label: 'Texto adicional',
+                tooltip: 'Un texto personalizado que aparece al final final. De no rellenarse, aparecerá simplemente «gracias»'
             }
         ]
     },
@@ -205,6 +221,12 @@ const templateDict: WikipediaTemplateDict = {
                 type: 'input',
                 name: '_param-aviso spam2-1',
                 label: 'Artículo en el que se llevó a cabo el spam'
+            },
+            {
+                type: 'input',
+                name: '_param-aviso spam1-2',
+                label: 'Texto adicional',
+                tooltip: 'Un texto personalizado que aparece al final final. De no rellenarse, aparecerá simplemente «gracias»'
             }
         ]
     },
@@ -225,6 +247,12 @@ const templateDict: WikipediaTemplateDict = {
                 type: 'input',
                 name: '_param-aviso spam4-1',
                 label: 'Artículo en el que se llevó a cabo el spam'
+            },
+            {
+                type: 'input',
+                name: '_param-aviso spam1-2',
+                label: 'Texto adicional',
+                tooltip: 'Un texto personalizado que aparece al final final. De no rellenarse, aparecerá simplemente «gracias»'
             }
         ]
     },
@@ -262,7 +290,15 @@ const templateDict: WikipediaTemplateDict = {
         ]
     },
     "aviso votonulo": {
-        description: "usuarios que han intentado votar sin cumplir los requisitos"
+        description: "usuarios que han intentado votar sin cumplir los requisitos",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso votonulo"-1',
+                label: 'Especificar tipo (opciones: «proselitismo» o «títere»)',
+                tooltip: '(Opcional) Especifica si se trataba de «proselitismo» o «títere». El parámetro solo acepta estas dos opciones, de lo contrario dejará un mensaje por defecto.'
+            }
+        ]
     },
     "no amenaces con acciones legales": {
         description: "usuarios que han amenazado con denunciar o llevar a juicio a Wikipedia/otros usuarios",
@@ -345,7 +381,6 @@ function listBuilder(list: WikipediaTemplateDict) {
  * @returns A formatted string with the template and its parameters.
  */
 function templateBuilder(paramObj: templateParamsDictionary): string {
-    debugger;
     let allTemplatesString = ''
     for (const element in paramObj) {
         let finalString = `{{sust:${element}`;
@@ -378,7 +413,7 @@ function paramAssigner(templateList: string[], input: QuickFormInputObject): tem
     for (const element of templateList) {
         finalObj[element] = {};
         for (const [key, value] of Object.entries(input)) {
-            if (key.includes('_param') && key.includes(element)) {
+            if (key.includes('_param') && key.includes(element) && value) {
                 if (!finalObj[element].params) {
                     finalObj[element].params = []
                 }
