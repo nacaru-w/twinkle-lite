@@ -1,12 +1,21 @@
-# v.4.2.1
+# v.4.3.0
 
 ## Module: Move to sandbox
 * Added explanatory reason for move
 * Page title without underscores
+* The module is now part of the configuration panel
 
 ## Module: Warnings
-* Added spam warning templates to catalogue
 * Added possibility of adding more than one parameter to templates
+* Updated template catalogue
+
+## Module: Tags
+* Added possibility of adding more than one parameter to templates
+* Updated template catalogue
+
+## Module: Reports
+* Added validation for article input field when "edit war" is chosen as motive of the report.
+* Added option to hide the reported name when "inappropriate name" is chosen as motive of the report.
 
 # v.4.2.0
 
