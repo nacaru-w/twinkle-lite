@@ -87,15 +87,17 @@ function changeButtonNames() {
     }
 }
 
-function adjustMotiveOptions(selectedOption: any) {
+function adjustMotiveOptions(selectedOption: string) {
     const reasonTextAreaNode = document.querySelector("label[for='reasontextareanode']");
     const articleFieldNode = document.getElementById('articlefieldnode');
     const otherReasonNode = document.getElementById('otherreasonnode');
+    const hideNameNode = document.getElementById('hideNameNode');
 
     if (reasonTextAreaNode && articleFieldNode && otherReasonNode) {
         reasonTextAreaNode.textContent = `Desarrolla la razón${reportMotiveDict[selectedOption].optionalReason ? ' (opcional)' : ''}:`
         articleFieldNode.setAttribute('style', 'display:none');
-        otherReasonNode.setAttribute('style', 'display:none')
+        otherReasonNode.setAttribute('style', 'display:none');
+        hideNameNode?.setAttribute('style', 'display:none');
 
         switch (selectedOption) {
             case 'Guerra de ediciones':
@@ -104,6 +106,11 @@ function adjustMotiveOptions(selectedOption: any) {
                 break;
             case 'Violación de etiqueta':
                 reasonTextAreaNode.textContent = 'Ediciones que constituyen una violación de etiqueta:'
+                break;
+            case 'Nombre inapropiado':
+                if (hideNameNode) {
+                    hideNameNode.style.display = '';
+                }
                 break;
             case 'Otro':
                 otherReasonNode.removeAttribute('style')
@@ -330,6 +337,18 @@ export function createReportsFormWindow(reportedUserFromDOM: string | null): voi
         name: 'usernamefield',
         value: "",
         tooltip: 'Escribe el nombre del usuario denunciado sin ningún tipo de wikicódigo'
+    })
+    reportInfoField.append({
+        type: 'checkbox',
+        list: [{
+            name: "hide",
+            value: "hide",
+            label: 'Ocultar nombre(s) de usuario en la denuncia',
+            checked: false,
+            tooltip: "Marca esta casilla para que el nombre de usuario de las personas que forman parte de la denuncia aparezca oculto"
+        }],
+        style: "padding-left: 1em; display: none;",
+        id: "hideNameNode"
     })
     reportInfoField.append({
         type: 'dyninput',
