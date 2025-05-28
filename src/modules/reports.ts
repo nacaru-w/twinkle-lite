@@ -110,6 +110,7 @@ function adjustMotiveOptions(selectedOption: string) {
             case 'Nombre inapropiado':
                 if (hideNameNode) {
                     hideNameNode.style.display = '';
+                    hideNameNode.style.paddingTop = '0.5em'
                 }
                 break;
             case 'Otro':
@@ -125,10 +126,14 @@ function setReportedUserName() {
     usernameField.value = reportedUser
 }
 
-function listWords(wordArray: string[], templateLetter: 'u' | 'a'): string {
+function listWords(wordArray: string[], templateLetter: 'u' | 'a', motive: string, addHideTemplate?: boolean): string {
     let bulletedWords = '';
     for (let word of wordArray) {
-        bulletedWords += `* {{${templateLetter}|${word}}} \n`
+        if (motive == 'Nombre inapropiado' && addHideTemplate) {
+            bulletedWords += `* {{bloqueo oculto|${word}|ocultar=sí}} \n`
+        } else {
+            bulletedWords += `* {{${templateLetter}|${word}}} \n`
+        }
     }
     return bulletedWords;
 }
@@ -182,8 +187,8 @@ function buildEditOnNoticeboard(input: QuickFormInputObject, usernames: string[]
         }
     } else {
         let title = motive == "Otro" ? input.otherreason : motive;
-        let bulletedUserList = listWords(usernames, 'u')
-        let bulletedArticleList = listWords(articles, 'a')
+        let bulletedUserList = listWords(usernames, 'u', motive, input.hide)
+        let bulletedArticleList = listWords(articles, 'a', motive)
         let reasonTitle = motive == "Guerra de ediciones" ? `; Comentario` : `; Motivo`;
         let articleListIfEditWar = motive == "Guerra de ediciones" ? `\n; Artículos en los que se lleva a cabo \n${bulletedArticleList} \n` : '\n';
         return (revision) => {
@@ -281,7 +286,6 @@ function submitMessage(e: Event) {
 }
 
 export function createReportsFormWindow(reportedUserFromDOM: string | null): void {
-
     // Something about the addPortletLink feature doesn't work well so this condition is unfortunately needed
     if (typeof reportedUserFromDOM == 'string') {
         reportedUser = reportedUserFromDOM;
@@ -347,7 +351,7 @@ export function createReportsFormWindow(reportedUserFromDOM: string | null): voi
             checked: false,
             tooltip: "Marca esta casilla para que el nombre de usuario de las personas que forman parte de la denuncia aparezca oculto"
         }],
-        style: "padding-left: 1em; display: none;",
+        style: "padding-top: 0.5em; display: none;",
         id: "hideNameNode"
     })
     reportInfoField.append({

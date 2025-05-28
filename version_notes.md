@@ -3,7 +3,7 @@
 ## Module: Move to sandbox
 * Added explanatory reason for move
 * Page title without underscores
-* The module is now part of the configuration panel
+* The module is now part of the configuration panel options
 
 ## Module: Warnings
 * Added possibility of adding more than one parameter to templates
