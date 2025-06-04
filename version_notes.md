@@ -17,6 +17,9 @@
 * Added validation for article input field when "edit war" is chosen as motive of the report.
 * Added option to hide the reported name when "inappropriate name" is chosen as motive of the report.
 
+## Module: DRM
+* In cases where the user chooses to nominate several articles at the same time, the names of the articles will be properly displayed on the request page.
+
 # v.4.2.0
 
 ## Module: Move to sandbox
