@@ -75,9 +75,7 @@ export async function createMTSFormWindow() {
  * If it's in use, it moves it into a subpage
  */
 async function movePageToSandbox() {
-    step += 1;
-
-    new Morebits.status(`Paso ${step}`, "moviendo la página al taller del usuario", "info");
+    new Morebits.status(`Paso ${step += 1}`, "moviendo la página al taller del usuario", "info");
 
     const sandbox = `Usuario:${creator}/Taller`;
     const isSandboxEmpty = await isPageMissing(sandbox);
@@ -99,8 +97,7 @@ async function movePageToSandbox() {
 async function postMessageOnTalkPage(moveReason: string) {
     if (creator == currentUser) return;
 
-    step += 1;
-    new Morebits.status(`Paso ${step}`, "publicando un mensaje en la página de discusión del creador...", "info");
+    new Morebits.status(`Paso ${step += 1}`, "publicando un mensaje en la página de discusión del creador...", "info");
     const summaryMessage = `Avisando al usuario del traslado de su artículo ${currentPageNameNoUnderscores} al [[${destinationPage}|taller]] mediante [[WP:TL]]`;
     const talkPageTemplate = `{{Aviso traslado al taller|${currentPageNameNoUnderscores}|${destinationPage.endsWith('/Taller') ? '' : currentPageName}|razón=${moveReason}}}`;
     const isTalkEmpty = await isPageMissing(`Usuario_discusión:${creator}`)
