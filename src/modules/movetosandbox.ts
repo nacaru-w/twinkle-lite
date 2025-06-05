@@ -78,8 +78,8 @@ async function movePageToSandbox() {
     new Morebits.status(`Paso ${step += 1}`, "moviendo la página al taller del usuario", "info");
 
     const sandbox = `Usuario:${creator}/Taller`;
-    const isSandboxEmpty = await isPageMissing(sandbox);
-    destinationPage = isSandboxEmpty ? sandbox : `${sandbox}/${currentPageName}`
+    const isSubSandboxEmpty = await isPageMissing(`${sandbox}/${currentPageName}`);
+    destinationPage = isSubSandboxEmpty ? `${sandbox}/${currentPageName}` : `${sandbox}/${currentPageName}/2`
 
     await movePage(currentPageName, {
         destination: destinationPage,
@@ -99,7 +99,7 @@ async function postMessageOnTalkPage(moveReason: string) {
 
     new Morebits.status(`Paso ${step += 1}`, "publicando un mensaje en la página de discusión del creador...", "info");
     const summaryMessage = `Avisando al usuario del traslado de su artículo ${currentPageNameNoUnderscores} al [[${destinationPage}|taller]] mediante [[WP:TL]]`;
-    const talkPageTemplate = `{{Aviso traslado al taller|${currentPageNameNoUnderscores}|${destinationPage.endsWith('/Taller') ? '' : currentPageName}|razón=${moveReason}}}`;
+    const talkPageTemplate = `{{sust:Aviso traslado al taller|${currentPageNameNoUnderscores}|${destinationPage.endsWith('/2') ? `${currentPageName}/2` : currentPageName}|razón=${moveReason}}}`;
     const isTalkEmpty = await isPageMissing(`Usuario_discusión:${creator}`)
     if (isTalkEmpty) {
         return await createPage(
