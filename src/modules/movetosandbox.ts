@@ -99,7 +99,7 @@ async function postMessageOnTalkPage(moveReason: string) {
 
     new Morebits.status(`Paso ${step += 1}`, "publicando un mensaje en la página de discusión del creador...", "info");
     const summaryMessage = `Avisando al usuario del traslado de su artículo ${currentPageNameNoUnderscores} al [[${destinationPage}|taller]] mediante [[WP:TL]]`;
-    const talkPageTemplate = `{{sust:Aviso traslado al taller|${currentPageNameNoUnderscores}|${destinationPage.endsWith('/2') ? `${currentPageName}/2` : currentPageName}|razón=${moveReason}}}`;
+    const talkPageTemplate = `{{sust:Aviso traslado al taller|${currentPageNameNoUnderscores}|${destinationPage.endsWith('/2') ? `${currentPageName}/2` : currentPageName}|razón=${moveReason}}} ~~~~`;
     const isTalkEmpty = await isPageMissing(`Usuario_discusión:${creator}`)
     if (isTalkEmpty) {
         return await createPage(
