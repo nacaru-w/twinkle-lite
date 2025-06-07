@@ -1,9 +1,11 @@
 # v.4.3.0
 
 ## Module: Move to sandbox
-* Added explanatory reason for move
+* Added explanatory reason for move to move summary
+* The script will not automatically request for the deletion of the redirected page if the user is not a sysop and thus has no permission to delete it.
 * Page title without underscores
 * The module is now part of the configuration panel options
+* Other minor bug fixes
 
 ## Module: Warnings
 * Added possibility of adding more than one parameter to templates
