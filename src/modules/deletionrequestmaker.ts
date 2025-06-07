@@ -243,8 +243,9 @@ function submitMessage(e: Event) {
                     )
                 })
                 .then(async function () {
-                    new Morebits.status(`Paso ${step += 1}`, "añadiendo el resto de páginas nominadas a la consulta...", "info");
-                    if (input.otherArticleFieldBox) {
+                    if (input.otherArticleFieldBox[0]) {
+                        new Morebits.status(`Paso ${step += 1}`, "añadiendo el resto de páginas nominadas a la consulta...", "info");
+
                         const otherArticleArray = Array.from(document.querySelectorAll('input[name="otherArticleFieldBox"]')) as HTMLInputElement[];
                         const mappedArray = otherArticleArray.map((o) => o.value)
                         for (let article of mappedArray) {
@@ -252,6 +253,7 @@ function submitMessage(e: Event) {
                         }
                         await addRemainingArticles(mappedArray, input.beta);
                     }
+                    return
                 })
                 .then(async function () {
                     if (!input.notify) return;
