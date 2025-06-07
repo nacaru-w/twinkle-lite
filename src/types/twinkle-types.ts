@@ -142,7 +142,7 @@ export type BlockAppealResolution = 'Rechazo' | 'Aprobación';
 
 export interface MovePageOptions {
     destination: string,
-    leaveRedirect?: boolean,
+    removeRedirect: boolean,
     moveTalk?: boolean,
     watch?: boolean,
     reason?: string,

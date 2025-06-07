@@ -453,7 +453,7 @@ export async function movePage(original: string, options: MovePageOptions) {
         to: options.destination,
         reason: options.reason || 'Traslado realizado con [[WP:Twinkle Lite|Twinkle Lite]]',
         movetalk: options.moveTalk || true,
-        noredirect: !options.leaveRedirect || true,
+        noredirect: options.removeRedirect,
         watchlist: options.watch ? 'watch' : undefined,
         format: 'json'
     }

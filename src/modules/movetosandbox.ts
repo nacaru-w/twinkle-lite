@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { createPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getCreator, isPageMissing, movePage } from "./../utils/utils";
+import { createPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getCreator, isCurrentUserSysop, isPageMissing, movePage } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let creator: string | null;
@@ -83,7 +83,7 @@ async function movePageToSandbox() {
 
     await movePage(currentPageName, {
         destination: destinationPage,
-        leaveRedirect: false,
+        removeRedirect: true,
         moveTalk: false,
         watch: true,
         reason: 'Traslado al taller para que el usuario pueda seguir trabajando en el artículo (mediante [[WP:TL|Twinkle Lite]])'
@@ -121,6 +121,22 @@ async function postMessageOnTalkPage(moveReason: string) {
     }
 }
 
+async function postDeletionTemplate() {
+    if (!isCurrentUserSysop) {
+        new Morebits.status(`Paso ${step += 1}`, "solicitando el borrado de la redirección...", "info");
+        return await new mw.Api().edit(
+            currentPageName,
+            (revision: any) => {
+                return {
+                    text: '{{destruir|r3}}\n' + revision.content,
+                    summary: 'Dejando una plantilla de borrado en la página ahora trasladada mediante [[WP:TL|Twinkle Lite]].',
+                    minor: false
+                }
+            }
+        )
+    }
+}
+
 async function submitMessage(e: Event) {
     const form = e.target as HTMLFormElement;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
@@ -132,6 +148,7 @@ async function submitMessage(e: Event) {
     try {
         await movePageToSandbox();
         if (input.notify) await postMessageOnTalkPage(moveReason);
+        await postDeletionTemplate();
         finishMorebitsStatus(Window, statusWindow, 'finished', true);
     } catch (error) {
         finishMorebitsStatus(Window, statusWindow, 'error');
