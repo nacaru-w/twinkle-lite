@@ -128,7 +128,7 @@ async function postDeletionTemplate() {
             currentPageName,
             (revision: any) => {
                 return {
-                    text: '{{destruir|r3}}\n' + revision.content,
+                    text: '{{destruir|r2}}\n' + revision.content,
                     summary: 'Dejando una plantilla de borrado en la página ahora trasladada mediante [[WP:TL|Twinkle Lite]].',
                     minor: false
                 }
