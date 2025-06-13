@@ -1,6 +1,6 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
 import { createBlockAppealsButton, createButton, createDRCButton, createHideButton } from "./utils/DOMutils";
-import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, currentUser, diffNewId, getConfigPage, isCurrentUserSysop } from "./utils/utils";
+import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, currentSkin, currentUser, diffNewId, getConfigPage, isCurrentUserSysop } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
 import { createTagsFormWindow } from "./modules/tags";
@@ -18,6 +18,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 
 	const loadDependencies = (callback: any) => {
 		mw.loader.using(['mediawiki.user', 'mediawiki.util', 'mediawiki.Title', 'jquery.ui', 'mediawiki.api', 'mediawiki.ForeignApi']);
+		mw.loader.load('https://es.wikipedia.org/w/index.php?title=Usuario:Nacaru/twinkle-lite.css&action=raw&ctype=text/css', 'text/css');
 		callback();
 	}
 	const loadMorebits = (callback: any) => {
@@ -27,25 +28,26 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 	};
 
 	const initializeTwinkleLite = async () => {
+		const menu = currentSkin == 'minerva' ? 'p-tb' : 'p-cactions';
 		const settings = await getConfigPage();
 
 		if (+currentNamespace >= 0 || mw.config.get('wgArticleId')) {
 			if (settings?.DRMActionsMenuCheckbox ?? true) {
-				const DRMportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
+				const DRMportletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Abrir CDB', 'TL-button', 'Abre una consulta de borrado para esta página');
 				if (DRMportletLink) {
 					DRMportletLink.onclick = createDeletionRequestMarkerFormWindow;
 				}
 			}
 
 			if (settings?.SDActionsMenuCheckbox ?? true) {
-				const SDportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Borrado rápido', 'TL-button', 'Solicita el borrado rápido de la página');
+				const SDportletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Borrado rápido', 'TL-button', 'Solicita el borrado rápido de la página');
 				if (SDportletLink) {
 					SDportletLink.onclick = createSpeedyDeletionFormWindow;
 				}
 			}
 
 			if (settings?.PPActionMenuCheckbox ?? true) {
-				const PPportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
+				const PPportletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Pedir protección', 'TL-button', 'Solicita que esta página sea protegida');
 				if (PPportletLink) {
 					PPportletLink.onclick = createPageProtectionFormWindow;
 				}
@@ -54,7 +56,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 
 		if (currentNamespace === 0 || currentNamespace === 1 || currentNamespace === 104 || currentNamespace === 105) {
 			if (settings?.tagsActionsMenuCheckbox ?? true) {
-				const TportleltLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
+				const TportleltLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Añadir plantilla', 'TL-button', 'Añade una plantilla a la página');
 				if (TportleltLink) {
 					TportleltLink.onclick = createTagsFormWindow;
 				}
@@ -63,14 +65,14 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 
 		if (currentNamespace === 2 || currentNamespace === 3 || (mw.config.get('wgPageName').indexOf("Especial:Contribuciones") > -1)) {
 			if (settings?.ReportsActionsMenuCheckbox ?? true) {
-				const RportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Denunciar usuario', 'TL-button', 'Informa de un problema en relación con el usuario');
+				const RportletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Denunciar usuario', 'TL-button', 'Informa de un problema en relación con el usuario');
 				if (RportletLink) {
 					RportletLink.onclick = createReportsFormWindow;
 				}
 			}
 
 			if (settings?.WarningsActionsMenuCheckbox ?? true) {
-				const WportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
+				const WportletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Avisar al usuario', 'TL-button', 'Deja una plantilla de aviso al usuario en su página de discusión');
 				if (WportletLink) {
 					WportletLink.onclick = createWarningsFormWindow;
 				}
@@ -90,7 +92,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			const openDeletionRequest = await checkIfOpenDR(currentPageName);
 			if (openDeletionRequest) {
 				if (settings?.DRCActionsMenuCheckbox ?? true) {
-					const DRCportletLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
+					const DRCportletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Cerrar CDB', 'TL-button', 'Cierra esta consulta de borrado');
 					if (DRCportletLink) {
 						DRCportletLink.onclick = createDRCFormWindow;
 					}
@@ -139,7 +141,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		}
 
 		if (currentNamespace == 2 && currentPageName.endsWith(currentUser)) {
-			const configLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Configuración de TL', 'TL-button', 'Configuración de Twinkle Lite')
+			const configLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Configuración de TL', 'TL-button', 'Configuración de Twinkle Lite')
 			if (configLink) {
 				configLink.onclick = () => createConfigWindow(settings);
 			}
@@ -151,7 +153,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		if (currentNamespace == 0 || currentNamespace == 1 || currentNamespace == 104 || currentNamespace == 105) {
 			if (settings?.MTSActionsMenuCheckbox ?? true) {
 
-				const mtsLink = mw.util.addPortletLink('p-cactions', 'javascript:void(0)', 'Mover al taller del usuario', 'TL-button', 'Mover esta página al taller del usuario');
+				const mtsLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Mover al taller del usuario', 'TL-button', 'Mover esta página al taller del usuario');
 				if (mtsLink) {
 					mtsLink.onclick = () => createMTSFormWindow();
 				}
