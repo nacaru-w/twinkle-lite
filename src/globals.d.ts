@@ -38,7 +38,10 @@ declare const mw: {
         ): any;
     };
     loader: {
-        using(module: string | string[]): Promise<void>;
+        using(module: string | string[]): {
+            done(callback: () => void): void;
+            then(onfulfilled?: () => void, onrejected?: (reason: any) => void): Promise<void>;
+        };
         load(module: string, type: string): void;
     };
     hook(hookType: string): {
