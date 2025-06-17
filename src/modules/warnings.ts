@@ -457,41 +457,21 @@ export function createWarningsFormWindow(warnedUserFromDOM: string | null): void
         id: 'search',
         size: 30,
         event: function quickFilter() {
-            const searchInput = document.getElementById("search") as HTMLInputElement
-            if (searchInput) {
-                const allCheckboxDivs = document.querySelectorAll("#checkboxContainer > div");
-                if (this.value) {
-                    // Flushes the list before calling the search query function, then does it as a callback so that it happens in the right order
-                    function flushList(callback: any) {
-                        for (let i = 0; i < allCheckboxDivs.length; i++) {
-                            const div = allCheckboxDivs[i] as HTMLElement;
-                            div.style.display = 'none';
-                        }
-                        callback();
-                    }
-                    // Finds matches for the search query within the checkbox list
-                    function updateList(searchString: string) {
-                        for (let i = 0; i < allCheckboxDivs.length; i++) {
-                            const checkboxText = allCheckboxDivs[i].childNodes[1].textContent
-                            if (checkboxText) {
-                                if (checkboxText.includes(searchString.toLowerCase()) || checkboxText.includes(searchString.toUpperCase())) {
-                                    const div = allCheckboxDivs[i] as HTMLElement;
-                                    div.style.display = '';
-                                }
-                            }
-                        }
-                    }
-                    flushList(() => updateList(searchInput.value));
-                }
-                // Retrieves the full list if nothing is on the search input box
-                if (this.value && this.value.length == 0) {
-                    for (let i = 0; i < allCheckboxDivs.length; i++) {
-                        const div = allCheckboxDivs[i] as HTMLElement;
-                        div.style.display = '';
-                    }
-                }
-            }
+            const searchInput = document.getElementById("search") as HTMLInputElement;
+            const allCheckboxDivs = document.querySelectorAll("#checkboxContainer > div");
+            const searchString = searchInput.value.toLowerCase();
 
+            allCheckboxDivs.forEach(div => {
+                const el = div as HTMLElement;
+                const label = el.querySelector("label");
+                const text = label?.textContent?.toLowerCase() ?? el.textContent?.toLowerCase() ?? "";
+
+                if (!searchString || text.includes(searchString)) {
+                    el.style.display = '';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
         }
     })
 
