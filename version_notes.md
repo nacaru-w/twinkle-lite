@@ -1,3 +1,11 @@
+# v.4.4.0
+
+## Module: Tags
+* The search template catalogue's search algorithm has been improved.
+
+## Module: Warnings
+* The search template catalogue's search algorithm has been improved.
+
 # v.4.3.0
 
 ## Module: Move to sandbox
