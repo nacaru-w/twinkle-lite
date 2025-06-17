@@ -224,7 +224,7 @@ const templateDict: WikipediaTemplateDict = {
             },
             {
                 type: 'input',
-                name: '_param-aviso spam1-2',
+                name: '_param-aviso spam2-2',
                 label: 'Texto adicional',
                 tooltip: 'Un texto personalizado que aparece al final final. De no rellenarse, aparecerá simplemente «gracias»'
             }
@@ -237,6 +237,12 @@ const templateDict: WikipediaTemplateDict = {
                 type: 'input',
                 name: '_param-aviso spam3-1',
                 label: 'Artículo en el que se llevó a cabo el spam'
+            },
+            {
+                type: 'input',
+                name: '_param-aviso spam3-2',
+                label: 'Texto adicional',
+                tooltip: 'Un texto personalizado que aparece al final final. De no rellenarse, aparecerá simplemente «gracias»'
             }
         ]
     },
@@ -250,7 +256,7 @@ const templateDict: WikipediaTemplateDict = {
             },
             {
                 type: 'input',
-                name: '_param-aviso spam1-2',
+                name: '_param-aviso spam4-2',
                 label: 'Texto adicional',
                 tooltip: 'Un texto personalizado que aparece al final final. De no rellenarse, aparecerá simplemente «gracias»'
             }
