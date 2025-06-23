@@ -6,6 +6,9 @@
 ## Module: Warnings
 * The search template catalogue's search algorithm has been improved.
 
+## Module: Hide
+* Improved aspect of hide button in Minerva skin.
+
 # v.4.3.0
 
 ## Module: Move to sandbox
