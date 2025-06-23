@@ -1,13 +1,32 @@
 import { createBlockAppealsWindow } from "./../modules/blockappeals";
 import { createDRCFormWindow } from "./../modules/deletionrequestcloser";
-import { currentPageName, diffNewId } from "./../utils/utils";
+import { currentPageName, diffNewId, isUserInMobileSkin } from "./../utils/utils";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
     if (!document.querySelector('.TL-hide-button')) {
         const parentElement = document.querySelector('.mw-diff-undo')?.parentElement;
-        if (parentElement) {
+        if (!parentElement) return;
+
+        const tooltip = "Solicita que esta edición se oculte en el TAB";
+        const isUserInMobileSkin = mw.config.get('skin') === 'minerva';
+
+        if (isUserInMobileSkin) {
+            const oouiBtn = oouiButton('ocultar', () => callbackFn(diffNewId), {
+                flags: [], // no OOUI flags
+                style: {
+                    marginLeft: '5px',
+                }
+            });
+
+            oouiBtn.$element
+                .addClass('TL-hide-button')
+                .attr('title', tooltip);
+
+            const container = document.createElement('span');
+            container.appendChild(oouiBtn.$element[0]);
+            parentElement.appendChild(container);
+        } else {
             const hideButton = document.createElement('span');
-            const tooltip: string = "Solicita que esta edición se oculte en el TAB";
             hideButton.innerHTML = ` (<a class="TL-hide-button" title="${tooltip}">ocultar</a>)`;
             parentElement.appendChild(hideButton);
 
@@ -67,16 +86,33 @@ export function createButton(
     }
 }
 
-export function oouiButton(label: string, onclickFn: any) {
+export function oouiButton(
+    label: string,
+    onclickFn: any,
+    options?: {
+        flags?: string[],
+        style?: Partial<CSSStyleDeclaration>  // generic CSS properties
+    }
+) {
     const button = new OO.ui.ButtonWidget({
         label: label,
-        flags: [
-            'primary',
-            'progressive'
-        ]
+        flags: options?.flags ?? ['primary', 'progressive']
     });
-    button.on('click', onclickFn)
-    return button
+
+    button.on('click', onclickFn);
+
+    if (options?.style) {
+        // Apply all style properties from the object to the button's root element
+        Object.entries(options.style).forEach(([key, value]) => {
+            // key is camelCase like 'marginInline', 'backgroundColor', etc.
+            if (value) {
+                // @ts-ignore to bypass TypeScript strictness on CSSStyleDeclaration
+                button.$element.css(key, value);
+            }
+        });
+    }
+
+    return button;
 }
 
 export function createBlockAppealsButton(appealBox: Element) {
