@@ -271,10 +271,18 @@ function editBuilder(data: QuickFormInputObject): any {
         template = `{{destruir|${allCriteria(data)}}} \n`
     }
     return (revision: any) => {
-        return {
-            text: template + revision.content,
-            summary: `Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]]${data?.originalArticleName ? `. Artículo existente de mayor calidad: [[${data.originalArticleName}]]` : ''}`,
-            minor: false
+        if (data.general?.includes('g6')) {
+            return {
+                text: template + '\n<!-- Contenido oculto por posibles violaciones de derechos de autor\n\n' + revision.content + '\n\n-->',
+                summary: `Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]]${data?.originalArticleName ? `. Artículo existente de mayor calidad: [[${data.originalArticleName}]]` : ''}`,
+                minor: false
+            }
+        } else {
+            return {
+                text: template + revision.content,
+                summary: `Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]]${data?.originalArticleName ? `. Artículo existente de mayor calidad: [[${data.originalArticleName}]]` : ''}`,
+                minor: false
+            }
         }
     }
 }
