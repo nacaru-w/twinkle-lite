@@ -9,6 +9,9 @@
 ## Module: Hide
 * Improved aspect of hide button in Minerva skin.
 
+## Module: Speedy deletion
+* The text in the article will be hidden when applying a G6 type of template (copyvio template).
+
 # v.4.3.0
 
 ## Module: Move to sandbox
