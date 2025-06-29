@@ -4,6 +4,7 @@ import { createStatusWindow, currentNamespace, currentPageName, currentPageNameN
 
 let Window: SimpleWindowInstance
 let deletionTemplateExists: boolean;
+let checkedBoxes: string[] = [];
 
 let criteriaLists: SpeedyDeletionCriteriaCategories = {
     general: [
@@ -111,14 +112,32 @@ export async function createSpeedyDeletionFormWindow() {
         style: "padding-left: 1em; padding-top:0.5em;"
     })
 
+    form.append({
+        type: 'checkbox',
+        list:
+            [{
+                name: "disableContent",
+                value: "disableContent",
+                label: "Ocultar contenido de la página",
+                checked: false,
+                disabled: true,
+                tooltip: "Marca esta casilla para que Twinkle Lite oculte el contenido de la página después de colocar la plantilla"
+            }],
+        style: "padding-left: 1em;"
+    })
+
     let gField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Criterios generales:',
     });
+
     gField.append({
         type: 'checkbox',
         name: 'general',
-        list: getOptions("general")
+        list: getOptions("general"),
+        event: (event: any) => {
+            toggleHideBox(event.target?.value as string, event.target?.checked)
+        }
     })
 
     if (currentNamespace == 0 || currentNamespace == 104 && !mw.config.get('wgIsRedirect')) {
@@ -197,6 +216,7 @@ export async function createSpeedyDeletionFormWindow() {
     let result = form.render();
     Window.setContent(result);
     Window.display();
+
     // After the content has been displayed, we will call the api
     // to check if a deletion template already exists and store
     // the info in a global variable
@@ -244,6 +264,34 @@ function submitMessage(e: Event) {
         })
 }
 
+function changeHideBoxDisableState(disable: boolean): void {
+    const element = document.querySelector("input[value='disableContent']") as HTMLElement | null;
+    if (element) {
+        if (disable) {
+            element.setAttribute('disabled', '');
+        } else {
+            element.removeAttribute('disabled');
+        }
+    }
+}
+
+function toggleHideBox(box: string, isChecked: boolean) {
+    if (isChecked) {
+        if (!checkedBoxes.includes(box)) {
+            checkedBoxes.push(box)
+        }
+    } else {
+        const index = checkedBoxes.indexOf(box);
+        if (index !== -1) {
+            checkedBoxes.splice(index, 1);
+        }
+    }
+    if (checkedBoxes.includes('g1') || checkedBoxes.includes('g2')) {
+        changeHideBoxDisableState(false)
+    } else {
+        changeHideBoxDisableState(true)
+    }
+}
 
 /**
  * Checks if a deletion template already exists on the current page.
