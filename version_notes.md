@@ -10,7 +10,7 @@
 * Improved aspect of hide button in Minerva skin.
 
 ## Module: Speedy deletion
-* The text in the article will be hidden when applying a G6 type of template (copyvio template).
+* There will be a possibility to hide the content of the article when the criteria G1, G2 or G6 have been chosen.
 
 # v.4.3.0
 
