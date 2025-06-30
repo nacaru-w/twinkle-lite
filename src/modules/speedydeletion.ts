@@ -116,12 +116,12 @@ export async function createSpeedyDeletionFormWindow() {
         type: 'checkbox',
         list:
             [{
-                name: "disableContent",
-                value: "disableContent",
-                label: "Ocultar contenido de la página",
+                name: "hideContentCheckbox",
+                value: "hideContentCheckbox",
+                label: "Ocultar el contenido de la página",
                 checked: false,
                 disabled: true,
-                tooltip: "Marca esta casilla para que Twinkle Lite oculte el contenido de la página después de colocar la plantilla"
+                tooltip: "Marca esta casilla para que Twinkle Lite oculte el contenido de la página después de colocar la plantilla (solo activable con criterios G1, G2 y G6)"
             }],
         style: "padding-left: 1em;"
     })
@@ -265,10 +265,11 @@ function submitMessage(e: Event) {
 }
 
 function changeHideBoxDisableState(disable: boolean): void {
-    const element = document.querySelector("input[value='disableContent']") as HTMLElement | null;
+    const element = document.querySelector("input[value='hideContentCheckbox']") as HTMLInputElement | null;
     if (element) {
         if (disable) {
             element.setAttribute('disabled', '');
+            element.checked = false
         } else {
             element.removeAttribute('disabled');
         }
@@ -286,7 +287,7 @@ function toggleHideBox(box: string, isChecked: boolean) {
             checkedBoxes.splice(index, 1);
         }
     }
-    if (checkedBoxes.includes('g1') || checkedBoxes.includes('g2')) {
+    if (checkedBoxes.includes('g1') || checkedBoxes.includes('g2') || checkedBoxes.includes('g6')) {
         changeHideBoxDisableState(false)
     } else {
         changeHideBoxDisableState(true)
@@ -319,9 +320,9 @@ function editBuilder(data: QuickFormInputObject): any {
         template = `{{destruir|${allCriteria(data)}}} \n`
     }
     return (revision: any) => {
-        if (data.general?.includes('g6')) {
+        if (data.hideContentCheckbox) {
             return {
-                text: template + '\n<!-- Contenido oculto por posibles violaciones de derechos de autor\n\n' + revision.content + '\n\n-->',
+                text: template + '\n<!-- Se ha ocultado el contenido del artículo, si esta acción no es correcta, por favor, elimina este texto junto con el cierre final\n\n' + revision.content + '\n\n-->',
                 summary: `Añadiendo plantilla de borrado mediante [[WP:Twinkle Lite|Twinkle Lite]]${data?.originalArticleName ? `. Artículo existente de mayor calidad: [[${data.originalArticleName}]]` : ''}`,
                 minor: false
             }
