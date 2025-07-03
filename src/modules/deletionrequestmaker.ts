@@ -76,11 +76,13 @@ async function createDeletionRequestPage(category: string, reason: string, isBet
             } else {
                 new Morebits.status("Proceso interrumpido", "acción abortada por el usuario... actualizando página", "error")
                 setTimeout(() => { location.reload() }, 4000);
+                return null
             }
         } else {
             alert('Parece que ya existe una consulta en curso')
             new Morebits.status("Proceso interrumpido", "ya existe una consulta en curso", "error");
             setTimeout(() => { location.reload() }, 4000);
+            return null
         }
     }
 }
@@ -235,14 +237,17 @@ function submitMessage(e: Event) {
             new Morebits.status(`Paso ${step += 1}`, "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
 
             createDeletionRequestPage(input.category, input.reason, input.beta)
-                .then(function () {
+                .then(function (result) {
+                    debugger;
+                    // If the user does not confirm in the previous function we return early
+                    if (result == null) throw 'aborted';
                     new Morebits.status(`Paso ${step += 1}`, "colocando plantilla en la(s) página(s) nominada(s)...", "info");
                     return new mw.Api().edit(
                         currentPageName,
                         buildEditOnNominatedPage
                     )
                 })
-                .then(async function () {
+                .then(async function (result) {
                     if (input.otherArticleFieldBox[0]) {
                         new Morebits.status(`Paso ${step += 1}`, "añadiendo el resto de páginas nominadas a la consulta...", "info");
 
@@ -266,6 +271,9 @@ function submitMessage(e: Event) {
                     setTimeout(() => { location.reload() }, 2000);
                 })
                 .catch(function (error) {
+                    if (error === 'aborted') {
+                        return;
+                    }
                     new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
                     console.log(`Error: ${error}`);
                 })
