@@ -12,6 +12,9 @@
 ## Module: Speedy deletion
 * There will be a possibility to hide the content of the article when the criteria G1, G2 or G6 have been chosen.
 
+## Module: DRM
+* The script will now properly exit when refusing the prompt asking to create a second request in articles where there was one previously closed request.
+
 # v.4.3.0
 
 ## Module: Move to sandbox
