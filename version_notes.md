@@ -5,6 +5,7 @@
 
 ## Module: Tags
 * The search template catalogue's search algorithm has been improved.
+* The template catalogue has been updated with `{{traducción no atribuida}}`.
 
 ## Module: Warnings
 * The search template catalogue's search algorithm has been improved.
