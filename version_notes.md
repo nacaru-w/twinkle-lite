@@ -1,5 +1,8 @@
 # v.4.4.0
 
+## Global enhancements:
+* The script has been fully adapted to the official mobile (Minerva) skin. A CSS file has been created in order make specific adaptations to the gadget's interface.
+
 ## Module: Tags
 * The search template catalogue's search algorithm has been improved.
 
