@@ -321,6 +321,11 @@ const tagTemplateDict: TagTemplateDict = {
         groupable: true,
         sust: true
     },
+    "traducción no atribuida": {
+        warning: "aviso traducción no atribuida",
+        description: "artículos traducidos de otros idiomas sin la correspondiente atribución al original",
+        sust: true
+    },
     "wikificar": {
         warning: "aviso wikificar",
         description: "textos con mal formato o que no cumplen el manual de estilo",
