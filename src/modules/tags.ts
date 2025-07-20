@@ -32,7 +32,8 @@ const tagTemplateDict: TagTemplateDict = {
     },
     "categorizar": {
         warning: "aviso categorizar",
-        description: "artículos sin categorías"
+        description: "artículos sin categorías",
+        end: true
     },
     "CDI": {
         warning: "aviso conflicto de interés",

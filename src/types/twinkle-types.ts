@@ -100,7 +100,8 @@ export interface TagTemplateDict {
         sust?: boolean,
         subgroup?: QuickFormElementData[],
         groupable?: boolean,
-        talkPage?: boolean
+        talkPage?: boolean,
+        end?: boolean
     }
 }
 
