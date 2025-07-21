@@ -238,7 +238,6 @@ function submitMessage(e: Event) {
 
             createDeletionRequestPage(input.category, input.reason, input.beta)
                 .then(function (result) {
-                    debugger;
                     // If the user does not confirm in the previous function we return early
                     if (result == null) throw 'aborted';
                     new Morebits.status(`Paso ${step += 1}`, "colocando plantilla en la(s) página(s) nominada(s)...", "info");
