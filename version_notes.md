@@ -4,11 +4,11 @@
 * The script has been fully adapted to the official mobile (Minerva) skin. A CSS file has been created in order make specific adaptations to the gadget's interface.
 
 ## Module: Tags
-* The search template catalogue's search algorithm has been improved.
+* The module's template catalogue's search algorithm has been improved.
 * The template catalogue has been updated with `{{traducción no atribuida}}`.
 
 ## Module: Warnings
-* The search template catalogue's search algorithm has been improved.
+* The module's template catalogue's search algorithm has been improved.
 
 ## Module: Hide
 * Improved aspect of hide button in Minerva skin.
