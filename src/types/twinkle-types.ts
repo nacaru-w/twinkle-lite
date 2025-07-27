@@ -11,14 +11,15 @@ export interface ProtectionOptions {
     default?: boolean
 }
 
-export interface WikipediaTemplateDict {
+export interface WarningTemplateDict {
     [name: string]: {
         description: string,
         warning?: string,
         tooltip?: string,
         sust?: boolean,
         groupable?: boolean
-        talkPage?: boolean
+        talkPage?: boolean,
+        sysopOnly?: boolean,
         subgroup?: ListElementData[]
     }
 }
