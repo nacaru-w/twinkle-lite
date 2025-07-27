@@ -2,15 +2,15 @@
 // Posts a warning message on a user discussion page that can be selected as part of a series of options of a checkbox list
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { templateParamsDictionary, WarningsModuleProcessedList, WikipediaTemplateDict } from "types/twinkle-types";
-import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName } from "./../utils/utils";
+import { templateParamsDictionary, WarningsModuleProcessedList, WarningTemplateDict } from "types/twinkle-types";
+import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName, isCurrentUserSysop } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let warnedUser: string;
 
 // Dictionary holding the different template definitions with descriptions and 
 // optional subgroups for specific parameters
-const templateDict: WikipediaTemplateDict = {
+const templateDict: WarningTemplateDict = {
     "aviso autopromoción": {
         description: "usuarios creadores de páginas promocionales o de publicidad",
         subgroup: [
@@ -35,6 +35,25 @@ const templateDict: WikipediaTemplateDict = {
     },
     "aviso blanqueo discusión": {
         description: "usuarios que han blanqueado total o parcialmente su página de discusión o la de otros usuarios",
+    },
+    "aviso bloqueado": {
+        description: "para notificar a usuarios que han recibido un bloqueo",
+        sysopOnly: true,
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso bloqueado-1',
+                label: 'Motivo del bloqueo',
+                tooltip: 'Escribe el motivo del bloqueo del usuario. Puedes usar wikicódigo.',
+                required: true
+            },
+            {
+                type: 'input',
+                name: '_param-aviso bloqueado-2',
+                label: '(sólo bloqueos parciales) Artículo del bloqueo parcial',
+                tooltip: 'Rellena este parámetro sólo si el usuario han recibido un bloqueo parcial: escribe el nombre del artículo que ya no deberá editar sin utilizar corchetes.',
+            }
+        ]
     },
     "aviso categorizar": {
         description: "usuarios que han olvidado categorizar artículos",
@@ -191,7 +210,7 @@ const templateDict: WikipediaTemplateDict = {
         subgroup: [
             {
                 type: 'input',
-                name: '_param-aviso sin sentido-1',
+                name: '_param-aviso sin" sentido-1',
                 label: 'Artículo en el que se llevó a cabo la edición',
                 tooltip: 'Escribe el nombre del artículo en el que se llevó a cabo la edición sin sentido o bulo. No uses corchetes, el enlace se añadirá automáticamente',
                 required: true
@@ -306,6 +325,10 @@ const templateDict: WikipediaTemplateDict = {
             }
         ]
     },
+    "aviso usuario títere": {
+        description: "usuarios que han creado una cuenta para eludir/evadir bloqueos",
+        sysopOnly: true,
+    },
     "no amenaces con acciones legales": {
         description: "usuarios que han amenazado con denunciar o llevar a juicio a Wikipedia/otros usuarios",
         subgroup: [
@@ -328,6 +351,7 @@ const templateDict: WikipediaTemplateDict = {
             }
         ]
     },
+
     "planvand": {
         description: "usuarios que han realizado ediciones perjudiciales o que van más allá del vandalismo",
         subgroup: [
@@ -367,16 +391,18 @@ function descriptionLinkBuilder(link: string) {
  * @param list - The dictionary of templates.
  * @returns An array of processed list items.
  */
-function listBuilder(list: WikipediaTemplateDict) {
+function listBuilder(list: WarningTemplateDict) {
     let finalList = [];
     for (let item in list) {
-        const template: WarningsModuleProcessedList = {
-            name: item,
-            value: item,
-            label: `{{${item}}} · ${list[item].description} ${descriptionLinkBuilder(item)}`,
-            subgroup: list[item]?.subgroup ? list[item].subgroup : null
-        };
-        finalList.push(template)
+        if (!list[item].sysopOnly || (list[item].sysopOnly && isCurrentUserSysop)) {
+            const template: WarningsModuleProcessedList = {
+                name: item,
+                value: item,
+                label: `{{${item}}} · ${list[item].description} ${descriptionLinkBuilder(item)}`,
+                subgroup: list[item]?.subgroup ? list[item].subgroup : null
+            };
+            finalList.push(template)
+        }
     }
     return finalList;
 }
