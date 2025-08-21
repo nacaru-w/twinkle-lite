@@ -164,7 +164,7 @@ const tagTemplateDict: TagTemplateDict = {
     "mal traducido": {
         warning: "aviso mal traducido",
         description: "escasa calidad de una traducción de otro idioma",
-        groupable: true
+        groupable: false
     },
     "mejorar redacción": {
         description: "redacciones que no siguen el manual de estilo",
@@ -243,7 +243,7 @@ const tagTemplateDict: TagTemplateDict = {
     "publicidad": {
         description: "contenido comercial que defiende proselitismos o propaganda",
         groupable: true,
-        sust: true
+        sust: false
 
     },
     "pvfan": {
@@ -324,7 +324,7 @@ const tagTemplateDict: TagTemplateDict = {
     "traducción no atribuida": {
         warning: "aviso traducción no atribuida",
         description: "artículos traducidos de otros idiomas sin la correspondiente atribución al original",
-        sust: true
+        sust: false
     },
     "wikificar": {
         warning: "aviso wikificar",
