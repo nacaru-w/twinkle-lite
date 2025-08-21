@@ -150,7 +150,7 @@ const tagTemplateDict: TagTemplateDict = {
             }
         ],
         groupable: true,
-        sust: true
+        sust: false
     },
     "infraesbozo": {
         warning: "aviso infraesbozo",
@@ -164,7 +164,8 @@ const tagTemplateDict: TagTemplateDict = {
     "mal traducido": {
         warning: "aviso mal traducido",
         description: "escasa calidad de una traducción de otro idioma",
-        groupable: false
+        groupable: false,
+        sust: false
     },
     "mejorar redacción": {
         description: "redacciones que no siguen el manual de estilo",
