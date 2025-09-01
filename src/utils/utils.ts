@@ -4,6 +4,7 @@ import { ApiDeleteParams, ApiMoveParams, ApiQueryBlocksParams, ApiQueryInfoParam
 import { ApiResponse } from 'types-mediawiki/mw/Api';
 
 export const api = new mw.Api()
+let cachedSettings: Settings | null = null;
 
 export const currentPageName = mw.config.get('wgPageName');
 export const currentPageNameNoUnderscores = currentPageName.replace(/_/g, ' ');
@@ -429,21 +430,27 @@ export async function getBlockInfo(username: string): Promise<BlockInfoObject | 
 }
 
 export async function getConfigPage(): Promise<Settings | null> {
+    if (cachedSettings) {
+        return cachedSettings;
+    }
+
     const localStorageSettings: string | null = localStorage.getItem("TwinkleLiteUserSettings");
     if (localStorageSettings) {
-        return JSON.parse(localStorageSettings);
+        cachedSettings = JSON.parse(localStorageSettings);
+        return cachedSettings;
     } else {
         try {
-            const onWikiSettings = await getContent(`Usuario:${currentUser}/twinkle-lite-settings.json`)
+            const onWikiSettings = await getContent(`Usuario:${currentUser}/twinkle-lite-settings.json`);
             if (onWikiSettings) {
-                return JSON.parse(onWikiSettings);
+                cachedSettings = JSON.parse(onWikiSettings);
+                return cachedSettings;
             }
         } catch (error) {
             console.error("Hubo un error cargando las preferencias", error);
-            return null
+            return null;
         }
     }
-    return null
+    return null;
 }
 
 export async function movePage(original: string, options: MovePageOptions) {
@@ -475,4 +482,11 @@ export async function createPage(page: string, content: string, summary: string)
         content
     )
     return response
+}
+
+export function showConfirmationDialog(message: string): boolean {
+    if (cachedSettings?.askConfirmationCheckbox) {
+        return confirm(message);
+    }
+    return true
 }
