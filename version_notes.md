@@ -1,3 +1,9 @@
+# 4.5.0
+
+## Global enhancements:
+
+* Users will now be able to choose whether they want a last confirmation before initiating Twinkle Lite's actions after the form has been filled for each module. 
+
 # v.4.4.0
 
 ## Global enhancements:
