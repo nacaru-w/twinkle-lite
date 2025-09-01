@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, ListElementData, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimestamp } from "./../utils/utils";
+import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimestamp, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { ProtectionStatus } from "types/twinkle-types";
 
@@ -186,20 +186,21 @@ function submitMessage(e: Event): void {
     if (input.motive == 'Otro' && !input.reason) {
         alert("Se ha seleccionado «Otro» como motivo pero no se ha establecido un motivo.");
     } else {
-        const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
-        createStatusWindow(statusWindow);
-        new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
-        new mw.Api().edit(
-            "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
-            buildEditOnNoticeboard(input)
-        )
-            .then(function () {
-                finishMorebitsStatus(Window, statusWindow, 'finished', false);
-            })
-            .catch(function (error: Error) {
-                finishMorebitsStatus(Window, statusWindow, 'error');
-                console.error(`Error: ${error}`);
-            })
-
+        if (showConfirmationDialog(`¿Seguro que quieres solicitar la ${input.protection} de esta página?`)) {
+            const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
+            createStatusWindow(statusWindow);
+            new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
+            new mw.Api().edit(
+                "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
+                buildEditOnNoticeboard(input)
+            )
+                .then(function () {
+                    finishMorebitsStatus(Window, statusWindow, 'finished', false);
+                })
+                .catch(function (error: Error) {
+                    finishMorebitsStatus(Window, statusWindow, 'error');
+                    console.error(`Error: ${error}`);
+                })
+        }
     }
 }

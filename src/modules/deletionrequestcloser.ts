@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, today } from "../utils/utils";
+import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, showConfirmationDialog, today } from "../utils/utils";
 
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
@@ -253,32 +253,34 @@ async function submitMessage(e: Event) {
         alert("Lo siento, pero parece que esta consulta se ha abierto mediante la plantilla de apertura de CDB de tipo BETA y por tanto debe de cerrarse manualmente.")
         return;
     }
-    const decision: string = input.result !== 'Otro' ? input.result : input.otherField;
-    const comment: string | null = input.reason ? input.reason : null;
 
-    const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
-    createStatusWindow(statusWindow);
+    if (showConfirmationDialog(`¿Seguro que quieres ${input.postpone ? 'prorrogar' : 'cerrar'} esta consulta de borrado?`)) {
+        const decision: string = input.result !== 'Otro' ? input.result : input.otherField;
+        const comment: string | null = input.reason ? input.reason : null;
 
-    if (input.postpone) {
-        try {
-            await addPostponeTemplate();
-            finishMorebitsStatus(Window, statusWindow, 'finished', true);
-        } catch (error) {
-            finishMorebitsStatus(Window, statusWindow, 'error');
-            console.error(`Error: ${error}`);
-        }
-    } else {
-        try {
-            await editRequestPage(decision, comment);
-            await editArticle(decision);
-            await editArticleTalkPage(decision);
-            finishMorebitsStatus(Window, statusWindow, 'finished', true);
-        } catch (error) {
-            finishMorebitsStatus(Window, statusWindow, 'error');
-            console.error(`Error: ${error}`);
+        const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
+        createStatusWindow(statusWindow);
+
+        if (input.postpone) {
+            try {
+                await addPostponeTemplate();
+                finishMorebitsStatus(Window, statusWindow, 'finished', true);
+            } catch (error) {
+                finishMorebitsStatus(Window, statusWindow, 'error');
+                console.error(`Error: ${error}`);
+            }
+        } else {
+            try {
+                await editRequestPage(decision, comment);
+                await editArticle(decision);
+                await editArticleTalkPage(decision);
+                finishMorebitsStatus(Window, statusWindow, 'finished', true);
+            } catch (error) {
+                finishMorebitsStatus(Window, statusWindow, 'error');
+                console.error(`Error: ${error}`);
+            }
         }
     }
-
 
 }
 

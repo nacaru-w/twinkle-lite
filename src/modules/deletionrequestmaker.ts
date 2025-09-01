@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, getContent, getCreator, isPageMissing } from "./../utils/utils";
+import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 // Declaring the variable that will eventually hold the form window now will allow us to manipulate it more easily  later
@@ -231,7 +231,7 @@ function submitMessage(e: Event) {
     if (input.reason === ``) {
         alert("No se ha establecido un motivo.");
     } else {
-        if (window.confirm(`Esto creará una consulta de borrado para el artículo ${currentPageNameNoUnderscores}, ¿estás seguro?`)) {
+        if (showConfirmationDialog(`Esto creará una consulta de borrado para el artículo ${currentPageNameNoUnderscores}, ¿estás seguro?`)) {
             const statusWindow = new Morebits.simpleWindow(400, 350);
             createStatusWindow(statusWindow);
             new Morebits.status(`Paso ${step += 1}`, "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");

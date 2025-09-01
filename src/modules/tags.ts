@@ -2,7 +2,7 @@
 // Allows users to add a tag in articles. The tag can be selected as part of a series of options of a checkbox list
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentNamespace, currentPageName, currentUser, finishMorebitsStatus, getCreator, isPageMissing, stripTalkPagePrefix } from "./../utils/utils";
+import { createStatusWindow, currentNamespace, currentPageName, currentUser, finishMorebitsStatus, getCreator, isPageMissing, showConfirmationDialog, stripTalkPagePrefix } from "./../utils/utils";
 import { TagTemplateDict, TagTemplateListElement, templateParamsDictionary } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
@@ -700,25 +700,29 @@ function submitMessage(e: Event) {
         return alert('No se ha seleccionado ninguna plantilla');
     }
 
-    templates.templatelist = groupTemplates(templates.templatelist);
-    const groupedTemplateWarning = createGroupedWarning(templates.templatelist);
+    if (showConfirmationDialog(`¿Estás seguro de que quieres añadir ${(templates.templatelist.length + templates.templateTalkPageList.length > 1) ? 'las plantillas seleccionadas' : 'la plantilla seleccionada'} ?`)) {
+        templates.templatelist = groupTemplates(templates.templatelist);
+        const groupedTemplateWarning = createGroupedWarning(templates.templatelist);
 
-    const statusWindow = new Morebits.simpleWindow(400, 350);
-    createStatusWindow(statusWindow);
-    new Morebits.status("Paso 1", `generando plantilla(s)...`, "info");
+        const statusWindow = new Morebits.simpleWindow(400, 350);
+        createStatusWindow(statusWindow);
+        new Morebits.status("Paso 1", `generando plantilla(s)...`, "info");
 
-    makeAllEdits(templates.templatelist, templates.templateTalkPageList, input)
-        .then(async () => {
-            if (!input.notify) return;
-            const pageCreator = await getCreator();
-            postsMessage(templates.templatelist, groupedTemplateWarning, pageCreator)
-        })
-        .then(() => {
-            finishMorebitsStatus(Window, statusWindow, "finished", true)
-        })
-        .catch((error) => {
-            finishMorebitsStatus(Window, statusWindow, "error");
-            console.error(`Error: ${error}`);
-        })
+        makeAllEdits(templates.templatelist, templates.templateTalkPageList, input)
+            .then(async () => {
+                if (!input.notify) return;
+                const pageCreator = await getCreator();
+                postsMessage(templates.templatelist, groupedTemplateWarning, pageCreator)
+            })
+            .then(() => {
+                finishMorebitsStatus(Window, statusWindow, "finished", true)
+            })
+            .catch((error) => {
+                finishMorebitsStatus(Window, statusWindow, "error");
+                console.error(`Error: ${error}`);
+            })
+
+    }
+
 
 }

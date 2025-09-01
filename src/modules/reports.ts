@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { ReportMotive } from "types/twinkle-types";
-import { createStatusWindow, currentPageName, finishMorebitsStatus, getContent, isPageMissing, relevantUserName } from "./../utils/utils";
+import { createStatusWindow, currentPageName, finishMorebitsStatus, getContent, isPageMissing, relevantUserName, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let reportedUser: string;
@@ -259,29 +259,31 @@ function submitMessage(e: Event) {
     } else if (input.motive == 'Guerra de ediciones' && !articles[0]) {
         alert('Debe incluirse al menos un artículo en la denuncia')
     } else {
-        const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
-        createStatusWindow(statusWindow);
-        new Morebits.status("Paso 1", `obteniendo datos del formulario...`, "info");
+        if (showConfirmationDialog('¿Estás seguro de que quieres enviar la denuncia?')) {
+            const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
+            createStatusWindow(statusWindow);
+            new Morebits.status("Paso 1", `obteniendo datos del formulario...`, "info");
 
-        new Morebits.status("Paso 2", "creando denuncia en el tablón...", "info");
-        new mw.Api().edit(
-            reportMotiveDict[chosenMotive].link,
-            buildEditOnNoticeboard(input, usernames, articles)
-        )
-            .then(() => {
-                return postsMessage(input, usernames);
-            })
-            .then(() => {
-                if (currentPageName.includes(`_discusión:${reportedUser}`)) {
-                    finishMorebitsStatus(Window, statusWindow, 'finished', true);
-                } else {
-                    finishMorebitsStatus(Window, statusWindow, 'finished', false);
-                }
-            })
-            .catch((error) => {
-                finishMorebitsStatus(Window, statusWindow, 'error');
-                console.error(`Error: ${error}`);
-            })
+            new Morebits.status("Paso 2", "creando denuncia en el tablón...", "info");
+            new mw.Api().edit(
+                reportMotiveDict[chosenMotive].link,
+                buildEditOnNoticeboard(input, usernames, articles)
+            )
+                .then(() => {
+                    return postsMessage(input, usernames);
+                })
+                .then(() => {
+                    if (currentPageName.includes(`_discusión:${reportedUser}`)) {
+                        finishMorebitsStatus(Window, statusWindow, 'finished', true);
+                    } else {
+                        finishMorebitsStatus(Window, statusWindow, 'finished', false);
+                    }
+                })
+                .catch((error) => {
+                    finishMorebitsStatus(Window, statusWindow, 'error');
+                    console.error(`Error: ${error}`);
+                })
+        }
     }
 }
 

@@ -3,7 +3,7 @@
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { templateParamsDictionary, WarningsModuleProcessedList, WarningTemplateDict } from "types/twinkle-types";
-import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName, isCurrentUserSysop } from "./../utils/utils";
+import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName, isCurrentUserSysop, showConfirmationDialog } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let warnedUser: string;
@@ -565,24 +565,26 @@ function submitMessage(e: Event) {
         alert("No puedes dejarte un aviso a ti mismo");
         return;
     } else {
-        // Create a status window to display progress
-        const statusWindow = new Morebits.simpleWindow(400, 350);
-        createStatusWindow(statusWindow)
-        new Morebits.status("Paso 1", 'generando plantilla...', 'info');
+        if (showConfirmationDialog(`¿Estás seguro de que quieres dejar un aviso a ${warnedUser}?`)) {
+            // Create a status window to display progress
+            const statusWindow = new Morebits.simpleWindow(400, 350);
+            createStatusWindow(statusWindow)
+            new Morebits.status("Paso 1", 'generando plantilla...', 'info');
 
-        // Post the message to the user's discussion page
-        postsMessage(templateParams, input)
-            .then(function () {
-                if (currentPageName.includes(`_discusión:${warnedUser}`)) {
-                    finishMorebitsStatus(Window, statusWindow, 'finished', true);
-                } else {
-                    finishMorebitsStatus(Window, statusWindow, 'finished', false);
-                }
-            })
-            .catch(function (error) {
-                finishMorebitsStatus(Window, statusWindow, 'error');
-                console.error(`Error: ${error}`);
-            })
+            // Post the message to the user's discussion page
+            postsMessage(templateParams, input)
+                .then(function () {
+                    if (currentPageName.includes(`_discusión:${warnedUser}`)) {
+                        finishMorebitsStatus(Window, statusWindow, 'finished', true);
+                    } else {
+                        finishMorebitsStatus(Window, statusWindow, 'finished', false);
+                    }
+                })
+                .catch(function (error) {
+                    finishMorebitsStatus(Window, statusWindow, 'error');
+                    console.error(`Error: ${error}`);
+                })
+        }
     }
 }
 

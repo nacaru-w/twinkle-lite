@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { SpeedyDeletionCriteriaType, SpeedyDeletionCriteriaCategories } from "types/twinkle-types";
-import { createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing } from "./../utils/utils";
+import { createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
 
 let Window: SimpleWindowInstance
 let deletionTemplateExists: boolean;
@@ -228,40 +228,42 @@ export async function createSpeedyDeletionFormWindow() {
  * @param {Event} e - The form submission event.
  */
 function submitMessage(e: Event) {
-    let form = e.target as HTMLFormElement;
-    let input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
-    //This little condition removes the A1 criterion if any of its subcriteria are included
-    if (input?.subA) {
-        if (Array.isArray(input.subA) && input.subA.length > 0) {
-            if (Array.isArray(input.article)) {
-                input.article.shift();
+    if (showConfirmationDialog('¿Estás seguro de que deseas solicitar el borrado rápido de esta página?')) {
+        let form = e.target as HTMLFormElement;
+        let input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
+        //This little condition removes the A1 criterion if any of its subcriteria are included
+        if (input?.subA) {
+            if (Array.isArray(input.subA) && input.subA.length > 0) {
+                if (Array.isArray(input.article)) {
+                    input.article.shift();
+                }
             }
         }
-    }
-    // This will ask the user to confirm the action if there's a deletion template
-    // in the article already, which is info we've previously stored as a global variable 
-    if (deletionTemplateExists) {
-        if (!confirm('Parece que ya existe una plantilla de borrado en el artículo, ¿deseas colocar la plantilla igualmente?')) {
-            return
+        // This will ask the user to confirm the action if there's a deletion template
+        // in the article already, which is info we've previously stored as a global variable 
+        if (deletionTemplateExists) {
+            if (!confirm('Parece que ya existe una plantilla de borrado en el artículo, ¿deseas colocar la plantilla igualmente?')) {
+                return
+            }
         }
+        const statusWindow = new Morebits.simpleWindow(400, 350);
+        createStatusWindow(statusWindow)
+        new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
+        new mw.Api().edit(
+            currentPageName,
+            editBuilder(input)
+        )
+            .then(function () {
+                return getCreator().then(postsMessage(input));
+            })
+            .then(function () {
+                finishMorebitsStatus(Window, statusWindow, 'finished', true)
+            })
+            .catch(function (error) {
+                finishMorebitsStatus(Window, statusWindow, 'error');
+                console.error(`Error: ${error}`);
+            })
     }
-    const statusWindow = new Morebits.simpleWindow(400, 350);
-    createStatusWindow(statusWindow)
-    new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
-    new mw.Api().edit(
-        currentPageName,
-        editBuilder(input)
-    )
-        .then(function () {
-            return getCreator().then(postsMessage(input));
-        })
-        .then(function () {
-            finishMorebitsStatus(Window, statusWindow, 'finished', true)
-        })
-        .catch(function (error) {
-            finishMorebitsStatus(Window, statusWindow, 'error');
-            console.error(`Error: ${error}`);
-        })
 }
 
 function changeHideBoxDisableState(disable: boolean): void {

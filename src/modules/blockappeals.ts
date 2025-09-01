@@ -1,5 +1,5 @@
 import { QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, finishMorebitsStatus, getBlockInfo, getContent, relevantUserName } from "./../utils/utils";
+import { api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, finishMorebitsStatus, getBlockInfo, getContent, relevantUserName, showConfirmationDialog } from "./../utils/utils";
 import { BlockAppealResolution, BlockInfoObject } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
@@ -154,30 +154,31 @@ async function makeEdit(pageContent: string, newTemplate: string, resolution: Bl
 
 
 async function submitMessage(e: Event) {
-    const form = e.target;
-    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
+    if (showConfirmationDialog('¿Seguro que quieres enviar la resolución de la solicitud de desbloqueo?')) {
+        const form = e.target;
+        const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
 
-    const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
-    createStatusWindow(statusWindow);
+        const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
+        createStatusWindow(statusWindow);
 
-    const content = await getContent(currentPageName);
+        const content = await getContent(currentPageName);
 
-    if (content) {
-        const appeal = fetchAppeal(content);
+        if (content) {
+            const appeal = fetchAppeal(content);
 
-        if (appeal) {
-            const filledTemplate = prepareAppealResolutionTemplate(appeal, input.reason, input.resolution);
-            try {
-                await makeEdit(content, filledTemplate, input.resolution);
-                finishMorebitsStatus(Window, statusWindow, 'finished', true);
-            } catch (error) {
-                finishMorebitsStatus(Window, statusWindow, 'error');
-                console.error(error);
+            if (appeal) {
+                const filledTemplate = prepareAppealResolutionTemplate(appeal, input.reason, input.resolution);
+                try {
+                    await makeEdit(content, filledTemplate, input.resolution);
+                    finishMorebitsStatus(Window, statusWindow, 'finished', true);
+                } catch (error) {
+                    finishMorebitsStatus(Window, statusWindow, 'error');
+                    console.error(error);
+                }
             }
+
         }
-
     }
-
 }
 
 export function createBlockAppealsWindow() {

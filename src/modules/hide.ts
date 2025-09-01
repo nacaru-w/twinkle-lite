@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, QuickFormInputObject, QuickFormInputValue, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, finishMorebitsStatus } from "./../utils/utils";
+import { createStatusWindow, finishMorebitsStatus, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let diffID: string;
@@ -151,30 +151,32 @@ ${reason ? `; Motivo\n${reason}` : ''}
  * @param e - The event triggered by the form submission.
  */
 function submitMessage(e: Event): void {
-    const board: string = "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual";
-    const form = e.target as HTMLFormElement;
-    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
+    if (showConfirmationDialog('¿Seguro que quieres enviar la solicitud de ocultado?')) {
+        const board: string = "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Miscelánea/Actual";
+        const form = e.target as HTMLFormElement;
+        const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
 
-    const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
-    createStatusWindow(statusWindow);
-    new Morebits.status("Paso 1", `Solicitando el ocultado de ${input.moreDiffs ? 'las ediciones' : 'la edición'}...`, "info");
+        const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
+        createStatusWindow(statusWindow);
+        new Morebits.status("Paso 1", `Solicitando el ocultado de ${input.moreDiffs ? 'las ediciones' : 'la edición'}...`, "info");
 
-    new mw.Api().edit(
-        board,
-        (revision) => {
-            const editParams: ApiEditPageParams = {
-                text: revision.content + buildMessage(input.moreDiffsString as string, input.reason as string),
-                summary: `Solicitando ocultado de ${input.moreDiffs ? 'ediciones' : 'una edición'} mediante [[WP:TL|Twinkle Lite]]`,
-                minor: false
+        new mw.Api().edit(
+            board,
+            (revision) => {
+                const editParams: ApiEditPageParams = {
+                    text: revision.content + buildMessage(input.moreDiffsString as string, input.reason as string),
+                    summary: `Solicitando ocultado de ${input.moreDiffs ? 'ediciones' : 'una edición'} mediante [[WP:TL|Twinkle Lite]]`,
+                    minor: false
+                }
+                return editParams
             }
-            return editParams
-        }
-    ).then(() => {
-        finishMorebitsStatus(Window, statusWindow, 'finished', false);
-    })
-        .catch(function (error: Error) {
-            finishMorebitsStatus(Window, statusWindow, 'error');
-            console.error(`Error: ${error}`);
+        ).then(() => {
+            finishMorebitsStatus(Window, statusWindow, 'finished', false);
         })
+            .catch(function (error: Error) {
+                finishMorebitsStatus(Window, statusWindow, 'error');
+                console.error(`Error: ${error}`);
+            })
+    }
 
 }

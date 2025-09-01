@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { createPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getCreator, isCurrentUserSysop, isPageMissing, movePage } from "./../utils/utils";
+import { createPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getCreator, isCurrentUserSysop, isPageMissing, movePage, showConfirmationDialog } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let creator: string | null;
@@ -138,21 +138,22 @@ async function postDeletionTemplate() {
 }
 
 async function submitMessage(e: Event) {
-    const form = e.target as HTMLFormElement;
-    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
-    const moveReason = input.reason;
+    if (showConfirmationDialog('¿Seguro que quieres trasladar este artículo al taller del usuario?')) {
+        const form = e.target as HTMLFormElement;
+        const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
+        const moveReason = input.reason;
 
-    const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
-    createStatusWindow(statusWindow);
+        const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
+        createStatusWindow(statusWindow);
 
-    try {
-        await movePageToSandbox();
-        if (input.notify) await postMessageOnTalkPage(moveReason);
-        await postDeletionTemplate();
-        finishMorebitsStatus(Window, statusWindow, 'finished', true);
-    } catch (error) {
-        finishMorebitsStatus(Window, statusWindow, 'error');
-        console.error(`Error: ${error}`);
+        try {
+            await movePageToSandbox();
+            if (input.notify) await postMessageOnTalkPage(moveReason);
+            await postDeletionTemplate();
+            finishMorebitsStatus(Window, statusWindow, 'finished', true);
+        } catch (error) {
+            finishMorebitsStatus(Window, statusWindow, 'error');
+            console.error(`Error: ${error}`);
+        }
     }
-
 }
