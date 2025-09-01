@@ -1,9 +1,8 @@
-import { QuickForm, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentUser, finishMorebitsStatus, getContent, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
+import { QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
+import { createStatusWindow, currentUser, finishMorebitsStatus, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
 import { Settings } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
-let config: Settings | null = null;
 
 async function createConfigPage(settings: Settings) {
     await new mw.Api().create(
@@ -67,6 +66,23 @@ export function createConfigWindow(settings: Settings | null) {
     Window.addFooterLink('Documentación de Twinkle Lite', 'WP:TL')
 
     const form = new Morebits.quickForm(submitMessage);
+
+    const generalField: QuickFormElementInstance = form.append({
+        type: 'field',
+        label: 'Configuración general',
+        id: 'general-box'
+    });
+
+    generalField.append({
+        type: 'checkbox',
+        name: 'generalMenu',
+        list: [{
+            value: 'askConfirmation',
+            label: 'Twinkle Lite pedirá una última confirmación antes de ejecutar las acciones de los módulos',
+            name: 'askConfirmationCheckbox',
+            checked: settings?.askConfirmationCheckbox ?? false
+        }]
+    })
 
     const tagsField: QuickFormElementInstance = form.append({
         type: 'field',
