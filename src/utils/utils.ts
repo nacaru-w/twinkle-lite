@@ -429,6 +429,11 @@ export async function getBlockInfo(username: string): Promise<BlockInfoObject | 
     }
 }
 
+/**
+ * Fetches the user settings from local storage or the user's wiki configuration subpage.
+ * 
+ * @returns the object containing the user settings
+ */
 export async function getConfigPage(): Promise<Settings | null> {
     if (cachedSettings) {
         return cachedSettings;
@@ -484,6 +489,13 @@ export async function createPage(page: string, content: string, summary: string)
     return response
 }
 
+/**
+ * Shows a confirmation dialog with a custom message if the user has enabled
+ * the corresponding setting in the configuration page.
+ * 
+ * @param message - The message to be shown in the confirmation dialog.
+ * @returns a boolean indicating if the user confirmed or not
+ */
 export function showConfirmationDialog(message: string): boolean {
     if (cachedSettings?.askConfirmationCheckbox) {
         return confirm(message);
