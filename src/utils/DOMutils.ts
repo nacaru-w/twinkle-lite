@@ -137,3 +137,29 @@ export function createDRCButton(textBox: Element) {
         textBox.prepend(container)
     });
 }
+
+function createNoticeboardResolutionButton(element: HTMLElement) {
+    const button = oouiButton(
+        'Resolver petición',
+        () => {
+            console.log('Botón de resolución del tablón de anuncios clicado');
+        }
+    );
+    element.appendChild(button.$element[0]);
+}
+
+export function createNoticeboardResolutionButtons() {
+    mw.loader.using(['oojs-ui-core', 'oojs-ui-widgets']).done(() => {
+        const elements: HTMLParagraphElement[] = Array.from(
+            document.querySelectorAll("p")
+        ).filter(
+            (el): el is HTMLParagraphElement =>
+                el.textContent?.trim() === "(a rellenar por un bibliotecario)"
+        );
+
+        elements.forEach(el => {
+            el.textContent = ""; // Clear the text content
+            createNoticeboardResolutionButton(el);
+        });
+    });
+}
