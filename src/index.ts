@@ -1,5 +1,5 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
-import { createBlockAppealsButton, createButton, createDRCButton, createHideButton } from "./utils/DOMutils";
+import { createBlockAppealsButton, createButton, createDRCButton, createHideButton, createNoticeboardResolutionButtons } from "./utils/DOMutils";
 import { checkIfOpenDR, currentAction, currentNamespace, currentPageName, currentSkin, currentUser, diffNewId, getConfigPage, isCurrentUserSysop } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
@@ -158,6 +158,12 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 					mtsLink.onclick = () => createMTSFormWindow();
 				}
 			}
+		}
+
+		// Noticeboard resolution module
+		if (currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/') && currentPageName.endsWith('/Actual')) {
+			console.log("Módulo de resolución del tablón de anuncios cargado");
+			createNoticeboardResolutionButtons();
 		}
 
 	};
