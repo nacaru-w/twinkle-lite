@@ -1,6 +1,7 @@
+import { createNoticeboardResolutionWindow } from "./../modules/noticeboardresolution";
 import { createBlockAppealsWindow } from "./../modules/blockappeals";
 import { createDRCFormWindow } from "./../modules/deletionrequestcloser";
-import { currentPageName, diffNewId, isUserInMobileSkin } from "./../utils/utils";
+import { currentPageName, diffNewId } from "./../utils/utils";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
     if (!document.querySelector('.TL-hide-button')) {
@@ -141,9 +142,7 @@ export function createDRCButton(textBox: Element) {
 function createNoticeboardResolutionButton(element: HTMLElement) {
     const button = oouiButton(
         'Resolver petición',
-        () => {
-            console.log('Botón de resolución del tablón de anuncios clicado');
-        }
+        createNoticeboardResolutionWindow,
     );
     element.appendChild(button.$element[0]);
 }
