@@ -161,7 +161,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		}
 
 		// Noticeboard resolution module
-		if (currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/') && currentPageName.endsWith('/Actual')) {
+		if (isCurrentUserSysop && currentNamespace == 4 && currentPageName.startsWith('Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/') && currentPageName.endsWith('/Actual')) {
 			console.log("Módulo de resolución del tablón de anuncios cargado");
 			createNoticeboardResolutionButtons();
 		}
