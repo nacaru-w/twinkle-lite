@@ -502,3 +502,22 @@ export function showConfirmationDialog(message: string): boolean {
     }
     return true
 }
+
+/**
+ * Replaces all underscores in a given text with spaces
+ * @param text - The text in which underscores will be replaced by spaces
+ * @returns 
+ */
+export function removeUnderscores(text: string): string {
+    return text.replace(/_/g, ' ');
+}
+
+/** Extracts the title of a noticeboard from its site link.
+ * 
+ * @param noticeboardSiteLink - The site link of the noticeboard (e.g., "/Archivo/Nombre_del_tablón/Actual").
+ * @returns The title of the noticeboard with underscores replaced by spaces, or `null` if not found.
+ */
+export function extractNoticeboardTitle(noticeboardSiteLink: string): string | null {
+    const match = noticeboardSiteLink.match(/\/Archivo\/(.*?)\/Actual/);
+    return match ? removeUnderscores(match[1]) : null;
+}
