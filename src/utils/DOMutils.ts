@@ -139,12 +139,36 @@ export function createDRCButton(textBox: Element) {
     });
 }
 
+function findClosestPreviousHeading(element: HTMLElement): HTMLElement | null {
+    let sibling = element.previousElementSibling;
+
+    while (sibling) {
+        if (sibling.matches('div.mw-heading')) {
+            return sibling as HTMLElement;
+        }
+        sibling = sibling.previousElementSibling;
+    }
+
+    return null;
+}
+
+function getIdFromFirstChild(element: HTMLElement): string | null {
+    if (element.firstElementChild && element.firstElementChild.id) {
+        return element.firstElementChild.id;
+    }
+    return null;
+}
+
 function createNoticeboardResolutionButton(element: HTMLElement) {
-    const button = oouiButton(
-        'Resolver petición',
-        createNoticeboardResolutionWindow,
-    );
-    element.appendChild(button.$element[0]);
+    const closestHeadingEl = findClosestPreviousHeading(element);
+    const id = closestHeadingEl ? getIdFromFirstChild(closestHeadingEl) : null;
+    if (id) {
+        const button = oouiButton(
+            'Resolver petición',
+            () => createNoticeboardResolutionWindow(id),
+        );
+        element.appendChild(button.$element[0]);
+    }
 }
 
 export function createNoticeboardResolutionButtons() {

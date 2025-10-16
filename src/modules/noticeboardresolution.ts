@@ -7,6 +7,7 @@ import { currentPageName, extractNoticeboardTitle } from "./../utils/utils";
 
 
 let Window: SimpleWindowInstance;
+let requestId: string;
 
 async function submitMessage(event: Event): Promise<void> {
     const form = event.target as HTMLFormElement;
@@ -14,7 +15,12 @@ async function submitMessage(event: Event): Promise<void> {
     console.log(input);
 }
 
-export function createNoticeboardResolutionWindow(): void {
+export function createNoticeboardResolutionWindow(headingId: string): void {
+    // Includes request title with underscores as spaces and, if there are more than one
+    // requests with the same title, the number represeting its position in descending
+    // chronological order (1 being the oldest).
+    requestId = headingId;
+
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
     Window.setTitle(`Resolver petición en ${extractNoticeboardTitle(currentPageName)?.toLowerCase()}`);
@@ -23,7 +29,7 @@ export function createNoticeboardResolutionWindow(): void {
 
     const textBoxField = form.append({
         type: 'field',
-        label: 'Mensaje para el usuario'
+        label: 'Resolución'
     });
 
     textBoxField.append({
@@ -36,7 +42,7 @@ export function createNoticeboardResolutionWindow(): void {
 
     const optionsField = form.append({
         type: 'field',
-        label: 'Opciones de la resolución'
+        label: 'Opciones'
     });
 
     optionsField.append({
@@ -52,7 +58,7 @@ export function createNoticeboardResolutionWindow(): void {
 
     form.append({
         type: 'submit',
-        label: 'Publicar resolución',
+        label: 'Publicar',
     });
 
     const result = form.render();
