@@ -1,7 +1,8 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
 import { APIPageResponse, BlockInfoObject, MovePageOptions, PageCreationBasicInfo, ProtectionStatus, Settings } from '../types/twinkle-types'
-import { ApiDeleteParams, ApiMoveParams, ApiQueryBlocksParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+import { ApiQueryBlocksParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 import { ApiResponse } from 'types-mediawiki/mw/Api';
+import { QueryParams } from 'types-mediawiki/mw/Uri';
 
 export const api = new mw.Api()
 let cachedSettings: Settings | null = null;
@@ -251,13 +252,14 @@ export async function getProtectionStatus(pageName: string): Promise<ProtectionS
 }
 
 /**
- * Fetches the text content of a specified page using the MediaWiki API.
+ * Fetches the text content of a page or a specific section using the MediaWiki API.
  * 
  * @param pageName - The name of the page to fetch content for.
- * @returns A promise that resolves to the page content as a string, or null if not found.
+ * @param sectionNumber - (Optional) The section number or "new" to fetch.
+ * @returns A promise that resolves to the section or page content as a string, or null if not found.
  * @throws An error if the API request fails.
  */
-export async function getContent(pageName: string): Promise<string | null> {
+export async function getContent(pageName: string, sectionNumber?: string): Promise<string | null> {
     const params: ApiQueryRevisionsParams = {
         action: 'query',
         prop: 'revisions',
@@ -265,22 +267,53 @@ export async function getContent(pageName: string): Promise<string | null> {
         rvprop: 'content',
         rvslots: 'main',
         formatversion: '2',
-        format: 'json'
+        format: 'json',
+        ...(sectionNumber !== undefined ? { rvsection: sectionNumber } : {}) // 👈 only include if provided
     };
 
-    const apiPromise = api.get(params);
-
     try {
-        const data = await apiPromise;
-        if (data.query?.pages[0]?.missing) {
-            return null
-        }
-        return data.query?.pages[0]?.revisions[0]?.slots?.main?.content;
+        const data = await api.get(params);
+
+        const page = data.query?.pages?.[0];
+        if (!page || page.missing) return null;
+
+        return page.revisions?.[0]?.slots?.main?.content ?? null;
     } catch (error) {
         console.error('Error fetching page content:', error);
         throw error;
     }
 }
+
+/**
+ * Edits a page using the MediaWiki API. Optionally, a specific section can be edited.
+ * 
+ * @param pageName - The name of the page to edit.
+ * @param summary - The edit summary.
+ * @param newtext - The new text content for the page or section.
+ * @param section - (Optional) The section number to edit.
+ * @returns A promise that resolves to the API response.
+ * @throws An error if the API request fails.
+ */
+export async function editPage(pageName: string, summary: string, newtext: string, section?: string) {
+    const params: QueryParams = {
+        action: 'edit',
+        title: pageName,
+        format: 'json',
+        summary: summary,
+        text: newtext,
+        ...(section !== undefined ? { section: section } : {})
+    }
+
+    try {
+        const res = await api.postWithToken('csrf', params);
+        return res
+    } catch (error) {
+        console.error('Error editing the page:', error);
+        throw error;
+    }
+
+}
+
 
 /**
  * Deletes a page (and, optionally, its associated talk page) given its Wikipedia name
