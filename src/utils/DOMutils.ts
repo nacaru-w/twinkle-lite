@@ -152,6 +152,27 @@ function findClosestPreviousHeading(element: HTMLElement): HTMLElement | null {
     return null;
 }
 
+function extractNoticeboardSectionInfo(element: HTMLElement): { title: string; sectionNumber: number | string } | null {
+    // Find the link inside the edit section span
+    const link = element.querySelector<HTMLAnchorElement>('.mw-editsection a');
+    if (!link) return null;
+
+    // Parse the URL to extract ?section=...
+    const url = new URL(link.href, window.location.origin);
+    const section = url.searchParams.get('section');
+    if (!section) return null;
+
+    // Extract the section title text (the <h2> heading text)
+    const heading = element.querySelector('h1, h2, h3, h4, h5, h6');
+    const title = heading ? heading.textContent?.trim() ?? '' : '';
+
+    // Return both title and section number (converted to number if numeric)
+    const sectionNumber = /^\d+$/.test(section) ? Number(section) : section;
+
+    return { title, sectionNumber };
+}
+
+
 function getIdFromFirstChild(element: HTMLElement): string | null {
     if (element.firstElementChild && element.firstElementChild.id) {
         return element.firstElementChild.id;
@@ -161,11 +182,11 @@ function getIdFromFirstChild(element: HTMLElement): string | null {
 
 function createNoticeboardResolutionButton(element: HTMLElement) {
     const closestHeadingEl = findClosestPreviousHeading(element);
-    const id = closestHeadingEl ? getIdFromFirstChild(closestHeadingEl) : null;
-    if (id) {
+    const sectionInfo = closestHeadingEl ? extractNoticeboardSectionInfo(closestHeadingEl) : null;
+    if (sectionInfo) {
         const button = oouiButton(
             'Resolver petición',
-            () => createNoticeboardResolutionWindow(id),
+            () => createNoticeboardResolutionWindow(sectionInfo),
         );
         element.appendChild(button.$element[0]);
     }
