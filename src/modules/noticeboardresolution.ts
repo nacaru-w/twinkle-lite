@@ -9,11 +9,11 @@ import { currentPageName, extractNoticeboardTitle, api, getContent, createStatus
 let Window: SimpleWindowInstance;
 let step = 0;
 let requestInfo: { title: string; sectionNumber: number | string } | null;
+let localStorageSaveTimer: number | undefined;
 
 async function submitMessage(event: Event): Promise<void> {
     const form = event.target as HTMLFormElement;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
-    console.log(input);
 
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
     createStatusWindow(statusWindow);
@@ -62,6 +62,41 @@ async function editSection(sysopResolution: string): Promise<void> {
     }
 }
 
+function fetchTextFromLocalStorage(): string | null {
+    if (typeof (Storage) !== "undefined") {
+        return localStorage.getItem(`TL_noticeboard_resolution_text_${requestInfo?.title}_${requestInfo?.sectionNumber}`);
+    }
+    return null;
+}
+
+
+
+function saveTextInLocalStorageDebounced(text: string): void {
+    if (typeof Storage === "undefined") return;
+
+    if (localStorageSaveTimer) {
+        clearTimeout(localStorageSaveTimer);
+    }
+
+    localStorageSaveTimer = window.setTimeout(() => {
+        localStorage.setItem(
+            `TL_noticeboard_resolution_text_${requestInfo?.title}_${requestInfo?.sectionNumber}`,
+            text
+        );
+    }, 500);
+}
+
+
+function addListenerToTextarea(): void {
+    const textarea = document.querySelector('textarea[name="resolution-text"]') as HTMLTextAreaElement;
+    if (textarea) {
+        textarea.addEventListener('input', (event: Event) => {
+            const target = event.target as HTMLTextAreaElement;
+            saveTextInLocalStorageDebounced(target.value)
+        });
+    }
+}
+
 export function createNoticeboardResolutionWindow(headerInfo: { title: string; sectionNumber: number | string } | null): void {
     // Includes request title with underscores as spaces and, if there are more than one
     // requests with the same title, the number represeting its position in descending
@@ -82,22 +117,23 @@ export function createNoticeboardResolutionWindow(headerInfo: { title: string; s
 
     textBoxField.append({
         type: 'textarea',
-        name: 'text',
+        name: 'resolution-text',
         label: 'Texto de la resolución:',
+        value: fetchTextFromLocalStorage() || '',
         tooltip: 'Escribe un mensaje para el usuario que hizo la petición. Puedes usar wikitexto.',
-        style: 'margin-top: 0'
+        style: 'margin-top: 0',
     });
 
     const optionsField = form.append({
         type: 'field',
-        label: 'Opciones'
+        label: 'Opciones:'
     });
 
     optionsField.append({
         type: 'checkbox',
-        name: 'closeRequest',
         list: [{
-            value: 'closeRequest',
+            name: 'notify',
+            value: 'notify',
             label: 'Avisar al usuario que realizó la petición',
             tooltip: 'Marca esta casilla si quieres que se le notifique al usuario que realizó la petición dejándole un mensaje en su página de discusión.',
             checked: false
@@ -112,5 +148,7 @@ export function createNoticeboardResolutionWindow(headerInfo: { title: string; s
     const result = form.render();
     Window.setContent(result);
     Window.display();
+
+    addListenerToTextarea();
 
 }
