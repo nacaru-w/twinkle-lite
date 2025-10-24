@@ -18,6 +18,7 @@ declare const mw: {
     config: {
         get(key: string): string;
         get(key: 'wgUserGroups'): string[];
+        get(key: 'wgIsArticle'): boolean;
     };
     Api: {
         new(): {

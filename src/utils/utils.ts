@@ -18,6 +18,7 @@ export const diffNewId = mw.config.get('wgDiffNewId');
 export const userFlags: string[] = mw.config.get('wgUserGroups');
 export const isCurrentUserSysop: boolean = userFlags.includes('sysop');
 export const isUserInMobileSkin = mw.config.get('skin') == 'minerva';
+export const isMainPage: boolean = mw.config.get('wgIsArticle');
 
 export const abbreviatedMonths: { [abbreviation: string]: number } = {
     ene: 1,
