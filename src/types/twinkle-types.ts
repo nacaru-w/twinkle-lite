@@ -150,3 +150,8 @@ export interface MovePageOptions {
     watch?: boolean,
     reason?: string,
 }
+
+export interface NoticeboardResolutionInput {
+    resolutionText: string,
+    notify: boolean
+}
