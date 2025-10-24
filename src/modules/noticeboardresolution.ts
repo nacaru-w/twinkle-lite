@@ -2,7 +2,8 @@
 // Handles the resolution of noticeboard entries, including fetching and updating entries.
 
 import { QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { currentPageName, extractNoticeboardTitle, api, getContent, createStatusWindow, finishMorebitsStatus, editPage } from "./../utils/utils";
+import { currentPageName, extractNoticeboardTitle, getContent, createStatusWindow, finishMorebitsStatus, editPage } from "./../utils/utils";
+import { NoticeboardResolutionInput } from "types/twinkle-types";
 
 
 
@@ -13,18 +14,18 @@ let localStorageSaveTimer: number | undefined;
 
 async function submitMessage(event: Event): Promise<void> {
     const form = event.target as HTMLFormElement;
-    const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
+    const input: NoticeboardResolutionInput = Morebits.quickForm.getInputData(form);
 
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
     createStatusWindow(statusWindow);
 
     try {
-        await editSection(input.text);
+        await editSection(input.resolutionText);
+        deleteTextFromLocalStorage()
         location.reload();
     } catch (error) {
         finishMorebitsStatus(Window, statusWindow, 'error');
         console.error(`Error: ${error}`);
-
     }
 
 }
@@ -46,11 +47,10 @@ async function appendResolutionText(newText: string, sectionNumber: string) {
         newText,
         sectionNumber
     );
-
 }
 
-
 async function editSection(sysopResolution: string): Promise<void> {
+    console.log(sysopResolution)
     new Morebits.status(`Paso ${step += 1}`, "obteniendo el contenido de la sección...", "info");
     const sectionContent = await getContent(currentPageName, requestInfo?.sectionNumber?.toString());
     if (sectionContent) {
@@ -62,6 +62,12 @@ async function editSection(sysopResolution: string): Promise<void> {
     }
 }
 
+/**
+ * Fetches the text saved in the local storage for the noticeboard resolution.
+ * The key for the local storage item is `TL_noticeboard_resolution_text_<title>_<sectionNumber>`.
+ * If the local storage item does not exist, it will return null.
+ * @returns {string|null} The text saved in the local storage, or null if it does not exist.
+ */
 function fetchTextFromLocalStorage(): string | null {
     if (typeof (Storage) !== "undefined") {
         return localStorage.getItem(`TL_noticeboard_resolution_text_${requestInfo?.title}_${requestInfo?.sectionNumber}`);
@@ -69,8 +75,11 @@ function fetchTextFromLocalStorage(): string | null {
     return null;
 }
 
-
-
+/**
+ * Saves a text in the local storage, but with a debounce of 500ms to avoid excessive writes.
+ * If the text is empty, it will remove the item from the local storage instead.
+ * @param {string} text The text to be saved.
+ */
 function saveTextInLocalStorageDebounced(text: string): void {
     if (typeof Storage === "undefined") return;
 
@@ -83,12 +92,21 @@ function saveTextInLocalStorageDebounced(text: string): void {
             `TL_noticeboard_resolution_text_${requestInfo?.title}_${requestInfo?.sectionNumber}`,
             text
         );
+        if (!text) {
+            localStorage.removeItem(`TL_noticeboard_resolution_text_${requestInfo?.title}_${requestInfo?.sectionNumber}`);
+        }
     }, 500);
+}
+
+function deleteTextFromLocalStorage(): void {
+    if (typeof (Storage) !== "undefined") {
+        localStorage.removeItem(`TL_noticeboard_resolution_text_${requestInfo?.title}_${requestInfo?.sectionNumber}`);
+    }
 }
 
 
 function addListenerToTextarea(): void {
-    const textarea = document.querySelector('textarea[name="resolution-text"]') as HTMLTextAreaElement;
+    const textarea = document.querySelector('textarea[name="resolutionText"]') as HTMLTextAreaElement;
     if (textarea) {
         textarea.addEventListener('input', (event: Event) => {
             const target = event.target as HTMLTextAreaElement;
@@ -117,7 +135,7 @@ export function createNoticeboardResolutionWindow(headerInfo: { title: string; s
 
     textBoxField.append({
         type: 'textarea',
-        name: 'resolution-text',
+        name: 'resolutionText',
         label: 'Texto de la resolución:',
         value: fetchTextFromLocalStorage() || '',
         tooltip: 'Escribe un mensaje para el usuario que hizo la petición. Puedes usar wikitexto.',
