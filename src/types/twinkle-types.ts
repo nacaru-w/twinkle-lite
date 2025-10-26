@@ -138,6 +138,7 @@ export interface Settings {
     DRCActionsMenuCheckbox: boolean,
     BAButtonMenuCheckbox: boolean,
     MTSActionsMenuCheckbox: boolean,
+    NBRButtonsCheckbox: boolean
     askConfirmationCheckbox: boolean,
 }
 
@@ -153,5 +154,6 @@ export interface MovePageOptions {
 
 export interface NoticeboardResolutionInput {
     resolutionText: string,
-    notify: boolean
+    notify: boolean,
+    useAdmintabTemplate: boolean
 }

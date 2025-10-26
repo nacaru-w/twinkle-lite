@@ -300,6 +300,23 @@ export function createConfigWindow(settings: Settings | null) {
         label: 'Aplicar configuración',
     });
 
+    const noticeboardResolutionField: QuickFormElementInstance = form.append({
+        type: 'field',
+        label: 'Módulo de resoluciones rápidas en el tablón (solo bibliotecarios)'
+    });
+
+    noticeboardResolutionField.append({
+        type: 'checkbox',
+        name: 'nbrMenu',
+        list: [{
+            value: 'noticeboard-resolution',
+            label: 'Permite resolver solicitudes de desbloqueo rápidamente habilitando un botón para ello en las solicitudes sin resolver de los tablones',
+            name: 'NBRButtonsCheckbox',
+            disabled: !isCurrentUserSysop,
+            checked: settings?.NBRButtonsCheckbox ?? true
+        }]
+    })
+
     const result = form.render();
     Window.setContent(result);
     Window.display();
