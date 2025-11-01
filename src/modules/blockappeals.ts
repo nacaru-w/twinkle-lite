@@ -92,7 +92,7 @@ export function fetchAppeal(pageContent: string): string | null {
 
 
 export function prepareAppealResolutionTemplate(appeal: string, explanation: string, resolution: BlockAppealResolution): string {
-    return `{{Desbloqueo revisado|${appeal}|${explanation} ~~~~|${resolution.toLowerCase()}}}`
+    return `{{Desbloqueo revisado|${appeal}|${explanation} ~~~~|${resolution.toLowerCase()}|{{safesubst:TESParam}}}}`;
 }
 
 export function substitutePageContent(text: string, newTemplate: string): string {
