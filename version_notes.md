@@ -4,6 +4,11 @@
 
 * Users will now be able to choose whether they want a last confirmation before initiating Twinkle Lite's actions after the form has been filled for each module. 
 
+# v.4.4.1 (hotfix)
+
+## Module: Block appeals
+* A fourth parameter has been added to the `{{desbloqueo revisado}}` template so that the edit will be registered as a «manual sysop action»- 
+
 # v.4.4.0
 
 ## Global enhancements:
