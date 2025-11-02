@@ -2,6 +2,7 @@ import { createNoticeboardResolutionWindow } from "./../modules/noticeboardresol
 import { createBlockAppealsWindow } from "./../modules/blockappeals";
 import { createDRCFormWindow } from "./../modules/deletionrequestcloser";
 import { currentPageName, diffNewId } from "./../utils/utils";
+import { NoticeboardRequestInfo } from "types/twinkle-types";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
     if (!document.querySelector('.TL-hide-button')) {
@@ -152,7 +153,7 @@ function findClosestPreviousHeading(element: HTMLElement): HTMLElement | null {
     return null;
 }
 
-function extractNoticeboardSectionInfo(element: HTMLElement): { title: string; sectionNumber: number | string } | null {
+function extractNoticeboardSectionInfo(element: HTMLElement): NoticeboardRequestInfo | null {
     // Find the link inside the edit section span
     const link = element.querySelector<HTMLAnchorElement>('.mw-editsection a');
     if (!link) return null;
