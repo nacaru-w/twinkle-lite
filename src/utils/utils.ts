@@ -295,14 +295,15 @@ export async function getContent(pageName: string, sectionNumber?: string): Prom
  * @returns A promise that resolves to the API response.
  * @throws An error if the API request fails.
  */
-export async function editPage(pageName: string, summary: string, newtext: string, section?: string) {
+export async function editPage(pageName: string, summary: string, newtext: string, section?: string, newSectionTitle?: string) {
     const params: QueryParams = {
         action: 'edit',
         title: pageName,
         format: 'json',
         summary: summary,
         text: newtext,
-        ...(section !== undefined ? { section: section } : {})
+        ...(section !== undefined ? { section: section } : {}),
+        ...(newSectionTitle !== undefined ? { sectiontitle: newSectionTitle } : {})
     }
 
     try {
@@ -312,9 +313,27 @@ export async function editPage(pageName: string, summary: string, newtext: strin
         console.error('Error editing the page:', error);
         throw error;
     }
-
 }
 
+/**
+ * Appends a new section to a page using the MediaWiki API. If the page does not exist, it creates it.
+ * 
+ * @param pageName - The name of the page to append to.
+ * @param summary - The edit summary.
+ * @param newTitle - The title of the new section.
+ * @param newtext - The content of the new section.
+ * @returns A promise that resolves to the API response.
+ * @throws An error if the API request fails.
+ */
+export async function appendSectionToPage(pageName: string, summary: string, newTitle: string, newtext: string) {
+    await editPage(
+        pageName,
+        summary,
+        newtext,
+        'new',
+        newTitle
+    );
+}
 
 /**
  * Deletes a page (and, optionally, its associated talk page) given its Wikipedia name
