@@ -1,10 +1,10 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { abbreviatedMonths, api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, showConfirmationDialog, today } from "../utils/utils";
+import { api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, showConfirmationDialog, today } from "../utils/utils";
+import { abbreviatedMonths } from "utils/maps";
 
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
 let DROpeningDate: string;
-let requestPageContent: string;
 
 const closureOptions: string[] = ['Mantener', 'Borrar', 'Otro'];
 let timeElapsed: { days: number, hours: number };

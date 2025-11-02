@@ -20,21 +20,6 @@ export const isCurrentUserSysop: boolean = userFlags.includes('sysop');
 export const isUserInMobileSkin = mw.config.get('skin') == 'minerva';
 export const isMainPage: boolean = mw.config.get('wgIsArticle');
 
-export const abbreviatedMonths: { [abbreviation: string]: number } = {
-    ene: 1,
-    feb: 2,
-    mar: 3,
-    abr: 4,
-    may: 5,
-    jun: 6,
-    jul: 7,
-    ago: 8,
-    sep: 9,
-    oct: 10,
-    nov: 11,
-    dic: 12
-};
-
 /**
  *  Gets the name of a talk page based on the name of the main page
  * @param mainPageName - The name of the page
