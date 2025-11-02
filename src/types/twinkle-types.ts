@@ -152,6 +152,11 @@ export interface MovePageOptions {
     reason?: string,
 }
 
+export interface NoticeboardRequestInfo {
+    title: string,
+    sectionNumber: number | string,
+}
+
 export interface NoticeboardResolutionInput {
     resolutionText: string,
     notify: boolean,

@@ -1,33 +1,73 @@
 // ** Noticeboard resolution module **
 // Handles the resolution of noticeboard entries, including fetching and updating entries.
 
-import { QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { currentPageName, extractNoticeboardTitle, getContent, createStatusWindow, finishMorebitsStatus, editPage } from "./../utils/utils";
-import { NoticeboardResolutionInput } from "types/twinkle-types";
+import { SimpleWindowInstance } from "types/morebits-types";
+import { currentPageName, extractNoticeboardTitle, getContent, createStatusWindow, finishMorebitsStatus, editPage, appendSectionToPage } from "./../utils/utils";
+import { NoticeboardRequestInfo, NoticeboardResolutionInput } from "types/twinkle-types";
 
 
 
 let Window: SimpleWindowInstance;
 let step = 0;
-let requestInfo: { title: string; sectionNumber: number | string } | null;
+
+let requestInfo: NoticeboardRequestInfo | null;
 let localStorageSaveTimer: number | undefined;
+let useAdminTabTemplate: boolean;
+let sectionContent: string | null;
 
 async function submitMessage(event: Event): Promise<void> {
     const form = event.target as HTMLFormElement;
     const input: NoticeboardResolutionInput = Morebits.quickForm.getInputData(form);
+    useAdminTabTemplate = input.useAdmintabTemplate;
 
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
     createStatusWindow(statusWindow);
 
     try {
         await editSection(input.resolutionText);
-        deleteTextFromLocalStorage()
-        location.reload();
+        deleteTextFromLocalStorage();
+        if (input.notify) await notifyUser();
+        finishMorebitsStatus(Window, statusWindow, 'finished', true);
+        // location.reload();
     } catch (error) {
         finishMorebitsStatus(Window, statusWindow, 'error');
         console.error(`Error: ${error}`);
     }
 
+}
+
+function extractUsernameFromContent(sectionContent: string): string | null {
+    if (!sectionContent) return null;
+
+    // Step 1: Find the part after "; Usuario que lo solicita"
+    const marker = /;\s*Usuario que lo solicita\s*/i;
+    const markerMatch = sectionContent.match(marker);
+    if (!markerMatch) return null;
+
+    // Get substring starting after the marker
+    const startIndex = sectionContent.indexOf(markerMatch[0]) + markerMatch[0].length;
+    const afterMarker = sectionContent.slice(startIndex);
+
+    // Step 2: Find the first [[Usuario:...]] link after the marker
+    const userMatch = afterMarker.match(/\[\[\s*Usuario\s*:\s*([^|\]\n#]+)/i);
+    if (!userMatch) return null;
+
+    // Step 3: Clean up username
+    return userMatch[1].trim().replace(/_/g, ' ');
+}
+
+async function notifyUser() {
+    if (sectionContent) {
+        new Morebits.status(`Paso ${step += 1}`, "avisando al usuario...", "info");
+        const notifiedUser = extractUsernameFromContent(sectionContent);
+        const noticeboard = extractNoticeboardTitle(currentPageName);
+        await appendSectionToPage(
+            `Usuario_discusión:${notifiedUser}`,
+            `Aviso de resolución de solicitud mediante [[WP:TL|Twinkle Lite]]`,
+            `Resolución de tu solicitud ${noticeboard ? `en ${noticeboard}` : ''}`,
+            'Prueba de edición'
+        )
+    }
 }
 
 function replaceAnswerPlaceholder(sectionText: string, newText: string): string {
@@ -50,9 +90,8 @@ async function appendResolutionText(newText: string, sectionNumber: string) {
 }
 
 async function editSection(sysopResolution: string): Promise<void> {
-    console.log(sysopResolution)
     new Morebits.status(`Paso ${step += 1}`, "obteniendo el contenido de la sección...", "info");
-    const sectionContent = await getContent(currentPageName, requestInfo?.sectionNumber?.toString());
+    sectionContent = await getContent(currentPageName, requestInfo?.sectionNumber?.toString());
     if (sectionContent) {
         const newSectionContent = replaceAnswerPlaceholder(sectionContent, sysopResolution);
         if (newSectionContent) {
@@ -115,12 +154,11 @@ function addListenerToTextarea(): void {
     }
 }
 
-export function createNoticeboardResolutionWindow(headerInfo: { title: string; sectionNumber: number | string } | null): void {
+export function createNoticeboardResolutionWindow(headerInfo: NoticeboardRequestInfo | null): void {
     // Includes request title with underscores as spaces and, if there are more than one
     // requests with the same title, the number represeting its position in descending
     // chronological order (1 being the oldest).
     requestInfo = headerInfo;
-    console.log(requestInfo)
 
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
@@ -146,6 +184,26 @@ export function createNoticeboardResolutionWindow(headerInfo: { title: string; s
         type: 'field',
         label: 'Opciones:'
     });
+
+    // optionsField.append({
+    //     type: 'checkbox',
+    //     list: [{
+    //         name: 'underReview',
+    //         value: 'underReview',
+    //         label: 'Marcar esta solicitud como «en revisión»',
+    //         checked: false
+    //     }]
+    // })
+
+    optionsField.append({
+        type: 'checkbox',
+        list: [{
+            name: 'useAdmintabTemplate',
+            value: 'useAdminTabTemplate',
+            label: 'Usar la plantilla {{admintab}} al responder',
+            checked: true
+        }]
+    })
 
     optionsField.append({
         type: 'checkbox',
