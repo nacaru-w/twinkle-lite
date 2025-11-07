@@ -89,11 +89,25 @@ async function appendResolutionText(newText: string, sectionNumber: string) {
     );
 }
 
+/**
+ * Adapts the sysop resolution to the correct format, depending on whether the admin tab template is used or not.
+ * @param {string} resolution - The sysop resolution to adapt.
+ * @returns {string} The adapted sysop resolution.
+ */
+function adaptSysopResolution(resolution: string): string {
+    if (useAdminTabTemplate) {
+        return `{{admintab|1=${resolution}|2=~~~~}}`
+    } else {
+        return `${resolution} ~~~~`
+    }
+}
+
 async function editSection(sysopResolution: string): Promise<void> {
     new Morebits.status(`Paso ${step += 1}`, "obteniendo el contenido de la sección...", "info");
     sectionContent = await getContent(currentPageName, requestInfo?.sectionNumber?.toString());
+    const adaptedResolution = adaptSysopResolution(sysopResolution);
     if (sectionContent) {
-        const newSectionContent = replaceAnswerPlaceholder(sectionContent, sysopResolution);
+        const newSectionContent = replaceAnswerPlaceholder(sectionContent, adaptedResolution);
         if (newSectionContent) {
             await appendResolutionText(newSectionContent, requestInfo?.sectionNumber?.toString() || '');
         }
@@ -117,7 +131,7 @@ function fetchTextFromLocalStorage(): string | null {
 /**
  * Saves a text in the local storage, but with a debounce of 500ms to avoid excessive writes.
  * If the text is empty, it will remove the item from the local storage instead.
- * @param {string} text The text to be saved.
+ * @param {string} text - The text to be saved.
  */
 function saveTextInLocalStorageDebounced(text: string): void {
     if (typeof Storage === "undefined") return;
