@@ -1,6 +1,6 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, showConfirmationDialog, today } from "../utils/utils";
-import { abbreviatedMonths } from "utils/maps";
+import { abbreviatedMonths } from "./../utils/maps";
 
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
