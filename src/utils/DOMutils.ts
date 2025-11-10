@@ -6,7 +6,7 @@ import { NoticeboardRequestInfo } from "types/twinkle-types";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
     if (!document.querySelector('.TL-hide-button')) {
-        const parentElement = document.querySelector('.mw-diff-undo')?.parentElement;
+        const parentElement = document.querySelector('strong>.mw-diff-undo')?.parentElement;
         if (!parentElement) return;
 
         const tooltip = "Solicita que esta edición se oculte en el TAB";
