@@ -164,7 +164,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		if (isCurrentUserSysop && currentNamespace == 4 && isMainPage && currentPageName.startsWith('Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/') && currentPageName.endsWith('/Actual')) {
 			if (settings?.NBRButtonsCheckbox ?? true) {
 				console.log("Módulo de resolución del tablón de anuncios cargado");
-				createNoticeboardResolutionButtons();
+				createNoticeboardResolutionButtons(settings);
 			}
 		}
 

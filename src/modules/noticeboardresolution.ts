@@ -18,7 +18,6 @@ let sectionContent: string | null;
 async function submitMessage(event: Event): Promise<void> {
     const form = event.target as HTMLFormElement;
     const input: NoticeboardResolutionInput = Morebits.quickForm.getInputData(form);
-    useAdminTabTemplate = input.useAdmintabTemplate;
 
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
     createStatusWindow(statusWindow);
@@ -168,11 +167,12 @@ function addListenerToTextarea(): void {
     }
 }
 
-export function createNoticeboardResolutionWindow(headerInfo: NoticeboardRequestInfo | null): void {
+export function createNoticeboardResolutionWindow(headerInfo: NoticeboardRequestInfo | null, configUseAdminTabTemplate: boolean): void {
     // Includes request title with underscores as spaces and, if there are more than one
     // requests with the same title, the number represeting its position in descending
     // chronological order (1 being the oldest).
     requestInfo = headerInfo;
+    useAdminTabTemplate = configUseAdminTabTemplate;
 
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
@@ -209,15 +209,15 @@ export function createNoticeboardResolutionWindow(headerInfo: NoticeboardRequest
     //     }]
     // })
 
-    optionsField.append({
-        type: 'checkbox',
-        list: [{
-            name: 'useAdmintabTemplate',
-            value: 'useAdminTabTemplate',
-            label: 'Usar la plantilla {{admintab}} al responder',
-            checked: true
-        }]
-    })
+    // optionsField.append({
+    //     type: 'checkbox',
+    //     list: [{
+    //         name: 'useAdmintabTemplate',
+    //         value: 'useAdminTabTemplate',
+    //         label: 'Usar la plantilla {{admintab}} al responder',
+    //         checked: true
+    //     }]
+    // })
 
     optionsField.append({
         type: 'checkbox',

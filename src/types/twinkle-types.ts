@@ -140,6 +140,7 @@ export interface Settings {
     MTSActionsMenuCheckbox: boolean,
     NBRButtonsCheckbox: boolean
     askConfirmationCheckbox: boolean,
+    useAdmintabTemplateCheckbox: boolean
 }
 
 export type BlockAppealResolution = 'Rechazo' | 'Aprobación';

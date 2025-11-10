@@ -2,7 +2,7 @@ import { createNoticeboardResolutionWindow } from "./../modules/noticeboardresol
 import { createBlockAppealsWindow } from "./../modules/blockappeals";
 import { createDRCFormWindow } from "./../modules/deletionrequestcloser";
 import { currentPageName, diffNewId } from "./../utils/utils";
-import { NoticeboardRequestInfo } from "types/twinkle-types";
+import { NoticeboardRequestInfo, Settings } from "types/twinkle-types";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
     if (!document.querySelector('.TL-hide-button')) {
@@ -181,19 +181,20 @@ function getIdFromFirstChild(element: HTMLElement): string | null {
     return null;
 }
 
-function createNoticeboardResolutionButton(element: HTMLElement) {
+function createNoticeboardResolutionButton(element: HTMLElement, useAdminTabTemplate: boolean) {
     const closestHeadingEl = findClosestPreviousHeading(element);
     const sectionInfo = closestHeadingEl ? extractNoticeboardSectionInfo(closestHeadingEl) : null;
     if (sectionInfo) {
         const button = oouiButton(
             'Resolver petición',
-            () => createNoticeboardResolutionWindow(sectionInfo),
+            () => createNoticeboardResolutionWindow(sectionInfo, useAdminTabTemplate),
         );
         element.appendChild(button.$element[0]);
     }
 }
 
-export function createNoticeboardResolutionButtons() {
+export function createNoticeboardResolutionButtons(settings: Settings | null) {
+    const useAdminTabTemplate = settings?.useAdmintabTemplateCheckbox ?? true;
     mw.loader.using(['oojs-ui-core', 'oojs-ui-widgets']).done(() => {
         const elements: HTMLParagraphElement[] = Array.from(
             document.querySelectorAll("p")
@@ -204,7 +205,7 @@ export function createNoticeboardResolutionButtons() {
 
         elements.forEach(el => {
             el.textContent = ""; // Clear the text content
-            createNoticeboardResolutionButton(el);
+            createNoticeboardResolutionButton(el, useAdminTabTemplate);
         });
     });
 }

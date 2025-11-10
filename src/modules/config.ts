@@ -317,6 +317,18 @@ export function createConfigWindow(settings: Settings | null) {
         }]
     })
 
+    noticeboardResolutionField.append({
+        type: 'checkbox',
+        name: 'useAdmintabTemplate',
+        list: [{
+            value: 'admintab-template',
+            label: 'Usar plantilla {{admintab}} al resolver solictudes en los tablones',
+            name: 'useAdmintabTemplateCheckbox',
+            disabled: !isCurrentUserSysop,
+            checked: settings?.useAdmintabTemplateCheckbox ?? true
+        }]
+    })
+
     const result = form.render();
     Window.setContent(result);
     Window.display();
