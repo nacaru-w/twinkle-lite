@@ -27,7 +27,7 @@ async function submitMessage(event: Event): Promise<void> {
         deleteTextFromLocalStorage();
         if (input.notify) await notifyUser();
         finishMorebitsStatus(Window, statusWindow, 'finished', true);
-        // location.reload();
+        location.reload();
     } catch (error) {
         finishMorebitsStatus(Window, statusWindow, 'error');
         console.error(`Error: ${error}`);
@@ -95,7 +95,7 @@ async function appendResolutionText(newText: string, sectionNumber: string) {
  */
 function adaptSysopResolution(resolution: string): string {
     if (useAdminTabTemplate) {
-        return `{{admintab|1=${resolution}|2=~~~~}}`
+        return `{{admintab|1=${resolution}|2=~~~~|3=}}`
     } else {
         return `${resolution} ~~~~`
     }
