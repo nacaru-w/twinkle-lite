@@ -55,17 +55,29 @@ function extractUsernameFromContent(sectionContent: string): string | null {
     return userMatch[1].trim().replace(/_/g, ' ');
 }
 
+function generateUserNotification(noticeboard: string): string {
+    return `
+    (Este es un aviso generado automáticamente a través de [[WP:TL|Twinkle Lite]])
+    Tu solicitud en ${noticeboard} ha sido resuelta. Puedes acceder a la misma a través del siguiente enlace:
+    * [[WP:TAB/${noticeboard}/Actual|Enlace a la resolución]].
+    Ten en cuenta qu el enlace caducará una vez se haya archivado. Saludos. ~~~~
+    `
+}
+
 async function notifyUser() {
     if (sectionContent) {
         new Morebits.status(`Paso ${step += 1}`, "avisando al usuario...", "info");
         const notifiedUser = extractUsernameFromContent(sectionContent);
         const noticeboard = extractNoticeboardTitle(currentPageName);
-        await appendSectionToPage(
-            `Usuario_discusión:${notifiedUser}`,
-            `Aviso de resolución de solicitud mediante [[WP:TL|Twinkle Lite]]`,
-            `Resolución de tu solicitud ${noticeboard ? `en ${noticeboard}` : ''}`,
-            'Prueba de edición'
-        )
+        if (notifiedUser && noticeboard) {
+            await appendSectionToPage(
+                `Usuario_discusión:${notifiedUser}`,
+                `Aviso de resolución de solicitud mediante [[WP:TL|Twinkle Lite]]`,
+                `Resolución de tu solicitud ${noticeboard ? `en ${noticeboard}` : ''}`,
+                generateUserNotification(noticeboard)
+            )
+        }
+
     }
 }
 
