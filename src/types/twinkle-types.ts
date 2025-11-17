@@ -156,6 +156,7 @@ export interface MovePageOptions {
 export interface NoticeboardRequestInfo {
     title: string,
     sectionNumber: number | string,
+    anchor: string
 }
 
 export interface NoticeboardResolutionInput {
