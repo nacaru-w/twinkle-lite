@@ -55,13 +55,13 @@ function extractUsernameFromContent(sectionContent: string): string | null {
     return userMatch[1].trim().replace(/_/g, ' ');
 }
 
-function generateUserNotification(noticeboard: string): string {
+async function generateUserNotification(noticeboard: string): Promise<string> {
     return `
-    (Este es un aviso generado automáticamente a través de [[WP:TL|Twinkle Lite]])
-    Tu solicitud en ${noticeboard} ha sido resuelta. Puedes acceder a la misma a través del siguiente enlace:
-    * [[WP:TAB/${noticeboard}/Actual|Enlace a la resolución]].
-    Ten en cuenta qu el enlace caducará una vez se haya archivado. Saludos. ~~~~
-    `
+(Este es un aviso generado automáticamente a través de [[WP:TL|Twinkle Lite]])
+Tu solicitud en ${noticeboard} ha sido resuelta. Puedes acceder a la misma a través del siguiente enlace:
+* [[Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/${noticeboard}/Actual#${requestInfo?.anchor}|Enlace a la resolución]].
+Ten en cuenta que el enlace caducará una vez se haya archivado el hilo. Saludos. ~~~~
+`
 }
 
 async function notifyUser() {
@@ -74,7 +74,7 @@ async function notifyUser() {
                 `Usuario_discusión:${notifiedUser}`,
                 `Aviso de resolución de solicitud mediante [[WP:TL|Twinkle Lite]]`,
                 `Resolución de tu solicitud ${noticeboard ? `en ${noticeboard}` : ''}`,
-                generateUserNotification(noticeboard)
+                await generateUserNotification(noticeboard)
             )
         }
 
