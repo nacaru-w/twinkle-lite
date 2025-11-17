@@ -154,6 +154,10 @@ function findClosestPreviousHeading(element: HTMLElement): HTMLElement | null {
 }
 
 function extractNoticeboardSectionInfo(element: HTMLElement): NoticeboardRequestInfo | null {
+
+    // We extract the anchor first
+    const anchor = extractAnchorFromSection(element)!;
+
     // Find the link inside the edit section span
     const link = element.querySelector<HTMLAnchorElement>('.mw-editsection a');
     if (!link) return null;
@@ -170,7 +174,7 @@ function extractNoticeboardSectionInfo(element: HTMLElement): NoticeboardRequest
     // Return both title and section number (converted to number if numeric)
     const sectionNumber = /^\d+$/.test(section) ? Number(section) : section;
 
-    return { title, sectionNumber };
+    return { title, sectionNumber, anchor };
 }
 
 
@@ -208,4 +212,9 @@ export function createNoticeboardResolutionButtons(settings: Settings | null) {
             createNoticeboardResolutionButton(el, useAdminTabTemplate);
         });
     });
+}
+
+export function extractAnchorFromSection(sectionElement: HTMLElement): string | null {
+    const anchorTag = sectionElement?.querySelector('h2')?.id
+    return anchorTag || null
 }
