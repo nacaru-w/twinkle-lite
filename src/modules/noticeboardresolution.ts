@@ -36,10 +36,19 @@ async function submitMessage(event: Event): Promise<void> {
 }
 
 function extractUsernameFromContent(sectionContent: string): string | null {
+    let marker;
+
+    if (currentPageName.includes('Solicitudes_de_nueva_consulta')) {
+        marker = /;\s*Usuario que consulta\s*/i;
+    } else if (currentPageName.includes('Permisos')) {
+        marker = /\*\s*Fecha y firma:\s*/i;
+    } else {
+        // Step 1: Find the part after "; Usuario que lo solicita"
+        marker = /;\s*Usuario que lo solicita\s*/i;
+    }
+
     if (!sectionContent) return null;
 
-    // Step 1: Find the part after "; Usuario que lo solicita"
-    const marker = /;\s*Usuario que lo solicita\s*/i;
     const markerMatch = sectionContent.match(marker);
     if (!markerMatch) return null;
 
@@ -57,8 +66,8 @@ function extractUsernameFromContent(sectionContent: string): string | null {
 
 async function generateUserNotification(noticeboard: string): Promise<string> {
     return `
-(Este es un aviso generado automáticamente a través de [[WP:TL|Twinkle Lite]])
-Tu solicitud en ${noticeboard} ha sido resuelta. Puedes acceder a la misma a través del siguiente enlace:
+''(Este es un aviso generado automáticamente a través de [[WP:TL|Twinkle Lite]])''\n
+Tu solicitud en el tablón de ${noticeboard} ha sido resuelta. Puedes acceder a la misma a través del siguiente enlace:
 * [[Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/${noticeboard}/Actual#${requestInfo?.anchor}|Enlace a la resolución]].
 Ten en cuenta que el enlace caducará una vez se haya archivado el hilo. Saludos. ~~~~
 `
@@ -73,7 +82,7 @@ async function notifyUser() {
             await appendSectionToPage(
                 `Usuario_discusión:${notifiedUser}`,
                 `Aviso de resolución de solicitud mediante [[WP:TL|Twinkle Lite]]`,
-                `Resolución de tu solicitud ${noticeboard ? `en ${noticeboard}` : ''}`,
+                `Resolución de tu solicitud ${noticeboard ? `en el tablón de ${noticeboard}` : ''}`,
                 await generateUserNotification(noticeboard)
             )
         }
@@ -84,7 +93,7 @@ async function notifyUser() {
 function replaceAnswerPlaceholder(sectionText: string, newText: string): string {
     return sectionText.replace(
         // match the line starting with "; Respuesta" and the text after it
-        /(; *Respuesta\s*\n)([\s\S]*?)(?=(?:\n;|$))/,
+        /(; *Respuesta\s*:?\s*\n)([\s\S]*?)(?=(?:\n;|$))/,
         `$1${newText}\n`
     );
 }
@@ -221,23 +230,13 @@ export function createNoticeboardResolutionWindow(headerInfo: NoticeboardRequest
     //     }]
     // })
 
-    // optionsField.append({
-    //     type: 'checkbox',
-    //     list: [{
-    //         name: 'useAdmintabTemplate',
-    //         value: 'useAdminTabTemplate',
-    //         label: 'Usar la plantilla {{admintab}} al responder',
-    //         checked: true
-    //     }]
-    // })
-
     optionsField.append({
         type: 'checkbox',
         list: [{
             name: 'notify',
             value: 'notify',
-            label: 'Avisar al usuario que realizó la petición',
-            tooltip: 'Marca esta casilla si quieres que se le notifique al usuario que realizó la petición dejándole un mensaje en su página de discusión.',
+            label: 'Avisar al usuario que realizó la petición (si es posible)',
+            tooltip: 'Marca esta casilla si quieres que se le notifique al usuario que realizó la petición dejándole un mensaje en su página de discusión. Esto solo será posible si la firma del usuario incluye un enlace a su PU',
             checked: false
         }],
     });
