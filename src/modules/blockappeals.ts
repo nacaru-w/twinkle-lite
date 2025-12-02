@@ -96,49 +96,60 @@ export function prepareAppealResolutionTemplate(appeal: string, explanation: str
 }
 
 export function substitutePageContent(text: string, newTemplate: string): string {
-    // Regular expression to find the beginning of the {{desbloquear}} template
+    // 1. Find all <nowiki>...</nowiki> ranges
+    const nowikiRanges: Array<[number, number]> = [];
+    const nowikiPattern = /<nowiki>([\s\S]*?)<\/nowiki>/gi;
+
+    let nwMatch;
+    while ((nwMatch = nowikiPattern.exec(text)) !== null) {
+        const start = nwMatch.index;
+        const end = nwMatch.index + nwMatch[0].length;
+        nowikiRanges.push([start, end]);
+    }
+
+    // 2. Locate the desbloquear template
     const desbloquearStartPattern = /{{\s*desbloquear\s*\|/i;
     const match = desbloquearStartPattern.exec(text);
 
-    // If no match is found, return the original text
     if (!match) {
-        return text;
+        return text; // No template found
     }
 
-    // Start reading after the match
-    const startIndex = match.index;
-    let braceCount = 1; // Starts at 1 because we've matched the opening {{
+    const templateStart = match.index;
+
+    // 3. Check if the template starts inside a <nowiki> block
+    for (const [start, end] of nowikiRanges) {
+        if (templateStart >= start && templateStart < end) {
+            // Template is inside <nowiki>: do NOT modify
+            return text;
+        }
+    }
+
+    // 4. Your original brace-matching logic
+    let braceCount = 1;
     let i = match.index + match[0].length;
 
-    // Parse the template content
     while (i < text.length) {
-        const nextTwoChars = text.slice(i, i + 2);
+        const nextTwo = text.slice(i, i + 2);
 
-        if (nextTwoChars === '{{') {
-            // Increment brace count for an opening brace
+        if (nextTwo === '{{') {
             braceCount++;
             i += 2;
-        } else if (nextTwoChars === '}}') {
-            // Decrement brace count for a closing brace
+        } else if (nextTwo === '}}') {
             braceCount--;
             i += 2;
-
-            // If brace count reaches zero, we've found the end of the template
-            if (braceCount === 0) {
-                break;
-            }
+            if (braceCount === 0) break;
         } else {
             i++;
         }
     }
 
-    // Extract the portion before and after the template
-    const beforeTemplate = text.slice(0, startIndex);
-    const afterTemplate = text.slice(i);
+    const before = text.slice(0, templateStart);
+    const after = text.slice(i);
 
-    // Return the updated text with the new template
-    return beforeTemplate + newTemplate + afterTemplate;
+    return before + newTemplate + after;
 }
+
 
 async function makeEdit(pageContent: string, newTemplate: string, resolution: BlockAppealResolution) {
     new Morebits.status("Paso 1", "cerrando la petición de desbloqueo...", "info");
