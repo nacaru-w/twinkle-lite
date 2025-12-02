@@ -7,6 +7,9 @@
 ## Module: Noticeboard resolution
 * The noticeboard resolution has been added. It is a sysop-only module that allows for the quick answering of noticeboard requests. It also includes the possibility of notifying the reporting user that their request has been answered.
 
+## Module: Block appeals
+* A bug has been fixed whereby the script would confuse `{{inhabilitación}}` template texts for actual block appeals. 
+
 # v.4.4.1 (hotfix)
 
 ## Module: Block appeals
