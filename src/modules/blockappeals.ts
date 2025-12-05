@@ -5,7 +5,7 @@ import { BlockAppealResolution, BlockInfoObject } from "types/twinkle-types";
 let Window: SimpleWindowInstance;
 let blockInfoObject: BlockInfoObject | null;
 
-const resolutionOptions: BlockAppealResolution[] = ['Rechazo', 'Aprobación'];
+const resolutionOptions: BlockAppealResolution[] = ['Rechazo', 'Aprobación', 'Archivo', 'Filtro', 'Extención'];
 
 function getResolutionOptions() {
     return resolutionOptions.map((e) => {

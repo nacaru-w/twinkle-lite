@@ -143,7 +143,7 @@ export interface Settings {
     useAdmintabTemplateCheckbox: boolean
 }
 
-export type BlockAppealResolution = 'Rechazo' | 'Aprobación';
+export type BlockAppealResolution = 'Rechazo' | 'Aprobación' | 'Archivo' | 'Extención' | 'Filtro';
 
 export interface MovePageOptions {
     destination: string,
