@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
+import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 // Declaring the variable that will eventually hold the form window now will allow us to manipulate it more easily  later
@@ -44,7 +44,11 @@ function getCategoryOptions(): ListElementData[] {
  * @returns A Wikicode string representing the deletion template.
  */
 function buildDeletionTemplate(category: string, reason: string, isBeta: boolean) {
-    return `{{sust:${isBeta ? 'cdb2024' : 'cdb2'}|pg=${currentPageNameNoUnderscores}|cat=${category}|texto=${reason}${isBeta ? '' : '|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}'}}} ~~~~`
+    if (isBeta) {
+        return `{{sust:abreCdb|cat=${category}|texto=${reason}}} ~~~~`
+    } else {
+        return `{{sust:cdb2|pg=${currentPageNameNoUnderscores}|cat=${category}|texto=${reason}|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}'}}} ~~~~`
+    }
 }
 
 /**
@@ -58,7 +62,7 @@ async function createDeletionRequestPage(category: string, reason: string, isBet
     const missingPage: boolean = await isPageMissing(`Wikipedia:Consultas de borrado/${currentPageName}`);
     if (missingPage) {
         deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}`
-        return new mw.Api().create(deletionPage,
+        return api.create(deletionPage,
             { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
             buildDeletionTemplate(category, reason, isBeta)
         );
@@ -68,7 +72,7 @@ async function createDeletionRequestPage(category: string, reason: string, isBet
             const confirmMessage = `Parece que ya se había creado una consulta de borrado para ${currentPageNameNoUnderscores} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`;
             if (confirm(confirmMessage)) {
                 deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}_(segunda_consulta)`
-                return new mw.Api().create(
+                return api.create(
                     deletionPage,
                     { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                     buildDeletionTemplate(category, reason, isBeta)
@@ -94,7 +98,7 @@ async function createDeletionRequestPage(category: string, reason: string, isBet
  */
 function buildEditOnNominatedPage(revision: any): ApiEditPageParams {
     return {
-        text: '{{sust:cdb}}\n' + revision.content,
+        text: '{{sust:ncdb}}\n' + revision.content,
         summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
         minor: false
     }
@@ -107,11 +111,11 @@ function buildEditOnNominatedPage(revision: any): ApiEditPageParams {
  * @returns A promise that resolves when the edit is complete.
  */
 async function makeEditOnOtherNominatedPages(article: string): Promise<void> {
-    await new mw.Api().edit(
+    await api.edit(
         article,
         (revision): ApiEditPageParams => {
             return {
-                text: `{{sust:cdb|${currentPageName}}}\n` + revision.content,
+                text: `{{sust:ncdb|${currentPageName}}}\n` + revision.content,
                 summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                 minor: false
             }
@@ -178,7 +182,7 @@ function appendArticlesToWikicode(pageContent: string, articles: string[], isBet
     }
 }
 async function addRemainingArticles(articleList: string[], isBeta: boolean) {
-    return new mw.Api().edit(
+    return api.edit(
         deletionPage,
         (revision): ApiEditPageParams => {
             return {
@@ -194,23 +198,24 @@ async function addRemainingArticles(articleList: string[], isBeta: boolean) {
  * Posts a notification message on the talk page of the creator of the article, 
  * informing them of the deletion discussion.
  * @param creator - The username of the article's creator.
+ * @param category - The category code of the article.
  * @returns A promise that resolves when the message is posted or the process is interrupted.
  */
-async function postsMessage(creator: string | null): Promise<void> {
+async function notifyUser(creator: string | null, category: string): Promise<void> {
     if (creator) {
         const mustCreateNewTalkPage = await isPageMissing(`Usuario_discusión:${creator}`);
         if (mustCreateNewTalkPage) {
-            return new mw.Api().create(
+            return api.create(
                 `Usuario_discusión:${creator}`,
                 { summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinkle Lite|Twinkle Lite]]' },
-                `{{sust:Aviso cdb|${currentPageNameNoUnderscores}}} ~~~~`
+                `{{sust:Aviso autor cdb|pg=${currentPageNameNoUnderscores}|cat=${category}} ~~~~`
             )
         } else {
-            return new mw.Api().edit(
+            return api.edit(
                 `Usuario_discusión:${creator}`,
                 (revision): ApiEditPageParams => {
                     return {
-                        text: revision.content + `\n{{sust:Aviso cdb|${currentPageNameNoUnderscores}}} ~~~~`,
+                        text: revision.content + `\n{{sust:Aviso cdb|${currentPageNameNoUnderscores}|cat=${category}} ~~~~`,
                         summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinkle Lite|Twinkle Lite]]',
                         minor: false
                     }
@@ -225,60 +230,59 @@ async function postsMessage(creator: string | null): Promise<void> {
  * editing the nominated page(s), and notifying the article's creator.
  * @param e - The form submission event.
  */
-function submitMessage(e: Event) {
-    let form = e.target;
-    let input = Morebits.quickForm.getInputData(form);
+async function submitMessage(e: Event) {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const input = Morebits.quickForm.getInputData(form);
+
     if (input.reason === ``) {
         alert("No se ha establecido un motivo.");
-    } else {
-        if (showConfirmationDialog(`Esto creará una consulta de borrado para el artículo ${currentPageNameNoUnderscores}, ¿estás seguro?`)) {
-            const statusWindow = new Morebits.simpleWindow(400, 350);
-            createStatusWindow(statusWindow);
-            new Morebits.status(`Paso ${step += 1}`, "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
-
-            createDeletionRequestPage(input.category, input.reason, input.beta)
-                .then(function (result) {
-                    // If the user does not confirm in the previous function we return early
-                    if (result == null) throw 'aborted';
-                    new Morebits.status(`Paso ${step += 1}`, "colocando plantilla en la(s) página(s) nominada(s)...", "info");
-                    return new mw.Api().edit(
-                        currentPageName,
-                        buildEditOnNominatedPage
-                    )
-                })
-                .then(async function (result) {
-                    if (input.otherArticleFieldBox[0]) {
-                        new Morebits.status(`Paso ${step += 1}`, "añadiendo el resto de páginas nominadas a la consulta...", "info");
-
-                        const otherArticleArray = Array.from(document.querySelectorAll('input[name="otherArticleFieldBox"]')) as HTMLInputElement[];
-                        const mappedArray = otherArticleArray.map((o) => o.value)
-                        for (let article of mappedArray) {
-                            await makeEditOnOtherNominatedPages(article);
-                        }
-                        await addRemainingArticles(mappedArray, input.beta);
-                    }
-                    return
-                })
-                .then(async function () {
-                    if (!input.notify) return;
-                    new Morebits.status(`Paso ${step += 1}`, "publicando un mensaje en la página de discusión del creador...", "info");
-                    const creator: string | null = await getCreator();
-                    return postsMessage(creator);
-                })
-                .then(function () {
-                    new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
-                    setTimeout(() => { location.reload() }, 2000);
-                })
-                .catch(function (error) {
-                    if (error === 'aborted') {
-                        return;
-                    }
-                    new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
-                    console.log(`Error: ${error}`);
-                })
-        }
+        return;
     }
+
+    if (!showConfirmationDialog(`Esto creará una consulta de borrado para el artículo ${currentPageNameNoUnderscores}, ¿estás seguro?`)) {
+        return;
+    }
+
+    const statusWindow = new Morebits.simpleWindow(400, 350);
+    createStatusWindow(statusWindow);
+    new Morebits.status(`Paso ${step += 1}`, "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
+
+    createDeletionRequestPage(input.category, input.reason, input.beta)
+        .then(function (result) {
+            if (result == null) throw 'aborted';
+            new Morebits.status(`Paso ${step += 1}`, "colocando plantilla en la(s) página(s) nominada(s)...", "info");
+            return api.edit(currentPageName, buildEditOnNominatedPage);
+        })
+        .then(async function () {
+            if (input.otherArticleFieldBox[0]) {
+                new Morebits.status(`Paso ${step += 1}`, "añadiendo el resto de páginas nominadas a la consulta...", "info");
+                const otherArticleArray = Array.from(document.querySelectorAll('input[name="otherArticleFieldBox"]')) as HTMLInputElement[];
+                const mappedArray = otherArticleArray.map((o) => o.value)
+                for (let article of mappedArray) {
+                    await makeEditOnOtherNominatedPages(article);
+                }
+                await addRemainingArticles(mappedArray, input.beta);
+            }
+        })
+        .then(async function () {
+            if (!input.notify) return;
+            new Morebits.status(`Paso ${step += 1}`, "publicando un mensaje en la página de discusión del creador...", "info");
+            const creator: string | null = await getCreator();
+            return notifyUser(creator, input.category);
+        })
+        .then(function () {
+            new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
+            setTimeout(() => { location.reload() }, 2000);
+        })
+        .catch(function (error) {
+            if (error === 'aborted') return;
+            new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
+            console.log(`Error: ${error}`);
+        });
 }
+
+
 
 /**
  * Creates the form window where the user will input the deletion request details.
