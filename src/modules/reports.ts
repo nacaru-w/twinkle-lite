@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { ReportMotive } from "types/twinkle-types";
-import { createStatusWindow, currentPageName, finishMorebitsStatus, getContent, isPageMissing, relevantUserName, showConfirmationDialog } from "./../utils/utils";
+import { api, createStatusWindow, currentPageName, finishMorebitsStatus, getContent, isPageMissing, relevantUserName, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let reportedUser: string;
@@ -220,14 +220,14 @@ function postsMessage(input: QuickFormInputObject, usernames: string[]): Promise
             const hash = await createHash(reportMotiveDict[motive].link, title);
             const notificationString = `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${reportMotiveDict[motive].link}#${motive == "Vandalismo en curso" ? reportedUser : hash}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`;
             if (mustCreateNewTalkPage) {
-                return new mw.Api().create(
+                return api.create(
                     `Usuario_discusión:${usernames[0]}`,
                     { summary: `Aviso al usuario de su denuncia por [[${reportMotiveDict[motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                     `\n== ${title} ==\n` +
                     notificationString
                 );
             } else {
-                return new mw.Api().edit(
+                return api.edit(
                     `Usuario_discusión:${usernames[0]}`,
                     function (revision) {
                         return {
@@ -265,7 +265,7 @@ function submitMessage(e: Event) {
             new Morebits.status("Paso 1", `obteniendo datos del formulario...`, "info");
 
             new Morebits.status("Paso 2", "creando denuncia en el tablón...", "info");
-            new mw.Api().edit(
+            api.edit(
                 reportMotiveDict[chosenMotive].link,
                 buildEditOnNoticeboard(input, usernames, articles)
             )

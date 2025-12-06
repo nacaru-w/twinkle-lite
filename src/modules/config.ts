@@ -1,11 +1,11 @@
 import { QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentUser, finishMorebitsStatus, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
+import { api, createStatusWindow, currentUser, finishMorebitsStatus, isCurrentUserSysop, isPageMissing } from "./../utils/utils";
 import { Settings } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
 
 async function createConfigPage(settings: Settings) {
-    await new mw.Api().create(
+    await api.create(
         `Usuario:${currentUser}/twinkle-lite-settings.json`,
         { summary: `Creando página de configuración de [[WP:TL|Twinkle Lite]]` },
         JSON.stringify(settings)
@@ -13,7 +13,7 @@ async function createConfigPage(settings: Settings) {
 }
 
 async function editConfigPage(settings: Settings) {
-    await new mw.Api().edit(
+    await api.edit(
         `Usuario:${currentUser}/twinkle-lite-settings.json`,
         () => {
             return {

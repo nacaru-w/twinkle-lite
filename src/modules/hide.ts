@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, QuickFormInputObject, QuickFormInputValue, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, finishMorebitsStatus, showConfirmationDialog } from "./../utils/utils";
+import { api, createStatusWindow, finishMorebitsStatus, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let diffID: string;
@@ -160,7 +160,7 @@ function submitMessage(e: Event): void {
         createStatusWindow(statusWindow);
         new Morebits.status("Paso 1", `Solicitando el ocultado de ${input.moreDiffs ? 'las ediciones' : 'la edición'}...`, "info");
 
-        new mw.Api().edit(
+        api.edit(
             board,
             (revision) => {
                 const editParams: ApiEditPageParams = {

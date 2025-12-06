@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { createPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getCreator, isCurrentUserSysop, isPageMissing, movePage, showConfirmationDialog } from "./../utils/utils";
+import { api, createPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getCreator, isCurrentUserSysop, isPageMissing, movePage, showConfirmationDialog } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let creator: string | null;
@@ -108,7 +108,7 @@ async function postMessageOnTalkPage(moveReason: string) {
             summaryMessage
         )
     } else {
-        return await new mw.Api().edit(
+        return await api.edit(
             `Usuario_discusión:${creator}`,
             (revision: any) => {
                 return {
@@ -124,7 +124,7 @@ async function postMessageOnTalkPage(moveReason: string) {
 async function postDeletionTemplate() {
     if (!isCurrentUserSysop) {
         new Morebits.status(`Paso ${step += 1}`, "solicitando el borrado de la redirección...", "info");
-        return await new mw.Api().edit(
+        return await api.edit(
             currentPageName,
             (revision: any) => {
                 return {

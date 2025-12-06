@@ -3,7 +3,7 @@
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { templateParamsDictionary, WarningsModuleProcessedList, WarningTemplateDict } from "types/twinkle-types";
-import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName, isCurrentUserSysop, showConfirmationDialog } from "./../utils/utils";
+import { createStatusWindow, currentPageName, currentUser, finishMorebitsStatus, isPageMissing, relevantUserName, isCurrentUserSysop, showConfirmationDialog, api } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let warnedUser: string;
@@ -599,13 +599,13 @@ function postsMessage(templateParams: templateParamsDictionary, input: QuickForm
     return isPageMissing(`Usuario_discusión:${warnedUser}`)
         .then(function (mustCreateNewTalkPage) {
             if (mustCreateNewTalkPage) {
-                return new mw.Api().create(
+                return api.create(
                     `Usuario_discusión:${warnedUser}`,
                     { summary: `Añadiendo aviso de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
                     `${templateBuilder(templateParams)}~~~~`
                 );
             } else {
-                return new mw.Api().edit(
+                return api.edit(
                     `Usuario_discusión:${warnedUser}`,
                     function (revision) {
                         return {

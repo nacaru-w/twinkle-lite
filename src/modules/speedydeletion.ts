@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
 import { SpeedyDeletionCriteriaType, SpeedyDeletionCriteriaCategories } from "types/twinkle-types";
-import { createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
+import { api, createStatusWindow, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
 
 let Window: SimpleWindowInstance
 let deletionTemplateExists: boolean;
@@ -249,7 +249,7 @@ function submitMessage(e: Event) {
         const statusWindow = new Morebits.simpleWindow(400, 350);
         createStatusWindow(statusWindow)
         new Morebits.status("Paso 1", `generando plantilla de borrado...`, "info");
-        new mw.Api().edit(
+        api.edit(
             currentPageName,
             editBuilder(input)
         )
@@ -373,13 +373,13 @@ function postsMessage(input: QuickFormInputObject): any | Promise<any> {
             return isPageMissing(`Usuario_discusión:${creator}`)
                 .then(function (mustCreateNewTalkPage: boolean) {
                     if (mustCreateNewTalkPage) {
-                        return new mw.Api().create(
+                        return api.create(
                             `Usuario_discusión:${creator}`,
                             { summary: `Aviso al usuario del posible borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                             `{{subst:Aviso destruir|${currentPageNameNoUnderscores}|${allCriteria(input)}}} ~~~~`
                         );
                     } else {
-                        return new mw.Api().edit(
+                        return api.edit(
                             `Usuario_discusión:${creator}`,
                             function (revision: any) {
                                 return {

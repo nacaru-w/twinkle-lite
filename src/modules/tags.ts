@@ -2,7 +2,7 @@
 // Allows users to add a tag in articles. The tag can be selected as part of a series of options of a checkbox list
 
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentNamespace, currentPageName, currentUser, finishMorebitsStatus, getCreator, isPageMissing, showConfirmationDialog, stripTalkPagePrefix } from "./../utils/utils";
+import { api, createStatusWindow, currentNamespace, currentPageName, currentUser, finishMorebitsStatus, getCreator, isPageMissing, showConfirmationDialog, stripTalkPagePrefix } from "./../utils/utils";
 import { TagTemplateDict, TagTemplateListElement, templateParamsDictionary } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
@@ -448,7 +448,7 @@ function templateBuilder(templateObj: templateParamsDictionary): string {
  * @returns A promise that resolves when the edit is complete.
  */
 async function makeEdit(templates: templateParamsDictionary, input: QuickFormInputObject, pagename: string): Promise<any> {
-    return await new mw.Api().edit(
+    return await api.edit(
         pagename,
         (revision) => {
             return {
@@ -506,7 +506,7 @@ async function makeAllEdits(templateList: string[], templateTalkPageList: string
         return isPageMissing(talkPage)
             .then(function (mustCreateNewTalkPage) {
                 if (mustCreateNewTalkPage) {
-                    return new mw.Api().create(
+                    return api.create(
                         talkPage,
                         { summary: `Añadiendo plantilla mediante [[WP:TL|Twinkle Lite]]` + `${input.reason ? `. ${input.reason}` : ''}` },
                         templateBuilder(templateTalkPageObj)
@@ -666,13 +666,13 @@ async function postsMessage(templateList: string[], groupedWarning: string | fal
             return;
         }
         if (mustCreateNewTalkPage) {
-            return new mw.Api().create(
+            return api.create(
                 `Usuario_discusión:${creator}`,
                 { summary: `Aviso al usuario de la colocación de una plantilla en [[${relevantPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                 `${warningTemplates}`
             );
         } else {
-            return new mw.Api().edit(
+            return api.edit(
                 `Usuario_discusión:${creator}`,
                 function (revision) {
                     return {

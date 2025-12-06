@@ -1,5 +1,5 @@
 import { QuickFormElementInstance, ListElementData, SimpleWindowInstance } from "types/morebits-types";
-import { createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimestamp, showConfirmationDialog } from "./../utils/utils";
+import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimestamp, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { ProtectionStatus } from "types/twinkle-types";
 
@@ -190,7 +190,7 @@ function submitMessage(e: Event): void {
             const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350);
             createStatusWindow(statusWindow);
             new Morebits.status("Paso 1", `solicitando la ${input.protection} de la página...`, "info");
-            new mw.Api().edit(
+            api.edit(
                 "Wikipedia:Tablón_de_anuncios_de_los_bibliotecarios/Portal/Archivo/Protección_de_artículos/Actual",
                 buildEditOnNoticeboard(input)
             )
