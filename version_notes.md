@@ -9,6 +9,7 @@
 
 ## Module: Block appeals
 * A bug has been fixed whereby the script would confuse `{{inhabilitación}}` template texts for actual block appeals. 
+* The resolution options "archivo", "filtro" and "extención" have been added.
 
 # v.4.4.1 (hotfix)
 
