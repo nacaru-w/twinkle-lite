@@ -1,6 +1,6 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
-import { APIPageResponse, BlockInfoObject, MovePageOptions, PageCreationBasicInfo, ProtectionStatus, Settings } from '../types/twinkle-types'
-import { ApiQueryBlocksParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+import { APIPageResponse, BlockInfoObject, MovePageOptions, PageCreationBasicInfo, ProtectionStatus, Settings, WikimediaCategory } from '../types/twinkle-types'
+import { ApiQueryBlocksParams, ApiQueryCategoriesParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 import { ApiResponse } from 'types-mediawiki/mw/Api';
 import { QueryParams } from 'types-mediawiki/mw/Uri';
 
@@ -550,7 +550,8 @@ export function removeUnderscores(text: string): string {
     return text.replace(/_/g, ' ');
 }
 
-/** Extracts the title of a noticeboard from its site link.
+/** 
+ * Extracts the title of a noticeboard from its site link.
  * 
  * @param noticeboardSiteLink - The site link of the noticeboard (e.g., "/Archivo/Nombre_del_tablón/Actual").
  * @returns The title of the noticeboard with underscores replaced by spaces, or `null` if not found.
@@ -558,4 +559,35 @@ export function removeUnderscores(text: string): string {
 export function extractNoticeboardTitle(noticeboardSiteLink: string): string | null {
     const match = noticeboardSiteLink.match(/\/Archivo\/(.*?)\/Actual/);
     return match ? removeUnderscores(match[1]) : null;
+}
+
+/**
+ * Gets the categories of a page
+ * 
+ * @param pagename - The name of the page
+ * @returns An array of WikimediaCategory objects or null
+ */
+export async function getCategories(pagename: string): Promise<WikimediaCategory[] | null> {
+    const params: ApiQueryCategoriesParams = {
+        action: 'query',
+        format: 'json',
+        prop: 'categories',
+        cllimit: 500,
+        titles: pagename
+    };
+
+    try {
+        const response = await api.get(params);
+        const page: any = Object.values(response.query.pages)[0];
+
+        if (page.missing !== undefined) {
+            return null;
+        }
+
+        return page.categories ?? [];
+
+    } catch (error) {
+        console.error(error);
+        return null
+    }
 }

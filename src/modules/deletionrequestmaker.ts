@@ -1,6 +1,7 @@
 import { ListElementData, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
+import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, getCategories, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
+import { WikimediaCategory } from "types/twinkle-types";
 
 // Declaring the variable that will eventually hold the form window now will allow us to manipulate it more easily  later
 let Window: SimpleWindowInstance;
@@ -52,6 +53,31 @@ function buildDeletionTemplate(category: string, reason: string, isBeta: boolean
 }
 
 /**
+ * Checks if a deletion request page has already been closed.
+ * @param requestContent - The content of the deletion request page.
+ * @param mappedCategories - The categories associated with the deletion request page.
+ * @returns A boolean indicating if the deletion request page has already been closed.
+ */
+function isRequestClosed(
+    requestContent: string,
+    mappedCategories: string[] | undefined
+): boolean {
+    if (!requestContent) return false;
+
+    const hasTemplates =
+        requestContent.includes('{{archivo borrar cabecera') ||
+        requestContent.includes('{{cierracdb-arr}}');
+
+    const hasClosedCategory =
+        mappedCategories?.some(c =>
+            c.includes('Consultas de borrado con resultado')
+        ) ?? false;
+
+    return hasTemplates || hasClosedCategory;
+}
+
+
+/**
  * Creates a deletion request page if it doesn't already exist. If the page exists and has been closed, 
  * it prompts the user to start a second deletion discussion.
  * @param category - The category code for the deletion request.
@@ -68,10 +94,12 @@ async function createDeletionRequestPage(category: string, reason: string, isBet
         );
     } else {
         const content: string | null = await getContent(`Wikipedia:Consultas de borrado/${currentPageName}`);
-        if (content && (content.includes('{{archivo borrar cabecera') || content.includes('{{cierracdb-arr}}'))) {
+        const deletionPageCategories = await getCategories(`Wikipedia:Consultas de borrado/${currentPageName}`);
+        const mappedCategories = deletionPageCategories?.map((category: WikimediaCategory) => category.title);
+        if (content && isRequestClosed(content, mappedCategories)) {
             const confirmMessage = `Parece que ya se había creado una consulta de borrado para ${currentPageNameNoUnderscores} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`;
             if (confirm(confirmMessage)) {
-                deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}_(2.ª consulta)`
+                deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}_(2.ª_consulta)`
                 return api.create(
                     deletionPage,
                     { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },

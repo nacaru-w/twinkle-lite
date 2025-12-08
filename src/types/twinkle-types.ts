@@ -164,3 +164,8 @@ export interface NoticeboardResolutionInput {
     notify: boolean,
     useAdmintabTemplate: boolean
 }
+
+export interface WikimediaCategory {
+    ns: number,
+    title: string
+}
