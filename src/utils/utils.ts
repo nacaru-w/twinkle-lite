@@ -591,3 +591,15 @@ export async function getCategories(pagename: string): Promise<WikimediaCategory
         return null
     }
 }
+
+/**
+ * Simplifies a list of WikimediaCategory objects into an array of category titles.
+ * 
+ * @param categories - An array of WikimediaCategory objects.
+ * @returns An array of category titles.
+ */
+export function simplifyCategories(
+    categories: WikimediaCategory[]
+): string[] {
+    return categories.map(cat => cat.title);
+}
