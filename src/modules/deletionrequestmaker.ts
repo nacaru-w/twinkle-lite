@@ -45,7 +45,7 @@ function getCategoryOptions(): ListElementData[] {
  */
 function buildDeletionTemplate(category: string, reason: string, isBeta: boolean) {
     if (isBeta) {
-        return `{{sust:abreCdb|cat=${category}|texto=${reason}}} ~~~~`
+        return `{{sust:abreCdb|pg=${currentPageNameNoUnderscores}|cat=${category}|texto=${reason}}} ~~~~`
     } else {
         return `{{sust:cdb2|pg=${currentPageNameNoUnderscores}|cat=${category}|texto=${reason}|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}'}}} ~~~~`
     }
@@ -71,7 +71,7 @@ async function createDeletionRequestPage(category: string, reason: string, isBet
         if (content && (content.includes('{{archivo borrar cabecera') || content.includes('{{cierracdb-arr}}'))) {
             const confirmMessage = `Parece que ya se había creado una consulta de borrado para ${currentPageNameNoUnderscores} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`;
             if (confirm(confirmMessage)) {
-                deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}_(segunda_consulta)`
+                deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}_(2.ª consulta)`
                 return api.create(
                     deletionPage,
                     { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
