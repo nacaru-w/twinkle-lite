@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, getCategories, getContent, getCreator, isPageMissing, showConfirmationDialog } from "./../utils/utils";
+import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, getCategories, getContent, getCreator, isPageMissing, showConfirmationDialog, stripCdbPrefix } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { WikimediaCategory } from "types/twinkle-types";
 
@@ -7,6 +7,7 @@ import { WikimediaCategory } from "types/twinkle-types";
 let Window: SimpleWindowInstance;
 let step = 0;
 let deletionPage: string;
+let deletionPageNoPrefix: string;
 
 // This is the dictionary holding the options for the categories deletion requests can be classified as
 const deletionRequestCategoryOptions: { code: string, name: string }[] = [
@@ -44,12 +45,9 @@ function getCategoryOptions(): ListElementData[] {
  * @param reason - The reason provided for the deletion request.
  * @returns A Wikicode string representing the deletion template.
  */
-function buildDeletionTemplate(category: string, reason: string, isBeta: boolean) {
-    if (isBeta) {
-        return `{{sust:abreCdb|pg=${currentPageNameNoUnderscores}|cat=${category}|texto=${reason}}} ~~~~`
-    } else {
-        return `{{sust:cdb2|pg=${currentPageNameNoUnderscores}|cat=${category}|texto=${reason}|{{sust:CURRENTDAY}}|{{sust:CURRENTMONTHNAME}}'}}} ~~~~`
-    }
+function buildDeletionTemplate(category: string, reason: string) {
+    return `{{sust:abreCdb|pg=${currentPageNameNoUnderscores}|cat=${category}|motivo=${reason}}} ~~~~`
+
 }
 
 /**
@@ -84,13 +82,14 @@ function isRequestClosed(
  * @param reason - The reason provided for the deletion request.
  * @returns A promise that resolves when the deletion request page is created or the process is interrupted.
  */
-async function createDeletionRequestPage(category: string, reason: string, isBeta: boolean) {
+async function createDeletionRequestPage(category: string, reason: string) {
     const missingPage: boolean = await isPageMissing(`Wikipedia:Consultas de borrado/${currentPageName}`);
     if (missingPage) {
         deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}`
+        deletionPageNoPrefix = stripCdbPrefix(deletionPage)
         return api.create(deletionPage,
             { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
-            buildDeletionTemplate(category, reason, isBeta)
+            buildDeletionTemplate(category, reason)
         );
     } else {
         const content: string | null = await getContent(`Wikipedia:Consultas de borrado/${currentPageName}`);
@@ -100,10 +99,11 @@ async function createDeletionRequestPage(category: string, reason: string, isBet
             const confirmMessage = `Parece que ya se había creado una consulta de borrado para ${currentPageNameNoUnderscores} cuyo resultado fue MANTENER. ¿Quieres abrir una segunda consulta?`;
             if (confirm(confirmMessage)) {
                 deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}_(2.ª_consulta)`
+                deletionPageNoPrefix = stripCdbPrefix(deletionPage)
                 return api.create(
                     deletionPage,
                     { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
-                    buildDeletionTemplate(category, reason, isBeta)
+                    buildDeletionTemplate(category, reason)
                 )
             } else {
                 new Morebits.status("Proceso interrumpido", "acción abortada por el usuario... actualizando página", "error")
@@ -126,8 +126,8 @@ async function createDeletionRequestPage(category: string, reason: string, isBet
  */
 function buildEditOnNominatedPage(revision: any): ApiEditPageParams {
     return {
-        text: '{{sust:ncdb}}\n' + revision.content,
-        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+        text: `{{sust:cdbM|página=${deletionPageNoPrefix}}}\n` + revision.content,
+        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${deletionPageNoPrefix}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
         minor: false
     }
 }
@@ -143,84 +143,85 @@ async function makeEditOnOtherNominatedPages(article: string): Promise<void> {
         article,
         (revision): ApiEditPageParams => {
             return {
-                text: `{{sust:ncdb|${currentPageName}}}\n` + revision.content,
-                summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                text: `{{sust:cdbM|página=${deletionPageNoPrefix}}}\n` + revision.content,
+                summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${deletionPageNoPrefix}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                 minor: false
             }
         }
     )
 }
 
-function appendArticlesToWikicode(pageContent: string, articles: string[], isBeta: boolean): string {
-    if (isBeta) {
-        const aCdbRegex = /\{\{aCdb\|([^\}]+?)\}\}/;
-        const aCdbPruebaRegex = /\{\{aCdb:prueba(?:\|([^\}]*))?\}\}/;
+// function appendArticlesToWikicode(pageContent: string, articles: string[], isBeta: boolean): string {
+//     if (isBeta) {
+//         const aCdbRegex = /\{\{aCdb\|([^\}]+?)\}\}/;
+//         const aCdbPruebaRegex = /\{\{aCdb:prueba(?:\|([^\}]*))?\}\}/;
 
-        const matchACdb = pageContent.match(aCdbRegex);
-        const matchPrueba = pageContent.match(aCdbPruebaRegex);
+//         const matchACdb = pageContent.match(aCdbRegex);
+//         const matchPrueba = pageContent.match(aCdbPruebaRegex);
 
-        // Helper: only append articles not already present
-        const buildTemplate = (templateName: string, existing: string[] = []) => {
-            const existingSet = new Set(existing.map(p => p.trim().toLowerCase()));
-            const newArticles = articles.filter(
-                title => !existingSet.has(title.toLowerCase())
-            );
-            if (newArticles.length === 0) return null;
-            const updatedParams = [...existing, ...newArticles];
-            return `{{${templateName}|${updatedParams.join('|')}}}`;
-        };
+//         // Helper: only append articles not already present
+//         const buildTemplate = (templateName: string, existing: string[] = []) => {
+//             const existingSet = new Set(existing.map(p => p.trim().toLowerCase()));
+//             const newArticles = articles.filter(
+//                 title => !existingSet.has(title.toLowerCase())
+//             );
+//             if (newArticles.length === 0) return null;
+//             const updatedParams = [...existing, ...newArticles];
+//             return `{{${templateName}|${updatedParams.join('|')}}}`;
+//         };
 
-        if (matchACdb) {
-            const existingParams = matchACdb[1].split('|').map(p => p.trim());
-            const newTemplate = buildTemplate('aCdb', existingParams);
-            if (!newTemplate) return pageContent;
-            return pageContent.replace(aCdbRegex, newTemplate);
-        }
+//         if (matchACdb) {
+//             const existingParams = matchACdb[1].split('|').map(p => p.trim());
+//             const newTemplate = buildTemplate('aCdb', existingParams);
+//             if (!newTemplate) return pageContent;
+//             return pageContent.replace(aCdbRegex, newTemplate);
+//         }
 
-        if (matchPrueba) {
-            const existingParams = matchPrueba[1]
-                ? matchPrueba[1].split('|').map(p => p.trim())
-                : [];
-            const newTemplate = buildTemplate('aCdb:prueba', existingParams);
-            if (!newTemplate) return pageContent;
-            return pageContent.replace(aCdbPruebaRegex, newTemplate);
-        }
+//         if (matchPrueba) {
+//             const existingParams = matchPrueba[1]
+//                 ? matchPrueba[1].split('|').map(p => p.trim())
+//                 : [];
+//             const newTemplate = buildTemplate('aCdb:prueba', existingParams);
+//             if (!newTemplate) return pageContent;
+//             return pageContent.replace(aCdbPruebaRegex, newTemplate);
+//         }
 
-        return pageContent;
-    } else {
-        if (articles.length === 0) return pageContent;
+//         return pageContent;
+//     } else {
+//         if (articles.length === 0) return pageContent;
 
-        const regex = /(:\{\{busca fuentes\|[^\n]+\}\})(?![\s\S]*:\{\{busca fuentes\|)/;
-        const match = pageContent.match(regex);
+//         const regex = /(:\{\{busca fuentes\|[^\n]+\}\})(?![\s\S]*:\{\{busca fuentes\|)/;
+//         const match = pageContent.match(regex);
 
-        if (!match || match.index === undefined) return pageContent;
+//         if (!match || match.index === undefined) return pageContent;
 
-        const additions = articles
-            .map(title => `:{{a|${title}}}\n:{{busca fuentes|${title}}}`)
-            .join('\n');
+//         const additions = articles
+//             .map(title => `:{{a|${title}}}\n:{{busca fuentes|${title}}}`)
+//             .join('\n');
 
-        const insertIndex = match.index + match[0].length;
+//         const insertIndex = match.index + match[0].length;
 
-        return (
-            pageContent.slice(0, insertIndex) +
-            '\n' +
-            additions +
-            pageContent.slice(insertIndex)
-        );
-    }
-}
-async function addRemainingArticles(articleList: string[], isBeta: boolean) {
-    return api.edit(
-        deletionPage,
-        (revision): ApiEditPageParams => {
-            return {
-                text: appendArticlesToWikicode(revision.content, articleList, isBeta),
-                summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
-                minor: false
-            }
-        }
-    )
-}
+//         return (
+//             pageContent.slice(0, insertIndex) +
+//             '\n' +
+//             additions +
+//             pageContent.slice(insertIndex)
+//         );
+//     }
+// }
+
+// async function addRemainingArticles(articleList: string[]) {
+//     return api.edit(
+//         deletionPage,
+//         (revision): ApiEditPageParams => {
+//             return {
+//                 text: appendArticlesToWikicode(revision.content, articleList),
+//                 summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+//                 minor: false
+//             }
+//         }
+//     )
+// }
 
 /**
  * Posts a notification message on the talk page of the creator of the article, 
@@ -236,14 +237,14 @@ async function notifyUser(creator: string | null, category: string): Promise<voi
             return api.create(
                 `Usuario_discusión:${creator}`,
                 { summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinkle Lite|Twinkle Lite]]' },
-                `{{sust:Aviso autor cdb|pg=${currentPageNameNoUnderscores}|cat=${category}} ~~~~`
+                `{{sust:Aviso autor cdb|pg=${currentPageNameNoUnderscores}|cat=${category}}} ~~~~`
             )
         } else {
             return api.edit(
                 `Usuario_discusión:${creator}`,
                 (revision): ApiEditPageParams => {
                     return {
-                        text: revision.content + `\n{{sust:Aviso cdb|${currentPageNameNoUnderscores}|cat=${category}} ~~~~`,
+                        text: revision.content + `\n{{sust:Aviso autor cdb|pg=${currentPageNameNoUnderscores}|cat=${category}} ~~~~`,
                         summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinkle Lite|Twinkle Lite]]',
                         minor: false
                     }
@@ -276,23 +277,23 @@ async function submitMessage(e: Event) {
     createStatusWindow(statusWindow);
     new Morebits.status(`Paso ${step += 1}`, "comprobando disponibilidad y creando la página de discusión de la consulta de borrado...", "info");
 
-    createDeletionRequestPage(input.category, input.reason, input.beta)
+    createDeletionRequestPage(input.category, input.reason)
         .then(function (result) {
             if (result == null) throw 'aborted';
             new Morebits.status(`Paso ${step += 1}`, "colocando plantilla en la(s) página(s) nominada(s)...", "info");
             return api.edit(currentPageName, buildEditOnNominatedPage);
         })
-        .then(async function () {
-            if (input.otherArticleFieldBox[0]) {
-                new Morebits.status(`Paso ${step += 1}`, "añadiendo el resto de páginas nominadas a la consulta...", "info");
-                const otherArticleArray = Array.from(document.querySelectorAll('input[name="otherArticleFieldBox"]')) as HTMLInputElement[];
-                const mappedArray = otherArticleArray.map((o) => o.value)
-                for (let article of mappedArray) {
-                    await makeEditOnOtherNominatedPages(article);
-                }
-                await addRemainingArticles(mappedArray, input.beta);
-            }
-        })
+        // .then(async function () {
+        //     if (input.otherArticleFieldBox[0]) {
+        //         new Morebits.status(`Paso ${step += 1}`, "añadiendo el resto de páginas nominadas a la consulta...", "info");
+        //         const otherArticleArray = Array.from(document.querySelectorAll('input[name="otherArticleFieldBox"]')) as HTMLInputElement[];
+        //         const mappedArray = otherArticleArray.map((o) => o.value)
+        //         for (let article of mappedArray) {
+        //             await makeEditOnOtherNominatedPages(article);
+        //         }
+        //         await addRemainingArticles(mappedArray);
+        //     }
+        // })
         .then(async function () {
             if (!input.notify) return;
             new Morebits.status(`Paso ${step += 1}`, "publicando un mensaje en la página de discusión del creador...", "info");
@@ -360,23 +361,11 @@ export function createDeletionRequestMarkerFormWindow(): void {
         type: 'checkbox',
         list:
             [{
-                name: "beta",
-                value: "beta",
-                label: "Abrir como consulta beta",
-                checked: false,
-                tooltip: "Marca esta casilla para que Twinkle Lite abra la consulta en modo BETA (aún en pruebas). Twinkle Lite no podrá usarse para cerrar consultas de este tipo."
-            }],
-        style: "padding-left: 1em;"
-    })
-
-    form.append({
-        type: 'checkbox',
-        list:
-            [{
                 name: "otherArticles",
                 value: "otherArticles",
-                label: "Aplicar la CDB a más artículos",
+                label: "Aplicar la CDB a más artículos (temporalmente deshabilitado)",
                 checked: false,
+                disabled: true
             }],
         style: "padding-left: 1em; padding-bottom:0.5em;",
         event: (e: any) => {

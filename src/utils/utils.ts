@@ -603,3 +603,13 @@ export function simplifyCategories(
 ): string[] {
     return categories.map(cat => cat.title);
 }
+
+/**
+ * Removes the 'Wikipedia:Consultas de borrado/' prefix from a given page name.
+ * @param {string} page - The page name to strip the prefix from.
+ * @returns {string} The page name without the prefix, or the original page name if it doesn't start with the prefix.
+ */
+export function stripCdbPrefix(page: string): string {
+    const prefix = 'Wikipedia:Consultas de borrado/';
+    return page.startsWith(prefix) ? page.slice(prefix.length) : page;
+}
