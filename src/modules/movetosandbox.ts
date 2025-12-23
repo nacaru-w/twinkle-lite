@@ -30,12 +30,12 @@ export async function createMTSFormWindow() {
 
     const form: QuickFormElementInstance = new Morebits.quickForm(submitMessage);
 
-    const textAreaAndReasonField = form.append({
+    const optionsField = form.append({
         type: 'field',
         label: 'Opciones:',
     });
 
-    textAreaAndReasonField.append({
+    optionsField.append({
         type: 'checkbox',
         list: [{
             name: "notify",
@@ -53,16 +53,27 @@ export async function createMTSFormWindow() {
         }
     })
 
+    optionsField.append({
+        type: 'checkbox',
+        list: [{
+            name: "watch",
+            value: "watch",
+            label: "Vigilar la página trasladada",
+            checked: false,
+        }]
+    })
+
     form.append({
         type: 'textarea',
         name: 'reason',
         label: 'Añade un comentario (opcional)',
-        tooltip: 'Añade un comentario explicando las razones que aparecerá junto al mensaje dejado en la página de discusión del usuario.'
+        tooltip: 'Añade un comentario explicando las razones que aparecerá junto al mensaje dejado en la página de discusión del usuario.',
+        style: 'margin-bottom: 0.5em;',
     })
 
     form.append({
         type: 'submit',
-        label: 'Aceptar'
+        label: 'Trasladar'
     })
 
     const result = form.render();
@@ -74,7 +85,7 @@ export async function createMTSFormWindow() {
  * Calls the MW API to move the current article to the user's sandbox page.
  * If it's in use, it moves it into a subpage
  */
-async function movePageToSandbox() {
+async function movePageToSandbox(watch: boolean) {
     new Morebits.status(`Paso ${step += 1}`, "moviendo la página al taller del usuario", "info");
 
     const sandbox = `Usuario:${creator}/Taller`;
@@ -85,7 +96,7 @@ async function movePageToSandbox() {
         destination: destinationPage,
         removeRedirect: true,
         moveTalk: false,
-        watch: true,
+        watch: watch,
         reason: 'Traslado al taller para que el usuario pueda seguir trabajando en el artículo (mediante [[WP:TL|Twinkle Lite]])'
     });
 }
@@ -147,7 +158,7 @@ async function submitMessage(e: Event) {
         createStatusWindow(statusWindow);
 
         try {
-            await movePageToSandbox();
+            await movePageToSandbox(input.watch);
             if (input.notify) await postMessageOnTalkPage(moveReason);
             await postDeletionTemplate();
             finishMorebitsStatus(Window, statusWindow, 'finished', true);
