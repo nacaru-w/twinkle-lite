@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, getCategories, getContent, getCreator, isPageMissing, showConfirmationDialog, stripCdbPrefix } from "./../utils/utils";
+import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getCategories, getContent, getCreator, isPageMissing, showConfirmationDialog, stripCdbPrefix } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { WikimediaCategory } from "types/twinkle-types";
 
@@ -46,8 +46,8 @@ function getCategoryOptions(): ListElementData[] {
  * @returns A Wikicode string representing the deletion template.
  */
 function buildDeletionTemplate(category: string, reason: string) {
-    return `{{sust:abreCdb|pg=${currentPageNameNoUnderscores}|cat=${category}|motivo=${reason}}} ~~~~`
-
+    const template = `{{sust:abreCdb|pg=${currentPageNameNoUnderscores}|cat=${category}|motivo=${reason}}}~~~~`
+    return template;
 }
 
 /**
@@ -151,78 +151,6 @@ async function makeEditOnOtherNominatedPages(article: string): Promise<void> {
     )
 }
 
-// function appendArticlesToWikicode(pageContent: string, articles: string[], isBeta: boolean): string {
-//     if (isBeta) {
-//         const aCdbRegex = /\{\{aCdb\|([^\}]+?)\}\}/;
-//         const aCdbPruebaRegex = /\{\{aCdb:prueba(?:\|([^\}]*))?\}\}/;
-
-//         const matchACdb = pageContent.match(aCdbRegex);
-//         const matchPrueba = pageContent.match(aCdbPruebaRegex);
-
-//         // Helper: only append articles not already present
-//         const buildTemplate = (templateName: string, existing: string[] = []) => {
-//             const existingSet = new Set(existing.map(p => p.trim().toLowerCase()));
-//             const newArticles = articles.filter(
-//                 title => !existingSet.has(title.toLowerCase())
-//             );
-//             if (newArticles.length === 0) return null;
-//             const updatedParams = [...existing, ...newArticles];
-//             return `{{${templateName}|${updatedParams.join('|')}}}`;
-//         };
-
-//         if (matchACdb) {
-//             const existingParams = matchACdb[1].split('|').map(p => p.trim());
-//             const newTemplate = buildTemplate('aCdb', existingParams);
-//             if (!newTemplate) return pageContent;
-//             return pageContent.replace(aCdbRegex, newTemplate);
-//         }
-
-//         if (matchPrueba) {
-//             const existingParams = matchPrueba[1]
-//                 ? matchPrueba[1].split('|').map(p => p.trim())
-//                 : [];
-//             const newTemplate = buildTemplate('aCdb:prueba', existingParams);
-//             if (!newTemplate) return pageContent;
-//             return pageContent.replace(aCdbPruebaRegex, newTemplate);
-//         }
-
-//         return pageContent;
-//     } else {
-//         if (articles.length === 0) return pageContent;
-
-//         const regex = /(:\{\{busca fuentes\|[^\n]+\}\})(?![\s\S]*:\{\{busca fuentes\|)/;
-//         const match = pageContent.match(regex);
-
-//         if (!match || match.index === undefined) return pageContent;
-
-//         const additions = articles
-//             .map(title => `:{{a|${title}}}\n:{{busca fuentes|${title}}}`)
-//             .join('\n');
-
-//         const insertIndex = match.index + match[0].length;
-
-//         return (
-//             pageContent.slice(0, insertIndex) +
-//             '\n' +
-//             additions +
-//             pageContent.slice(insertIndex)
-//         );
-//     }
-// }
-
-// async function addRemainingArticles(articleList: string[]) {
-//     return api.edit(
-//         deletionPage,
-//         (revision): ApiEditPageParams => {
-//             return {
-//                 text: appendArticlesToWikicode(revision.content, articleList),
-//                 summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${currentPageName}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
-//                 minor: false
-//             }
-//         }
-//     )
-// }
-
 /**
  * Posts a notification message on the talk page of the creator of the article, 
  * informing them of the deletion discussion.
@@ -283,17 +211,6 @@ async function submitMessage(e: Event) {
             new Morebits.status(`Paso ${step += 1}`, "colocando plantilla en la(s) página(s) nominada(s)...", "info");
             return api.edit(currentPageName, buildEditOnNominatedPage);
         })
-        // .then(async function () {
-        //     if (input.otherArticleFieldBox[0]) {
-        //         new Morebits.status(`Paso ${step += 1}`, "añadiendo el resto de páginas nominadas a la consulta...", "info");
-        //         const otherArticleArray = Array.from(document.querySelectorAll('input[name="otherArticleFieldBox"]')) as HTMLInputElement[];
-        //         const mappedArray = otherArticleArray.map((o) => o.value)
-        //         for (let article of mappedArray) {
-        //             await makeEditOnOtherNominatedPages(article);
-        //         }
-        //         await addRemainingArticles(mappedArray);
-        //     }
-        // })
         .then(async function () {
             if (!input.notify) return;
             new Morebits.status(`Paso ${step += 1}`, "publicando un mensaje en la página de discusión del creador...", "info");
@@ -301,17 +218,13 @@ async function submitMessage(e: Event) {
             return notifyUser(creator, input.category);
         })
         .then(function () {
-            new Morebits.status("✔️ Finalizado", "actualizando página...", "status");
-            setTimeout(() => { location.reload() }, 2000);
+            finishMorebitsStatus(Window, statusWindow, 'finished', true);
         })
         .catch(function (error) {
             if (error === 'aborted') return;
-            new Morebits.status("❌ Se ha producido un error", "Comprueba las ediciones realizadas", "error");
-            console.log(`Error: ${error}`);
+            finishMorebitsStatus(Window, statusWindow, 'error');
         });
 }
-
-
 
 /**
  * Creates the form window where the user will input the deletion request details.
