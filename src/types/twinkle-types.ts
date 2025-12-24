@@ -169,3 +169,10 @@ export interface WikimediaCategory {
     ns: number,
     title: string
 }
+
+export interface DeletionRequestData {
+    dateOpened: string,
+    timesPostponed: number,
+    daysElapsedSinceOpened: number,
+    lastPostponed: string | null,
+}
