@@ -1,7 +1,8 @@
 import { QuickFormElementInstance, ListElementData, SimpleWindowInstance } from "types/morebits-types";
-import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, parseTimestamp, showConfirmationDialog } from "./../utils/utils";
+import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getProtectionStatus, showConfirmationDialog } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { ProtectionStatus } from "types/twinkle-types";
+import { parseTimestamp } from "./../utils/dateUtils";
 
 let Window: SimpleWindowInstance;
 

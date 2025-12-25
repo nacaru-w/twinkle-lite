@@ -346,44 +346,6 @@ export async function deletePage(pageName: string, deleteTalk: boolean, reason?:
     }
 }
 
-/**
- * Finds today's date and returns it as a timestamp
- * @returns today's date as timestamp
- */
-export function todayAsTimestamp(): string {
-    const today = new Date();
-    const timestamp = today.getTime().toString();
-
-    return timestamp
-}
-
-/**
- * Parses a timestamp string and returns it formatted as a localized date string in Spanish.
- * 
- * @param timeStamp - The timestamp string to be parsed.
- * @returns A formatted date string in the format "day month year" in Spanish locale.
- */
-export function parseTimestamp(timeStamp: string): string {
-    const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    }
-    const date = new Date(timeStamp);
-    return date.toLocaleDateString('es-ES', options)
-}
-
-export const today: string = parseTimestamp(todayAsTimestamp());
-
-/**
- * Converts a Date object to ISO timestamp format
- * 
- * @param date - A date object
- * @returns The date object converted to ISO timestamp format (string)
- */
-export function convertDateToISO(date: Date): string {
-    return date.toISOString();
-}
 
 /**
  * Takes two ISO timestamps and returns the time difference between them in days and hours
@@ -437,11 +399,28 @@ export function finishMorebitsStatus(window: SimpleWindowInstance, statusWindow:
 
 }
 
-export async function checkIfOpenDR(pagename: string): Promise<boolean | void> {
+export async function isDeletionRequestOpen(pagename: string): Promise<boolean> {
     const content = await getContent(pagename);
+
     if (content) {
-        return !content.includes('{{cierracdb-arr}}')
+        const regex1 = /\{\{cierracdb-arr\}\}/i;
+        const regex2 = /\{\{cierrecdb/gi;
+
+        // If cierracdb-arr is present, it's closed
+        if (regex1.test(content)) {
+            return false;
+        }
+
+        // We'll count for the number of {{cierrecdb, if it's present twice it's closed
+        const matches = content.match(regex2);
+        const count = matches ? matches.length : 0;
+        if (count >= 2) {
+            return false;
+        }
+
+        return true;
     }
+    return false
 }
 
 export async function getBlockInfo(username: string): Promise<BlockInfoObject | null> {

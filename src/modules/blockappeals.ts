@@ -1,6 +1,7 @@
 import { QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, finishMorebitsStatus, getBlockInfo, getContent, relevantUserName, showConfirmationDialog } from "./../utils/utils";
+import { api, calculateTimeDifferenceBetweenISO, createStatusWindow, currentPageName, finishMorebitsStatus, getBlockInfo, getContent, relevantUserName, showConfirmationDialog } from "./../utils/utils";
 import { BlockAppealResolution, BlockInfoObject } from "types/twinkle-types";
+import { convertDateToISO } from "./../utils/dateUtils";
 
 let Window: SimpleWindowInstance;
 let blockInfoObject: BlockInfoObject | null;

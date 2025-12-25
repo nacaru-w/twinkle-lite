@@ -1,29 +1,24 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { api, calculateTimeDifferenceBetweenISO, convertDateToISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getPageCreationInfo, getTalkPage, isPageMissing, parseTimestamp, showConfirmationDialog, today } from "../utils/utils";
-import { abbreviatedMonths } from "./../utils/maps";
+import { api, calculateTimeDifferenceBetweenISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getTalkPage, isPageMissing, showConfirmationDialog } from "../utils/utils";
+import { spanishMonths } from "./../utils/maps";
+import { convertDateToISO, parseTimestamp } from "./../utils/dateUtils";
+import { DeletionRequestData } from "types/twinkle-types";
 
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
-let DROpeningDate: string;
+let requestData: DeletionRequestData | null;
 
-const closureOptions: string[] = ['Mantener', 'Borrar', 'Otro'];
-let timeElapsed: { days: number, hours: number };
+const closureOptions: string[] = ['Mantener', 'Borrar', 'Borrar con excepciones', 'Neutralizar', 'Fusionar', 'Trasladar', 'Suspendida', 'Cancelada', 'Archivada', 'Otro'];
 
 const DRC = {
     closedDR: {
         top: (veredict: string, comment: string | null): string => {
-            return `{{cierracdb-arr}} '''${veredict.toUpperCase()}'''. ${comment ? comment + ' ' : ''}~~~~`;
+            return `${veredict.toUpperCase()}${comment ? `|cc=${comment} ~~~~` : ''}`;
         },
-        bottom: '{{cierracdb-ab}}'
+        bottom: '{{cierreCdb|{{safesubst:TESParam}}}}'
     },
-    talkPage: async (veredict: string) => {
-        if (!DROpeningDate) {
-            const creationInfo = await getPageCreationInfo(currentPageName)
-            if (creationInfo) {
-                DROpeningDate = parseTimestamp(creationInfo?.timestamp);
-            }
-        }
-        return `{{cdbpasada|página=${currentPageName}|fecha=${DROpeningDate}|resultado='''${veredict}'''}}`
+    talkPage: async (veredict: string, requestData: DeletionRequestData) => {
+        return `{{cdbpasada|página=${currentPageName}|fecha=${parseTimestamp(requestData.dateOpened)}}|resultado='''${veredict}'''}}`
     },
     articlePage: {
         removeTemplate: (content: string): string => {
@@ -60,64 +55,110 @@ function showPostponeCheckbox(): void {
     }
 }
 
-export function findLastPostponementDate(text: string): string | null {
-    // Regular expression to match the "Prorrogada para generar más discusión..." and capture the date
-    const prorrogarRegex = /'''Prorrogada para generar más discusión.*?(\d{1,2})\s*(\w+)\s*(\d{4}) \(UTC\)/gi;
+export function extractDeletionRequestData(text: string): DeletionRequestData | null {
+    const regex =
+        /\{\{actualCdb\|[^|]*\|(\d{4})\|(\w+)\|(\d{1,2})\|\-\|(\d{4})\|(\w+)\|(\d{1,2})\|/i;
 
-    let match: RegExpExecArray | null;
-    let lastDate: Date | null = null;
+    const match = text.match(regex);
+    if (!match) return null;
 
-    // Search for all occurrences of the phrase in the text
-    while ((match = prorrogarRegex.exec(text)) !== null) {
-        const [day, monthName, year] = [match[1], match[2].toLowerCase(), match[3]];
+    const [, openYear, openMonthName, openDay, lastYear, lastMonthName, lastDay,] = match;
 
-        // Convert month name to a number
-        const month = abbreviatedMonths[monthName];
-        if (!month) continue;
+    const openMonth = spanishMonths[openMonthName.toLowerCase()];
+    const lastMonth = spanishMonths[lastMonthName.toLowerCase()];
 
-        // Create a date object from the captured values
-        const currentDate = new Date(parseInt(year), month - 1, parseInt(day));
+    if (!openMonth || !lastMonth) return null;
 
-        // Keep the latest date
-        if (!lastDate || currentDate > lastDate) {
-            lastDate = currentDate;
-        }
-    }
+    const openedDate = new Date(Date.UTC(
+        Number(openYear),
+        openMonth - 1,
+        Number(openDay)
+    ));
 
-    // Return the latest date in ISO format, or null if no templates were found
-    return lastDate ? lastDate.toISOString() : null;
+    const lastPostponedDate = new Date(Date.UTC(
+        Number(lastYear),
+        lastMonth - 1,
+        Number(lastDay)
+    ));
+
+    // Days since opening (now - opened)
+    const nowUtc = new Date();
+    const diffOpenedMs = nowUtc.getTime() - openedDate.getTime();
+    const daysElapsedSinceOpened = Math.floor(
+        diffOpenedMs / (1000 * 60 * 60 * 24)
+    );
+
+    // Postponements
+    const diffPostponedMs =
+        lastPostponedDate.getTime() - openedDate.getTime();
+    const diffPostponedDays = Math.floor(
+        diffPostponedMs / (1000 * 60 * 60 * 24)
+    );
+
+    const timesPostponed =
+        diffPostponedDays > 0 ? Math.floor(diffPostponedDays / 14) : 0;
+
+    return {
+        dateOpened: openedDate.toISOString(),
+        timesPostponed,
+        daysElapsedSinceOpened,
+        lastPostponed:
+            timesPostponed === 0 ? null : lastPostponedDate.toISOString(),
+    };
 }
 
-function showCreationDateAndTimeElapsed(creationDateAsTimestamp: string, prorroga: boolean): void {
-    const span = document.querySelector("div[name='timeElapsedFromDRCreation'] > span.quickformDescription");
-    if (span) {
-        timeElapsed = calculateTimeDifferenceBetweenISO(creationDateAsTimestamp, convertDateToISO(new Date()));
-        const format = {
-            emoji: timeElapsed.days >= 14 ? '✔️' : '❌',
-            color: timeElapsed.days >= 14 ? 'var(--color-destructive--focus);' : 'var(--color-destructive);',
-        }
-        span.innerHTML = `${format.emoji} CDB ${prorroga ? 'prorrogada' : 'abierta'} el ${parseTimestamp(creationDateAsTimestamp)}: <span style="font-weight: bold; color: ${format.color};">hace ${timeElapsed.days} días y ${timeElapsed.hours} horas</span>`;
-    }
-    if (timeElapsed.days >= 14) {
+
+
+function showCreationDateAndTimeElapsed(): void {
+    if (!requestData) return;
+
+    const span = document.querySelector(
+        "div[name='timeElapsedFromDRCreation'] > span.quickformDescription"
+    );
+    if (!span) return;
+
+    const timeElapsed = calculateTimeDifferenceBetweenISO(
+        requestData.lastPostponed || requestData.dateOpened,
+        convertDateToISO(new Date())
+    );
+
+    const isPostponable = timeElapsed.days >= 14;
+
+    const format = {
+        emoji: isPostponable ? '✔️' : '❌',
+        color: isPostponable
+            ? 'var(--color-destructive--focus);'
+            : 'var(--color-destructive);',
+    };
+
+    const statusText =
+        requestData.timesPostponed > 0
+            ? `prorrogada por última vez`
+            : 'abierta';
+
+    span.innerHTML = `
+        ${format.emoji} CDB ${statusText} el ${parseTimestamp(requestData.lastPostponed || requestData.dateOpened)}:
+        <span style="font-weight: bold; color: ${format.color};">
+            hace ${timeElapsed.days} días y ${timeElapsed.hours} horas
+        </span>
+    `;
+
+    if (isPostponable) {
         showPostponeCheckbox();
     }
 }
 
+
 async function fetchCreationOrProrrogationDate(): Promise<void> {
     const pageContent = await getContent(currentPageName);
-    if (pageContent) {
-        const lastPostponement = findLastPostponementDate(pageContent);
-        if (lastPostponement) {
-            showCreationDateAndTimeElapsed(lastPostponement, true);
-        } else {
-            const creationInfo = await getPageCreationInfo(currentPageName);
-            if (creationInfo) {
-                DROpeningDate = creationInfo.timestamp;
-                showCreationDateAndTimeElapsed(creationInfo.timestamp, false);
-            }
-        }
-    }
+    if (!pageContent) return;
+
+    requestData = extractDeletionRequestData(pageContent);
+    if (!requestData) return;
+
+    showCreationDateAndTimeElapsed();
 }
+
 
 function manageOtherInputField(selectedOption: string): void {
     const field = document.getElementById('otherField');
@@ -142,18 +183,20 @@ function manageOtherInputField(selectedOption: string): void {
     }
 }
 
-export function replaceDRTemplate(input: string, replacement: string): string {
+export function replaceDRTemplate(pageContent: string, replacement: string): string {
     // The string it uses is automatically placed by template at the top of the page when opening a DR
-    const templateRegex = /\{\{RETIRA ESTA PLANTILLA CUANDO CIERRES ESTA CONSULTA\|[^\}]+\}\}/;
-    return input.replace(templateRegex, replacement);
+    return pageContent.replace(
+        /\|(\s*ABIERTA\s*)/,
+        `|${replacement}`
+    );
 }
 
-export function extractPageTitleFromWikicode(input: string): string | null {
-    // Regular expression to match the pattern with variable "=" and capture the content inside the square brackets
-    const match = input.match(/=+\s*\[\[(.+?)\]\]\s*=+/);
-
-    // If there's a match, return the captured group (the content inside the brackets)
-    return match ? match[1] : null;
+function extractNominatedPage(pageTitle: string): string {
+    return pageTitle
+        // remove the CDB prefix
+        .replace(/^Wikipedia:Consultas_de_borrado\//, '')
+        // remove trailing _(n.ª consulta)
+        .replace(/_\(\d+\.ª consulta\)$/, '');
 }
 
 async function editRequestPage(decision: string, comment: string | null) {
@@ -169,26 +212,23 @@ async function editRequestPage(decision: string, comment: string | null) {
 }
 
 async function editArticle(decision: string): Promise<void> {
-    const content = await getContent(currentPageName);
-    if (content) {
-        const page = extractPageTitleFromWikicode(content);
-        if (page) {
-            nominatedPage = page;
-            if (decision == 'Borrar') {
-                new Morebits.status("Paso 2", "borrando la página original...", "info");
-                const reason = `Según resultado de CDB: [[${currentPageNameNoUnderscores}]]`
-                await deletePage(page, true, reason)
-            } else {
-                new Morebits.status("Paso 2", "editando la página original...", "info");
-                await api.edit(
-                    page,
-                    (revision: any) => ({
-                        text: DRC.articlePage.removeTemplate(revision.content),
-                        summary: `Elimino plantilla según el resultado de [[${currentPageName}|la consulta de borrado]]: ${decision.toUpperCase()}; mediante [[WP:TL|Twinkle Lite]]`,
-                        minor: false
-                    })
-                );
-            }
+    const page = extractNominatedPage(currentPageName);
+    if (page) {
+        nominatedPage = page;
+        if (decision == 'Borrar') {
+            new Morebits.status("Paso 2", "borrando la página original...", "info");
+            const reason = `Según resultado de CDB: [[${currentPageNameNoUnderscores}]]`
+            await deletePage(page, true, reason)
+        } else {
+            new Morebits.status("Paso 2", "editando la página original...", "info");
+            await api.edit(
+                page,
+                (revision: any) => ({
+                    text: DRC.articlePage.removeTemplate(revision.content),
+                    summary: `Elimino plantilla según el resultado de [[${currentPageName}|la consulta de borrado]]: ${decision.toUpperCase()}; mediante [[WP:TL|Twinkle Lite]]`,
+                    minor: false
+                })
+            );
         }
     }
 }
@@ -209,7 +249,7 @@ async function editArticleTalkPage(decision: string): Promise<void> {
     if (decision == 'Borrar') return;
     const talkPage = getTalkPage(nominatedPage);
     new Morebits.status("Paso 3", 'editando la página de discusión...', "info");
-    const template = await DRC.talkPage(decision)
+    const template = await DRC.talkPage(decision, requestData!);
     if (await isPageMissing(talkPage)) {
         await api.create(
             talkPage,
@@ -229,30 +269,16 @@ async function editArticleTalkPage(decision: string): Promise<void> {
 }
 
 function confirmIfLessThan14Days(): boolean {
-    if (timeElapsed.days <= 14) {
-        return confirm(`Han pasado solo ${timeElapsed.days} días desde que se abrió la CDB. La política ([[WP:CDB]]) especifica que los debates de las consultas de borrado deben durar 14 días, y su cierre solo se puede producir después de pasado este tiempo. ¿Seguro que quieres cerrarla antes del tiempo establecido?`)
+    if (requestData && requestData?.daysElapsedSinceOpened <= 14) {
+        return confirm(`Han pasado solo ${requestData?.daysElapsedSinceOpened} días desde que se abrió la CDB. La política ([[WP:CDB]]) especifica que los debates de las consultas de borrado deben durar 14 días, y su cierre solo se puede producir después de pasado este tiempo. ¿Seguro que quieres cerrarla antes del tiempo establecido?`)
     }
     return true
-}
-
-async function isCDBBeta(): Promise<boolean> {
-    const content = await getContent(currentPageName);
-    if (content) {
-        const regex = /\{\{\s*actualCdb[\s:|}]/i;
-        return regex.test(content);
-    }
-    return false
 }
 
 async function submitMessage(e: Event) {
     if (!confirmIfLessThan14Days()) return;
     const form = e.target;
     const input: QuickFormInputObject = Morebits.quickForm.getInputData(form);
-
-    if (await isCDBBeta() && !input.postpone) {
-        alert("Lo siento, pero parece que esta consulta se ha abierto mediante la plantilla de apertura de CDB de tipo BETA y por tanto debe de cerrarse manualmente.")
-        return;
-    }
 
     if (showConfirmationDialog(`¿Seguro que quieres ${input.postpone ? 'prorrogar' : 'cerrar'} esta consulta de borrado?`)) {
         const decision: string = input.result !== 'Otro' ? input.result : input.otherField;
