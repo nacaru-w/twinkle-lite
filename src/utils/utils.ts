@@ -19,9 +19,8 @@ export const userFlags: string[] = mw.config.get('wgUserGroups');
 export const isCurrentUserSysop: boolean = userFlags.includes('sysop');
 export const isUserInMobileSkin = mw.config.get('skin') == 'minerva';
 export const isMainPage: boolean = mw.config.get('wgIsArticle');
-export const deletionTemplatesArray: string[] = [
-    '{{db-u1|', '{{db-user|', '{{speedy|', '{{d|', '{{borrar|', '{{db|', '{{delete|', '{{eliminar|', '{{aviso borrar'
-]
+export const deletionTemplateRegex: RegExp = /({{(?:destruir|d|db-ul|db-user|plagio|bulo|speedy|borrar|db|delete|eliminar|aviso\sborrar)(\|.+|}}))/i;
+
 
 /**
  *  Gets the name of a talk page based on the name of the main page
@@ -602,5 +601,17 @@ export function stripCdbPrefix(page: string): string {
  */
 export function pageHasDeletionTemplate(pageContent: string | null): boolean {
     if (!pageContent) return false;
-    return deletionTemplatesArray.some(template => pageContent?.includes(template));
+
+    return deletionTemplateRegex.test(pageContent);
+}
+
+
+/**
+ * Removes the deletion template from a given page content.
+ * 
+ * @param {string} content - The page content to remove the deletion template from.
+ * @returns {string} The page content without the deletion template.
+ */
+export function removeDeletionPageFromContent(content: string) {
+    return content.replace(deletionTemplateRegex, '');
 }
