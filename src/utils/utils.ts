@@ -19,6 +19,9 @@ export const userFlags: string[] = mw.config.get('wgUserGroups');
 export const isCurrentUserSysop: boolean = userFlags.includes('sysop');
 export const isUserInMobileSkin = mw.config.get('skin') == 'minerva';
 export const isMainPage: boolean = mw.config.get('wgIsArticle');
+export const deletionTemplatesArray: string[] = [
+    '{{db-u1|', '{{db-user|', '{{speedy|', '{{d|', '{{borrar|', '{{db|', '{{delete|', '{{eliminar|', '{{aviso borrar'
+]
 
 /**
  *  Gets the name of a talk page based on the name of the main page
@@ -591,4 +594,13 @@ export function simplifyCategories(
 export function stripCdbPrefix(page: string): string {
     const prefix = 'Wikipedia:Consultas de borrado/';
     return page.startsWith(prefix) ? page.slice(prefix.length) : page;
+}
+
+/**
+ * Checks if the current page has a deletion template in it.
+ * @returns {boolean} `true` if the page has a deletion template, `false` otherwise.
+ */
+export function pageHasDeletionTemplate(pageContent: string | null): boolean {
+    if (!pageContent) return false;
+    return deletionTemplatesArray.some(template => pageContent?.includes(template));
 }
