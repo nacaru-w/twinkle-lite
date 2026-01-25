@@ -1,8 +1,10 @@
 import { QuickFormElementInstance, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { api, createPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getCreator, isCurrentUserSysop, isPageMissing, movePage, showConfirmationDialog } from "./../utils/utils";
+import { api, createPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, currentUser, editPage, finishMorebitsStatus, getContent, getCreator, isCurrentUserSysop, isPageMissing, movePage, pageHasDeletionTemplate, removeDeletionPageFromContent, showConfirmationDialog } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let creator: string | null;
+let pageContent: string | null;
+let hasDeletionTemplate: boolean;
 let destinationPage: string;
 let step = 0;
 
@@ -20,8 +22,19 @@ function toggleTextAreaDisable(disable: boolean) {
     }
 }
 
+/**
+ * Retrieves the content of the current page and checks if it has a deletion template.
+ * If the current user is a sysop, it will set the page content and hasDeletionTemplate variables.
+ * @returns A promise that resolves when the function has completed.
+ */
+async function setDeletionTemplateConfig(): Promise<void> {
+    pageContent = await getContent(currentPageName);
+    hasDeletionTemplate = pageHasDeletionTemplate(pageContent);
+}
+
 export async function createMTSFormWindow() {
     creator = await getCreator();
+    if (isCurrentUserSysop) await setDeletionTemplateConfig();
 
     Window = new Morebits.simpleWindow(620, 530);
     Window.setScriptName('Twinkle Lite');
@@ -63,6 +76,20 @@ export async function createMTSFormWindow() {
         }]
     })
 
+    if (isCurrentUserSysop) {
+        optionsField.append({
+            type: 'checkbox',
+            list: [{
+                name: 'removeDeletionTemplate',
+                value: 'removeDeletionTemplate',
+                label: 'Eliminar plantilla de borrado al realizar el traslado',
+                checked: false,
+                disabled: !hasDeletionTemplate,
+                tooltip: 'Esta opción solo está disponible cuando el artículo incluye una plantilla de borrado rápido.'
+            }],
+        })
+    }
+
     form.append({
         type: 'textarea',
         name: 'reason',
@@ -79,6 +106,23 @@ export async function createMTSFormWindow() {
     const result = form.render();
     Window.setContent(result);
     Window.display();
+}
+
+/**
+ * Removes the deletion template from the page.
+ * 
+ * This function is called when the user selects the option to remove the deletion template
+ * from the page. It will edit the page and remove the deletion template.
+ * 
+ * @returns A promise that resolves when the action is completed.
+ */
+async function removeDeletionTemplate() {
+    new Morebits.status(`Paso ${step += 1}`, "eliminando la plantilla de borrado rápido", "info");
+    await editPage(
+        currentPageName,
+        'Eliminando la plantilla de borrado rápido mediante [[WP:TL|Twinkle Lite]]',
+        removeDeletionPageFromContent(pageContent!),
+    )
 }
 
 /**
@@ -109,7 +153,7 @@ async function postMessageOnTalkPage(moveReason: string) {
     if (creator == currentUser) return;
 
     new Morebits.status(`Paso ${step += 1}`, "publicando un mensaje en la página de discusión del creador...", "info");
-    const summaryMessage = `Avisando al usuario del traslado de su artículo ${currentPageNameNoUnderscores} al [[${destinationPage}|taller]] mediante [[WP:TL]]`;
+    const summaryMessage = `Avisando al usuario del traslado de su artículo ${currentPageNameNoUnderscores} al [[${destinationPage}|taller]] mediante [[WP:TL|Twinkle Lite]]`;
     const talkPageTemplate = `{{sust:Aviso traslado al taller|${currentPageNameNoUnderscores}|${destinationPage.endsWith('/2') ? `${currentPageName}/2` : currentPageName}|razón=${moveReason}}} ~~~~`;
     const isTalkEmpty = await isPageMissing(`Usuario_discusión:${creator}`)
     if (isTalkEmpty) {
@@ -133,19 +177,17 @@ async function postMessageOnTalkPage(moveReason: string) {
 }
 
 async function postDeletionTemplate() {
-    if (!isCurrentUserSysop) {
-        new Morebits.status(`Paso ${step += 1}`, "solicitando el borrado de la redirección...", "info");
-        return await api.edit(
-            currentPageName,
-            (revision: any) => {
-                return {
-                    text: '{{destruir|r2}}\n' + revision.content,
-                    summary: 'Dejando una plantilla de borrado en la página ahora trasladada mediante [[WP:TL|Twinkle Lite]].',
-                    minor: false
-                }
+    new Morebits.status(`Paso ${step += 1}`, "solicitando el borrado de la redirección...", "info");
+    return await api.edit(
+        currentPageName,
+        (revision: any) => {
+            return {
+                text: '{{destruir|r2}}\n' + revision.content,
+                summary: 'Dejando una plantilla de borrado en la página ahora trasladada mediante [[WP:TL|Twinkle Lite]].',
+                minor: false
             }
-        )
-    }
+        }
+    )
 }
 
 async function submitMessage(e: Event) {
@@ -158,9 +200,10 @@ async function submitMessage(e: Event) {
         createStatusWindow(statusWindow);
 
         try {
+            if (input.removeDeletionTemplate) await removeDeletionTemplate();
             await movePageToSandbox(input.watch);
             if (input.notify) await postMessageOnTalkPage(moveReason);
-            await postDeletionTemplate();
+            if (!isCurrentUserSysop) await postDeletionTemplate();
             finishMorebitsStatus(Window, statusWindow, 'finished', true);
         } catch (error) {
             finishMorebitsStatus(Window, statusWindow, 'error');
