@@ -18,7 +18,8 @@ let criteriaLists: SpeedyDeletionCriteriaCategories = {
         { code: "g8", name: "G8. Borrado de una página para dejar sitio" },
         { code: "g9", name: "G9. Recreación de material borrado" },
         { code: "g10", name: "G10. Para mantenimiento elemental" },
-        { code: "g11", name: "G11. A petición del único autor" }
+        { code: "g11", name: "G11. A petición del único autor" },
+        { code: "g12", name: "G12. Páginas generadas por LLM sin revisión humana" }
     ], articles: [
         {
             code: "a1", name: "A1. Viola «lo que Wikipedia no es»", subgroup: {
