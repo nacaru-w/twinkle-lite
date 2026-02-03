@@ -278,17 +278,19 @@ export async function getContent(pageName: string, sectionNumber?: string): Prom
  * @param pageName - The name of the page to edit.
  * @param summary - The edit summary.
  * @param newtext - The new text content for the page or section.
+ * @param redirect - (Optional) A boolean indicating if the page should be redirected.
  * @param section - (Optional) The section number to edit.
  * @returns A promise that resolves to the API response.
  * @throws An error if the API request fails.
  */
-export async function editPage(pageName: string, summary: string, newtext: string, section?: string, newSectionTitle?: string) {
+export async function editPage(pageName: string, summary: string, newtext: string, redirect?: boolean, section?: string, newSectionTitle?: string) {
     const params: QueryParams = {
         action: 'edit',
         title: pageName,
         format: 'json',
         summary: summary,
         text: newtext,
+        ...(redirect === true ? { redirect: true } : {}),
         ...(section !== undefined ? { section: section } : {}),
         ...(newSectionTitle !== undefined ? { sectiontitle: newSectionTitle } : {})
     }
@@ -317,8 +319,9 @@ export async function appendSectionToPage(pageName: string, summary: string, new
         pageName,
         summary,
         newtext,
+        true,
         'new',
-        newTitle
+        newTitle,
     );
 }
 
