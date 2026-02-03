@@ -310,7 +310,7 @@ export function createConfigWindow(settings: Settings | null) {
         name: 'nbrMenu',
         list: [{
             value: 'noticeboard-resolution',
-            label: 'Permite resolver solicitudes de desbloqueo rápidamente habilitando un botón para ello en las solicitudes sin resolver de los tablones',
+            label: 'Permite resolver solicitudes en los tablones rápidamente habilitando un botón para ello en las que están sin resolver',
             name: 'NBRButtonsCheckbox',
             disabled: !isCurrentUserSysop,
             checked: settings?.NBRButtonsCheckbox ?? true

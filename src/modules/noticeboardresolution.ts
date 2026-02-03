@@ -105,6 +105,7 @@ async function appendResolutionText(newText: string, sectionNumber: string) {
         currentPageName,
         "Resolviendo resolución mediante [[WP:TL|Twinkle Lite]]",
         newText,
+        false,
         sectionNumber
     );
 }
@@ -211,7 +212,7 @@ export function createNoticeboardResolutionWindow(headerInfo: NoticeboardRequest
         name: 'resolutionText',
         label: 'Texto de la resolución:',
         value: fetchTextFromLocalStorage() || '',
-        tooltip: 'Escribe un mensaje para el usuario que hizo la petición. Puedes usar wikitexto.',
+        tooltip: 'Escribe un mensaje para el usuario que hizo la petición. Puedes usar wikitexto. La firma será añadida automáticamente.',
         style: 'margin-top: 0',
     });
 
