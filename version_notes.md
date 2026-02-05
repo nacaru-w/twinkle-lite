@@ -1,7 +1,6 @@
 # v.5.0.0
 
 ## Global enhancements:
-
 * Users will now be able to choose whether they want a last confirmation before initiating Twinkle Lite's actions after the form has been filled for each module. 
 
 ## Module: Noticeboard resolution
@@ -10,6 +9,19 @@
 ## Module: Block appeals
 * A bug has been fixed whereby the script would confuse `{{inhabilitación}}` template texts for actual block appeals. 
 * The resolution options "archivo", "filtro" and "extención" have been added.
+
+## Module: Move to sandbox
+* Added an option that allows the user to choose whether they want to add the moved page to their watchlist.
+* (Sysop only) added an option that allows the user to remove the deletion template in the moving process.
+
+## Module: Deletion request maker
+* The module has been reworked to work with beta-type requests as default.
+
+## Module: Deletion request closer
+* The module has been reworked to work with beta-type requests as default.
+
+## Module: Speedy deletion
+* Added criterion G.12, following the recently approved NOIA policy.
 
 # v.4.4.1 (hotfix)
 
