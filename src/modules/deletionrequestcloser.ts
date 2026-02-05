@@ -8,7 +8,7 @@ let Window: SimpleWindowInstance;
 let nominatedPage: string;
 let requestData: DeletionRequestData | null;
 
-const closureOptions: string[] = ['Mantener', 'Borrar', 'Borrar con excepciones', 'Neutralizar', 'Fusionar', 'Trasladar', 'Suspendida', 'Cancelada', 'Archivada', 'Otro'];
+const closureOptions: string[] = ['Mantener', 'Borrar', 'Neutralizar', 'Fusionar', 'Trasladar', 'Suspendida', 'Cancelada', 'Archivada', 'Otro'];
 
 const DRC = {
     closedDR: {
