@@ -103,7 +103,7 @@ async function appendResolutionText(newText: string, sectionNumber: string) {
 
     return await editPage(
         currentPageName,
-        "Resolviendo resolución mediante [[WP:TL|Twinkle Lite]]",
+        "Resolviendo solicitud en tablón mediante [[WP:TL|Twinkle Lite]]",
         newText,
         false,
         sectionNumber
