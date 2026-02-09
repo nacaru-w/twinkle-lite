@@ -1,3 +1,8 @@
+# v.5.0.1 
+
+# Module: Noticeboard resolution
+* Included link to resolved request in edit summary.
+
 # v.5.0.0
 
 ## Global enhancements:
