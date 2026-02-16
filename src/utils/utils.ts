@@ -1,6 +1,6 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
 import { APIPageResponse, BlockInfoObject, MovePageOptions, PageCreationBasicInfo, ProtectionStatus, Settings, WikimediaCategory } from '../types/twinkle-types'
-import { ApiQueryBlocksParams, ApiQueryCategoriesParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+import { ApiProtectParams, ApiQueryBlocksParams, ApiQueryCategoriesParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 import { ApiResponse } from 'types-mediawiki/mw/Api';
 import { QueryParams } from 'types-mediawiki/mw/Uri';
 
@@ -351,6 +351,25 @@ export async function deletePage(pageName: string, deleteTalk: boolean, reason?:
     }
 }
 
+export async function protectPage(pageName: string, protections: string, expiry?: string, reason?: string) {
+    const params: ApiProtectParams = {
+        action: 'protect',
+        title: pageName,
+        protections: protections,
+        ...(expiry !== undefined ? { expiry } : {}),
+        ...(reason !== undefined ? { reason } : {}),
+        format: 'json'
+    }
+
+    try {
+        const res = await api.postWithToken('csrf', params);
+        return res
+    } catch (error) {
+        console.error('Error protecting the page:', error);
+        throw error;
+    }
+
+}
 
 /**
  * Takes two ISO timestamps and returns the time difference between them in days and hours
