@@ -351,6 +351,17 @@ export async function deletePage(pageName: string, deleteTalk: boolean, reason?:
     }
 }
 
+
+/**
+ * Protects a page from being edited by adding protections to it.
+ * 
+ * @param pageName - The name of the page to protect.
+ * @param protections - A string describing the protections to apply to the page. Ex.: 'edit=autoconfirmed|move=sysop'
+ * @param expiry - (Optional) The timestamp at which the protection should expire.
+ * @param reason - (Optional) The reason for the protection or 'infinite'.
+ * @returns A promise that resolves to the API response.
+ * @throws An error if the API request fails.
+ */
 export async function protectPage(pageName: string, protections: string, expiry?: string, reason?: string) {
     const params: ApiProtectParams = {
         action: 'protect',
