@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormInputObject, SimpleWindowInstance } from "types/morebits-types";
-import { api, calculateTimeDifferenceBetweenISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getTalkPage, isPageMissing, showConfirmationDialog } from "../utils/utils";
+import { api, calculateTimeDifferenceBetweenISO, createStatusWindow, currentPageName, currentPageNameNoUnderscores, deletePage, finishMorebitsStatus, getContent, getTalkPage, isPageMissing, protectPage, showConfirmationDialog } from "../utils/utils";
 import { spanishMonths } from "./../utils/maps";
 import { convertDateToISO, parseTimestamp } from "./../utils/dateUtils";
 import { DeletionRequestData } from "types/twinkle-types";
@@ -7,6 +7,7 @@ import { DeletionRequestData } from "types/twinkle-types";
 let Window: SimpleWindowInstance;
 let nominatedPage: string;
 let requestData: DeletionRequestData | null;
+let step = 0;
 
 const closureOptions: string[] = ['Mantener', 'Borrar', 'Neutralizar', 'Fusionar', 'Trasladar', 'Suspendida', 'Cancelada', 'Archivada', 'Otro'];
 
@@ -200,7 +201,7 @@ function extractNominatedPage(pageTitle: string): string {
 }
 
 async function editRequestPage(decision: string, comment: string | null) {
-    new Morebits.status("Paso 1", "cerrando la página de la consulta...", "info");
+    new Morebits.status(`Paso ${step += 1}`, "cerrando la página de la consulta...", "info");
     await api.edit(
         currentPageName,
         (revision: any) => ({
@@ -216,11 +217,11 @@ async function editArticle(decision: string): Promise<void> {
     if (page) {
         nominatedPage = page;
         if (decision == 'Borrar') {
-            new Morebits.status("Paso 2", "borrando la página original...", "info");
+            new Morebits.status(`Paso ${step += 1}`, "borrando la página original...", "info");
             const reason = `Según resultado de CDB: [[${currentPageNameNoUnderscores}]]`
             await deletePage(page, true, reason)
         } else {
-            new Morebits.status("Paso 2", "editando la página original...", "info");
+            new Morebits.status(`Paso ${step += 1}`, "editando la página original...", "info");
             await api.edit(
                 page,
                 (revision: any) => ({
@@ -234,7 +235,7 @@ async function editArticle(decision: string): Promise<void> {
 }
 
 async function addPostponeTemplate() {
-    new Morebits.status("Paso 1", "añadiendo plantilla para posponer la consulta...", "info");
+    new Morebits.status(`Paso ${step += 1}`, "añadiendo plantilla para posponer la consulta...", "info");
     await api.edit(
         currentPageName,
         (revision: any) => ({
@@ -248,7 +249,7 @@ async function addPostponeTemplate() {
 async function editArticleTalkPage(decision: string): Promise<void> {
     if (decision == 'Borrar') return;
     const talkPage = getTalkPage(nominatedPage);
-    new Morebits.status("Paso 3", 'editando la página de discusión...', "info");
+    new Morebits.status(`Paso ${step += 1}`, 'editando la página de discusión...', "info");
     const template = await DRC.talkPage(decision, requestData!);
     if (await isPageMissing(talkPage)) {
         await api.create(
@@ -266,6 +267,11 @@ async function editArticleTalkPage(decision: string): Promise<void> {
             })
         )
     }
+}
+
+async function protectDeletionRequestPage() {
+    new Morebits.status(`Paso ${step += 1}`, "protegiendo la página de la consulta...", "info");
+    await protectPage(currentPageName, 'edit=sysop|move=sysop', 'infinite', 'Página protegida tras cierre de la consulta (mediante [[WP:TL|Twinkle Lite]])');
 }
 
 function confirmIfLessThan14Days(): boolean {
@@ -300,6 +306,7 @@ async function submitMessage(e: Event) {
                 await editRequestPage(decision, comment);
                 await editArticle(decision);
                 await editArticleTalkPage(decision);
+                await protectDeletionRequestPage();
                 finishMorebitsStatus(Window, statusWindow, 'finished', true);
             } catch (error) {
                 finishMorebitsStatus(Window, statusWindow, 'error');
