@@ -1,5 +1,5 @@
 import { ListElementData, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getCategories, getContent, getCreator, isPageMissing, showConfirmationDialog, stripCdbPrefix } from "./../utils/utils";
+import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getCategories, getContent, getCreator, isPageMissing, removeUnderscores, showConfirmationDialog, stripCdbPrefix } from "./../utils/utils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { WikimediaCategory } from "types/twinkle-types";
 
@@ -46,7 +46,7 @@ function getCategoryOptions(): ListElementData[] {
  * @returns A Wikicode string representing the deletion template.
  */
 function buildDeletionTemplate(category: string, reason: string) {
-    const template = `{{sust:abreCdb|pg=${currentPageNameNoUnderscores}|cat=${category}|motivo=${reason}}}~~~~`
+    const template = `{{sust:abreCdb|pg=${currentPageNameNoUnderscores}|cat=${category}|motivo=${reason}}} ~~~~`
     return template;
 }
 
@@ -88,7 +88,7 @@ async function createDeletionRequestPage(category: string, reason: string) {
         deletionPage = `Wikipedia:Consultas de borrado/${currentPageName}`
         deletionPageNoPrefix = stripCdbPrefix(deletionPage)
         return api.create(deletionPage,
-            { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
+            { summary: `Creando página de discusión para el borrado de [[${currentPageNameNoUnderscores}]], mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
             buildDeletionTemplate(category, reason)
         );
     } else {
@@ -127,7 +127,7 @@ async function createDeletionRequestPage(category: string, reason: string) {
 function buildEditOnNominatedPage(revision: any): ApiEditPageParams {
     return {
         text: `{{sust:cdbM|página=${deletionPageNoPrefix}}}\n` + revision.content,
-        summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${deletionPageNoPrefix}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+        summary: `Añadiendo plantilla de consulta de borrado, véase [[Wikipedia:Consultas de borrado/${removeUnderscores(deletionPageNoPrefix)}]]; mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
         minor: false
     }
 }
