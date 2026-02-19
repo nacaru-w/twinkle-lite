@@ -1,3 +1,10 @@
+# v5.0.2
+## Module: Deletion request maker
+* Fixed a bug in user notification template.
+
+## Module: Deletion request closer
+* Closed deletion requests will not be sysop-protected by default
+
 # v.5.0.1 
 
 # Module: Noticeboard resolution

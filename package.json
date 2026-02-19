@@ -1,7 +1,7 @@
 {
   "name": "twinkle-lite",
-  "version": "4.4.1",
-  "description": "Light version of Twinkle for eswiki",
+  "version": "5.0.2",
+  "description": "Modular maintenance tool for eswiki",
   "homepage": "https://github.com/nacaru-w/twinkle-lite",
   "private": true,
   "scripts": {
