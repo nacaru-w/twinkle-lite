@@ -19,6 +19,8 @@ async function submitMessage(event: Event): Promise<void> {
     const form = event.target as HTMLFormElement;
     const input: NoticeboardResolutionInput = Morebits.quickForm.getInputData(form);
 
+    if (!input.resolutionText) return showNoTextAlert();
+
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(400, 350)
     createStatusWindow(statusWindow);
 
@@ -189,6 +191,10 @@ function addListenerToTextarea(): void {
     }
 }
 
+function showNoTextAlert(): void {
+    alert('Por favor, completa el texto de la resolución.');
+}
+
 export function createNoticeboardResolutionWindow(headerInfo: NoticeboardRequestInfo | null, configUseAdminTabTemplate: boolean): void {
     // Includes request title with underscores as spaces and, if there are more than one
     // requests with the same title, the number represeting its position in descending
@@ -237,7 +243,7 @@ export function createNoticeboardResolutionWindow(headerInfo: NoticeboardRequest
             name: 'notify',
             value: 'notify',
             label: 'Avisar al usuario que realizó la petición (si es posible)',
-            tooltip: 'Marca esta casilla si quieres que se le notifique al usuario que realizó la petición dejándole un mensaje en su página de discusión. Esto solo será posible si la firma del usuario incluye un enlace a su PU',
+            tooltip: 'Marca esta casilla si quieres que se le notifique al usuario que realizó la petición dejándole un mensaje en su página de discusión. Esto solo será posible si la firma del usuario incluye un enlace a su PU.',
             checked: false
         }],
     });
