@@ -173,6 +173,16 @@ async function createHash(board: string, reportTitle: string): Promise<string | 
     return alert("Ha habido un error, inténtalo de nuevo maś tarde");
 }
 
+function buildTitle(motive: string, usernames: string[], articles: string[], input: QuickFormInputObject): string {
+    switch (motive) {
+        case 'Guerra de ediciones':
+            return `Guerra de ediciones en ${articles.length > 1 ? 'varios artículos' : `${articles[0]}`}`;
+        case 'Nombre inapropiado':
+            return `Nombre inapropiado ${input.hide ? '(oculto)' : `de ${usernames.length > 1 ? 'varios usuarios' : usernames[0]}`}`
+        default:
+            return `${motive} de ${usernames.length > 1 ? 'varios usuarios' : usernames[0]}`
+    }
+}
 
 function buildEditOnNoticeboard(input: QuickFormInputObject, usernames: string[], articles: string[]): (revision: any) => ApiEditPageParams {
     const motive: string = input.motive as string
@@ -186,7 +196,7 @@ function buildEditOnNoticeboard(input: QuickFormInputObject, usernames: string[]
             }
         }
     } else {
-        let title = motive == "Otro" ? input.otherreason : motive;
+        let title = motive == "Otro" ? input.otherreason : buildTitle(motive, usernames, articles, input);
         let bulletedUserList = listWords(usernames, 'u', motive, input.hide)
         let bulletedArticleList = listWords(articles, 'a', motive)
         let reasonTitle = motive == "Guerra de ediciones" ? `; Comentario` : `; Motivo`;
@@ -203,7 +213,7 @@ function buildEditOnNoticeboard(input: QuickFormInputObject, usernames: string[]
                     '* ~~~~' + '\n' +
                     '; Respuesta' + '\n' +
                     '(a rellenar por un bibliotecario)',
-                summary: `Creando denuncia de usuario mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                summary: `/* ${title} */ Creando denuncia de ${usernames.length > 1 ? 'varios usuarios' : `[[Especial:Contribuciones/${usernames[0]}|usuario]]`} mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                 minor: false
             }
         }
