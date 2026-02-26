@@ -1,4 +1,11 @@
-# v5.0.2
+# v.5.1.0
+## Global enhancements:
+* TL modules that add noticeboard requests will now have more unique titles. The corresponding edit summaries will now include a link to the relevant request.
+
+## Module: Warnings
+* Added template {{aviso referencias}} to catalogue.
+
+# v.5.0.2
 ## Module: Deletion request maker
 * Fixed a bug in user notification template.
 
