@@ -3,6 +3,7 @@ import { api, createStatusWindow, finishMorebitsStatus, showConfirmationDialog }
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let diffID: string;
+let reportTitle: string;
 let Window: SimpleWindowInstance;
 
 /**
@@ -133,8 +134,10 @@ function buildMessage(moreDiffs: string, reason: string): string {
         diffList.push(diffID);
     }
 
+    reportTitle = 'Ocultar ' + (moreDiffs ? 'varias ediciones' : `edición ${diffID}`);
+
     const boardMessage =
-        `\n== Ocultar ${moreDiffs ? "ediciones" : "edición"} ==
+        `\n== ${reportTitle} ==
 ; Asunto
 ${makeDiffMessage(diffList)}
 ${reason ? `; Motivo\n${reason}` : ''}
@@ -165,7 +168,7 @@ function submitMessage(e: Event): void {
             (revision) => {
                 const editParams: ApiEditPageParams = {
                     text: revision.content + buildMessage(input.moreDiffsString as string, input.reason as string),
-                    summary: `Solicitando ocultado de ${input.moreDiffs ? 'ediciones' : 'una edición'} mediante [[WP:TL|Twinkle Lite]]`,
+                    summary: `/* ${reportTitle} */ Solicitando ocultado de ${input.moreDiffs ? 'varias ediciones' : `[[Especial:Diff/${diffID}|una edición]]`} mediante [[WP:TL|Twinkle Lite]]`,
                     minor: false
                 }
                 return editParams

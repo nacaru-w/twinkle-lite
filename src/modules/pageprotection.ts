@@ -65,11 +65,11 @@ function protectionStatusTextBuilder(protectionExpiry: string): string {
  * @returns A function that takes a revision and returns the edit parameters.
  */
 function buildEditOnNoticeboard(input: any): (revision: any) => ApiEditPageParams {
-    let title = `== ${input.protection == "desprotección" ? 'Solicitud de desprotección de ' : ''}[[${currentPageNameNoUnderscores}]] ==`;
+    let title = `${input.protection == "desprotección" ? 'Solicitud de desprotección de ' : ''}[[${currentPageNameNoUnderscores}]]`;
     return (revision: any) => {
         const editParams: ApiEditPageParams = {
             text: revision.content + `\n
-${title} 
+== ${title} == 
 ;Artículo(s) 
 * {{a|${currentPageNameNoUnderscores}}}
 ;Causa 
@@ -78,7 +78,7 @@ ${input.reason ? input.reason : input.motive}
 * ~~~~ 
 ;Respuesta
 (a rellenar por un bibliotecario)`,
-            summary: `Solicitando ${input.protection} de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+            summary: `/* ${currentPageNameNoUnderscores} */ Solicitando ${input.protection} de [[${currentPageNameNoUnderscores}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
             minor: false
         }
         return editParams
