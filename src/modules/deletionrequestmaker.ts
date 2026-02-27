@@ -172,7 +172,7 @@ async function notifyUser(creator: string | null, category: string): Promise<voi
                 `Usuario_discusión:${creator}`,
                 (revision): ApiEditPageParams => {
                     return {
-                        text: revision.content + `\n{{sust:Aviso autor cdb|pg=${currentPageNameNoUnderscores}|cat=${category}} ~~~~`,
+                        text: revision.content + `\n{{sust:Aviso autor cdb|pg=${currentPageNameNoUnderscores}|cat=${category}}} ~~~~`,
                         summary: 'Aviso al usuario de la apertura de una CDB mediante [[WP:Twinkle Lite|Twinkle Lite]]',
                         minor: false
                     }
