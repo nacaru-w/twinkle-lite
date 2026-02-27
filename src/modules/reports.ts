@@ -4,6 +4,7 @@ import { api, createStatusWindow, currentPageName, finishMorebitsStatus, getCont
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 
 let reportedUser: string;
+let reportTitle: string;
 let Window: SimpleWindowInstance;
 
 let reportMotiveDict: ReportMotive = {
@@ -188,15 +189,16 @@ function buildEditOnNoticeboard(input: QuickFormInputObject, usernames: string[]
     const motive: string = input.motive as string
     if (motive == "Vandalismo en curso") {
         return (revision) => {
+            reportTitle = usernames[0];
             const summaryUser = usernames.length > 1 ? 'usuarios' : `[[Especial:Contribuciones/${usernames[0]}|usuario]]`;
             return {
                 text: revision.content + '\n' + '\n' + VECReportBuilder(usernames, input),
-                summary: `Creando denuncia de ${summaryUser} mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                summary: `/* ${reportTitle} */ Creando denuncia de ${summaryUser} mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                 minor: false
             }
         }
     } else {
-        let title = motive == "Otro" ? input.otherreason : buildTitle(motive, usernames, articles, input);
+        reportTitle = motive == "Otro" ? input.otherreason : buildTitle(motive, usernames, articles, input);
         let bulletedUserList = listWords(usernames, 'u', motive, input.hide)
         let bulletedArticleList = listWords(articles, 'a', motive)
         let reasonTitle = motive == "Guerra de ediciones" ? `; Comentario` : `; Motivo`;
@@ -204,7 +206,7 @@ function buildEditOnNoticeboard(input: QuickFormInputObject, usernames: string[]
         return (revision) => {
             return {
                 text: revision.content + '\n' + '\n' +
-                    `== ${title} ==` + '\n' +
+                    `== ${reportTitle} ==` + '\n' +
                     `; ${reportMotiveDict[motive].usersSubtitle}` + '\n' +
                     `${bulletedUserList}` +
                     articleListIfEditWar +
@@ -213,7 +215,7 @@ function buildEditOnNoticeboard(input: QuickFormInputObject, usernames: string[]
                     '* ~~~~' + '\n' +
                     '; Respuesta' + '\n' +
                     '(a rellenar por un bibliotecario)',
-                summary: `/* ${title} */ Creando denuncia de ${usernames.length > 1 ? 'varios usuarios' : `[[Especial:Contribuciones/${usernames[0]}|usuario]]`} mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                summary: `/* ${reportTitle} */ Creando denuncia de ${usernames.length > 1 ? 'varios usuarios' : `[[Especial:Contribuciones/${usernames[0]}|usuario]]`} mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                 minor: false
             }
         }
@@ -227,12 +229,12 @@ function postsMessage(input: QuickFormInputObject, usernames: string[]): Promise
         .then(async function (mustCreateNewTalkPage) {
             const title: string = (input.motive == "Otro" ? input.otherreason : input.motive) as string;
             const motive: string = input.motive as string;
-            const hash = await createHash(reportMotiveDict[motive].link, title);
-            const notificationString = `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${reportMotiveDict[motive].link}#${motive == "Vandalismo en curso" ? reportedUser : hash}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`;
+            const notificationString = `Hola. Te informo de que he creado una denuncia —por la razón mencionada en el título— que te concierne. Puedes consultarla en el tablón correspondiente a través de '''[[${reportMotiveDict[motive].link}#${reportTitle}|este enlace]]'''. Un [[WP:B|bibliotecario]] se encargará de analizar el caso y emitirá una resolución al respecto próximamente. Un saludo. ~~~~`;
+            const reportLink = `${reportMotiveDict[motive].link}#${reportTitle}`;
             if (mustCreateNewTalkPage) {
                 return api.create(
                     `Usuario_discusión:${usernames[0]}`,
-                    { summary: `Aviso al usuario de su denuncia por [[${reportMotiveDict[motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
+                    { summary: `/* ${title} */ Aviso al usuario de su [[${reportLink}|denuncia]] por ${title.toLowerCase()} mediante [[WP:Twinkle Lite|Twinkle Lite]]` },
                     `\n== ${title} ==\n` +
                     notificationString
                 );
@@ -242,7 +244,7 @@ function postsMessage(input: QuickFormInputObject, usernames: string[]): Promise
                     function (revision) {
                         return {
                             text: revision.content + `\n== ${title} ==\n` + notificationString,
-                            summary: `Aviso al usuario de su denuncia por [[${reportMotiveDict[motive].link}|${title.toLowerCase()}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                            summary: `/* ${title} */ Aviso al usuario de su [[${reportLink}|denuncia]] por ${title.toLowerCase()} mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                             minor: false
                         }
                     }
