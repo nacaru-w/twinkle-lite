@@ -100,7 +100,7 @@ function makeDiffList(diffIDs: string): string[] {
     // numbers or commas are processed
     let processedDiffList = diffIDs.replace(/[^0-9,]+/g, "");
     let processedDiffListArray: string[] = processedDiffList.split(',');
-    processedDiffListArray.unshift(diffID);
+    processedDiffListArray.push(diffID);
     return processedDiffListArray;
 }
 
@@ -134,7 +134,7 @@ function buildMessage(moreDiffs: string, reason: string): string {
         diffList.push(diffID);
     }
 
-    reportTitle = 'Ocultar ' + (moreDiffs ? 'varias ediciones' : `edición ${diffID}`);
+    reportTitle = 'Ocultar ' + (moreDiffs ? `ediciones ${moreDiffs.replace(',', ', ')} y ${diffID}` : `edición ${diffID}`);
 
     const boardMessage =
         `\n== ${reportTitle} ==
@@ -168,7 +168,7 @@ function submitMessage(e: Event): void {
             (revision) => {
                 const editParams: ApiEditPageParams = {
                     text: revision.content + buildMessage(input.moreDiffsString as string, input.reason as string),
-                    summary: `/* ${reportTitle} */ Solicitando ocultado de ${input.moreDiffs ? 'varias ediciones' : `[[Especial:Diff/${diffID}|una edición]]`} mediante [[WP:TL|Twinkle Lite]]`,
+                    summary: `/* ${reportTitle} */ Solicitando ocultado de ${input.moreDiffsString ? 'varias ediciones' : `[[Especial:Diff/${diffID}|una edición]]`} mediante [[WP:TL|Twinkle Lite]]`,
                     minor: false
                 }
                 return editParams
