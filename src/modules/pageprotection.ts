@@ -94,7 +94,7 @@ async function fetchAndShowProtectionStatus(): Promise<void> {
     // Displays protection level on page
     const showProtection = document.querySelector("div[name='currentProtection'] > span.quickformDescription");
     if (showProtection) {
-        showProtection.innerHTML = `Nivel actual de protección:<span style="color:royalblue; font-weight: bold;"> ${protection.level} <span style="font-weight: normal;">${protectionStatusTextBuilder(protection.expiry)}</span>`;
+        showProtection.innerHTML = `Nivel actual de protección:<span style="color:var(--color-progressive, #88a3e8); font-weight: bold;"> ${protection.level} <span style="font-weight: normal;">${protectionStatusTextBuilder(protection.expiry)}</span></span><br><a target=_blank style="font-size: smaller; font-style: normal; color: var(--color-link--active, #b6d4fb);" href=https://es.wikipedia.org/wiki/Especial:Registro?type=protect&page=${currentPageName}>🔎 Ver registro de protecciones</a>`;
         // Disables "unprotect" option if not applicable
         if (protection.level == 'sin protección') {
             let unprotectDiv: HTMLElement | undefined = document.getElementById('protect')?.children[1] as HTMLElement;
