@@ -5,6 +5,9 @@
 ## Module: Warnings
 * Added template {{aviso referencias}} to catalogue.
 
+## Module: Page protection
+* Added link to page protection registry to the form window.
+
 # v.5.0.2
 ## Module: Deletion request maker
 * Fixed a bug in user notification template.
