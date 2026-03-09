@@ -205,6 +205,18 @@ const templateDict: WarningTemplateDict = {
             }
         ]
     },
+    "aviso referencias": {
+        description: "usuario que no referencia correctamente, y/o cuyas aportaciones han tenido que ser modificadas, retiradas o marcadas con plantillas de referencias en un artículo",
+        subgroup: [
+            {
+                type: 'input',
+                name: '_param-aviso referencias-1',
+                label: 'Artículo donde el usuario no ha aportado las referencias suficientes',
+                tooltip: 'Escribe el nombre del artículo donde el usuario no ha aportado las referencias suficientes. No uses corchetes, el enlace se añadirá automáticamente',
+                required: false
+            }
+        ]
+    },
     "aviso sin sentido": {
         description: "usuarios que crean páginas sin sentido o bulos",
         subgroup: [
