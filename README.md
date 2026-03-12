@@ -25,6 +25,7 @@ Sysop modules:
 * **Deletion-request-closer**: Identifies deletion request pages and provides an option to close them through a form. Upon submission, the script performs the necessary administrative actions, modifying the deletion request page, the article's talk page, and the nominated page's main page.
 * **Block-appeals**: Handles the resolution of block appeals. This module uses the information provided by admins through a form to modify the appealing user's talk page.
 * **Fast-blocker**: Developed by user -sasha- in JavaScript, this module enables quick blocking of users. It has been integrated into Twinkle Lite as part of the sysop modules and ported to TypeScript.
+* **Noticeboard resolutions**: Allows sysops to leave a response to requests on noticeboard quickly, also permitting leaving a otification on the talk page of the user who wrote the request.
 
 Twinkle Lite is inspired by the original [Twinkle](https://github.com/wikimedia-gadgets/twinkle) developed by [AzaToth](https://en.wikipedia.org/wiki/User:AzaToth) on English Wikipedia, and [TwinkleGlobal](https://github.com/Xi-Plus/twinkle-global) by [Xiplus](https://meta.wikimedia.org/wiki/User:Xiplus).
 
