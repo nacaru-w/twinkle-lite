@@ -1,7 +1,7 @@
 import { createNoticeboardResolutionWindow } from "./../modules/noticeboardresolution";
 import { createBlockAppealsWindow } from "./../modules/blockappeals";
 import { createDRCFormWindow } from "./../modules/deletionrequestcloser";
-import { currentPageName, diffNewId } from "./../utils/utils";
+import { currentPageName, currentSkin, diffNewId } from "./../utils/utils";
 import { NoticeboardRequestInfo, Settings } from "types/twinkle-types";
 
 export function createHideButton(callbackFn: (arg: string) => void) {
@@ -46,47 +46,47 @@ export function createButton(
     buttonColor: string,
     callbackFn: (arg: string | null) => void
 ): void {
-    const usersNodeList = document.querySelectorAll('a.mw-usertoollinks-talk');
-    if (usersNodeList) {
-        usersNodeList.forEach((element) => {
-            if (element) {
-                const firstParentElement = element.parentElement;
-                if (firstParentElement) {
-                    if (firstParentElement.querySelector('a.extiw')) {
-                        return;
-                    }
-                    const newElement = document.createElement('span');
-                    newElement.textContent = ' · ';
-                    const elementChild = document.createElement('a');
-                    elementChild.id = buttonId;
-                    elementChild.textContent = buttonText;
-                    elementChild.style.color = buttonColor;
-                    elementChild.addEventListener('click', () => {
-                        let username;
-                        // Always using the special page name logic
-                        if (currentPageName === "Especial:PáginasNuevas") {
-                            username = element.closest('.mw-usertoollinks')!.parentElement?.querySelector('.mw-userlink, .history-user .mw-userlink')
-                                ?.textContent
-                                ?.trim();
-                        } else {
-                            username = element.closest('.mw-usertoollinks')!.parentElement?.parentElement?.querySelector('.mw-userlink, .history-user .mw-userlink')
-                                ?.textContent
-                                ?.trim();
-                        }
-                        if (username) {
-                            callbackFn(username);
-                        }
-                    });
-                    newElement.append(elementChild);
-                    const firstParentNode = element.parentNode;
-                    if (firstParentNode) {
-                        firstParentNode.insertBefore(newElement, element.nextSibling);
-                    }
-                }
-            }
+    function createButtonElement(prefix: string, onClick: () => void): HTMLSpanElement {
+        const anchor = document.createElement('a');
+        anchor.id = buttonId;
+        anchor.textContent = buttonText;
+        anchor.style.color = buttonColor;
+        anchor.addEventListener('click', onClick);
+
+        const span = document.createElement('span');
+        span.textContent = prefix;
+        span.append(anchor);
+        return span;
+    }
+
+    // Minerva skin diff pages
+    if (diffNewId && currentSkin === 'minerva') {
+        const userNameInAccordion = document.querySelector('.cdx-accordion__header__title>a.mw-userlink>bdi');
+        const username = userNameInAccordion?.textContent?.trim() || null;
+        if (username) {
+            const newElement = createButtonElement('· ', () => callbackFn(username));
+            userNameInAccordion!.parentElement?.parentElement?.append(newElement);
+        }
+        // other skins
+    } else {
+        document.querySelectorAll('a.mw-usertoollinks-talk').forEach((element) => {
+            const firstParentElement = element.parentElement;
+            if (!firstParentElement || firstParentElement.querySelector('a.extiw')) return;
+
+            const newElement = createButtonElement(' · ', () => {
+                const toollinksParent = element.closest('.mw-usertoollinks')!.parentElement;
+                const container = currentPageName === 'Especial:PáginasNuevas'
+                    ? toollinksParent
+                    : toollinksParent?.parentElement;
+                const username = container?.querySelector('.mw-userlink, .history-user .mw-userlink')?.textContent?.trim();
+                if (username) callbackFn(username);
+            });
+
+            element.parentNode?.insertBefore(newElement, element.nextSibling);
         });
     }
 }
+
 
 export function oouiButton(
     label: string,
