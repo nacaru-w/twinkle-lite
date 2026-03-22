@@ -4,6 +4,10 @@
 
 ## Module: Warnings
 * Added template {{aviso referencias}} to catalogue.
+* There will now be a link to open the module form in mobile skin (Minerva) diff pages.
+
+## Module: Tags
+* There will now be a link to open the module form in mobile skin (Minerva) diff pages.
 
 ## Module: Page protection
 * Added link to page protection registry to the form window.
