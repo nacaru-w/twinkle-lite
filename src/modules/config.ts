@@ -28,7 +28,7 @@ async function editConfigPage(settings: Settings) {
 function saveSettingsToLocalStorage(settings: Settings) {
     try {
         const serializedSettings = JSON.stringify(settings);
-        localStorage.setItem("TwinkleLiteUserSettings", serializedSettings);
+        localStorage.setItem(`TwinkleLiteUserSettings_${currentUser}`, serializedSettings);
     } catch (error) {
         console.error("Hubo un error guardando las preferencias de configuración en el localStorage:", error)
     }
