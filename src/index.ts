@@ -1,6 +1,6 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
 import { createBlockAppealsButton, createButton, createDRCButton, createHideButton, createNoticeboardResolutionButtons } from "./utils/DOMutils";
-import { isDeletionRequestOpen, currentAction, currentNamespace, currentPageName, currentSkin, currentUser, diffNewId, getConfigPage, isCurrentUserSysop, isMainPage } from "./utils/utils";
+import { isDeletionRequestOpen, currentAction, currentNamespace, currentPageName, currentPageNameNoUnderscores, currentSkin, currentUser, diffNewId, getConfigPage, isCurrentUserSysop, isMainPage } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
 import { createTagsFormWindow } from "./modules/tags";
@@ -139,7 +139,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			})
 		}
 
-		if (currentNamespace == 2 && currentPageName.endsWith(currentUser)) {
+		if (currentNamespace == 2 && currentPageNameNoUnderscores.endsWith(currentUser)) {
 			const configLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Configuración de TL', 'TL-button', 'Configuración de Twinkle Lite')
 			if (configLink) {
 				configLink.onclick = () => createConfigWindow(settings);
