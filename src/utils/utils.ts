@@ -7,15 +7,15 @@ import { QueryParams } from 'types-mediawiki/mw/Uri';
 export const api = new mw.Api()
 let cachedSettings: Settings | null = null;
 
-export const currentPageName = mw.config.get('wgPageName');
+export const currentPageName = mw.config.get('wgPageName') || '';
 export const currentPageNameNoUnderscores = currentPageName.replace(/_/g, ' ');
-export const currentUser = mw.config.get('wgUserName');
-export const relevantUserName = mw.config.get("wgRelevantUserName");
+export const currentUser = mw.config.get('wgUserName') || '';
+export const relevantUserName = mw.config.get("wgRelevantUserName") || '';
 export const currentNamespace: string | number = mw.config.get('wgNamespaceNumber');
 export const currentAction = mw.config.get('wgAction');
 export const currentSkin = mw.config.get('skin');
 export const diffNewId = mw.config.get('wgDiffNewId');
-export const userFlags: string[] = mw.config.get('wgUserGroups');
+export const userFlags: string[] = mw.config.get('wgUserGroups') || [];
 export const isCurrentUserSysop: boolean = userFlags.includes('sysop');
 export const isUserInMobileSkin = mw.config.get('skin') == 'minerva';
 export const isMainPage: boolean = mw.config.get('wgIsArticle');
@@ -491,7 +491,7 @@ export async function getConfigPage(): Promise<Settings | null> {
         return cachedSettings;
     }
 
-    const localStorageSettings: string | null = localStorage.getItem("TwinkleLiteUserSettings");
+    const localStorageSettings: string | null = localStorage.getItem(`TwinkleLiteUserSettings_${currentUser}`);
     if (localStorageSettings) {
         cachedSettings = JSON.parse(localStorageSettings);
         return cachedSettings;
