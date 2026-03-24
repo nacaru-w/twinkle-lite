@@ -139,13 +139,11 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			})
 		}
 
-		if (currentNamespace == 2 && currentPageName.endsWith(currentUser)) {
+		if (currentNamespace == 2 && currentPageName.endsWith(currentUser.replace(/ /g, '_'))) {
 			const configLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Configuración de TL', 'TL-button', 'Configuración de Twinkle Lite')
 			if (configLink) {
 				configLink.onclick = () => createConfigWindow(settings);
 			}
-
-
 		}
 
 		// Move to sandbox module option
