@@ -1,4 +1,5 @@
 const { Compilation, sources, ConcatenationScope, experiments } = require('webpack');
+const webpack = require('webpack');
 const output = "twinkle-lite.js";
 
 // Adapted from https://stackoverflow.com/a/65529189
@@ -47,6 +48,11 @@ module.exports = {
     },
     mode: 'production',
     plugins: [
+        new webpack.BannerPlugin({
+            banner: `⚠️ IMPORTANTE: ESTE CÓDIGO NO DEBE MODIFICARSE DESDE ESTA PÁGINA, SINO A TRAVÉS DE PR AL REPOSITORIO OFICIAL EN https://github.com/nacaru-w/twinkle-lite POR FAVOR, CONTACTA CON @Nacaru SI TIENES ALGUNA DUDA AL RESPECTO`,
+            raw: false,
+            entryOnly: true,
+        }),
         new NoWiki(),
     ],
 };
