@@ -19,7 +19,7 @@ const DRC = {
         bottom: '{{cierreCdb|{{safesubst:TESParam}}}}'
     },
     talkPage: async (veredict: string, requestData: DeletionRequestData) => {
-        return `{{cdbpasada|página=${currentPageName}|fecha=${parseTimestamp(requestData.dateOpened)}}|resultado='''${veredict}'''}}`
+        return `{{cdbpasada|página=${nominatedPage}|fecha=${parseTimestamp(requestData.dateOpened)}|resultado='''${veredict}'''}}`
     },
     articlePage: {
         removeTemplate: (content: string): string => {
