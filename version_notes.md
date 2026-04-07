@@ -6,11 +6,14 @@
 * Added template {{aviso referencias}} to catalogue.
 * There will now be a link to open the module form in mobile skin (Minerva) diff pages.
 
-## Module: Tags
+## Module: Reports
 * There will now be a link to open the module form in mobile skin (Minerva) diff pages.
 
 ## Module: Page protection
 * Added link to page protection registry to the form window.
+
+## Module: DRC
+* Fixed a bug that inserted a wrong link in the talk page's `cdbpasada` template.
 
 # v.5.0.2
 ## Module: Deletion request maker
