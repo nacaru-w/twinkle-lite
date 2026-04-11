@@ -31,6 +31,8 @@ async function submitMessage(event: Event): Promise<void> {
         finishMorebitsStatus(Window, statusWindow, 'finished', true);
         location.reload();
     } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+        new Morebits.status('Error', errorMessage, 'error');
         finishMorebitsStatus(Window, statusWindow, 'error');
         console.error(`Error: ${error}`);
     }
@@ -128,14 +130,19 @@ function adaptSysopResolution(resolution: string): string {
 async function editSection(sysopResolution: string): Promise<void> {
     new Morebits.status(`Paso ${step += 1}`, "obteniendo el contenido de la sección...", "info");
     sectionContent = await getContent(currentPageName, requestInfo?.sectionNumber?.toString());
-    const adaptedResolution = adaptSysopResolution(sysopResolution);
-    if (sectionContent) {
-        const newSectionContent = replaceAnswerPlaceholder(sectionContent, adaptedResolution);
-        if (newSectionContent) {
-            await appendResolutionText(newSectionContent, requestInfo?.sectionNumber?.toString() || '');
-        }
-        return
+
+    if (!sectionContent) {
+        throw new Error('No se ha podido obtener el contenido de la sección. Es posible que la página haya sido modificada o que la sección ya no exista.');
     }
+
+    const adaptedResolution = adaptSysopResolution(sysopResolution);
+    const newSectionContent = replaceAnswerPlaceholder(sectionContent, adaptedResolution);
+
+    if (newSectionContent === sectionContent) {
+        throw new Error('No se ha encontrado el campo «Respuesta» en la sección. Es posible que la estructura de la sección haya cambiado o que otro usuario la haya modificado.');
+    }
+
+    await appendResolutionText(newSectionContent, requestInfo?.sectionNumber?.toString() || '');
 }
 
 /**
