@@ -92,6 +92,10 @@ export function stripTalkPagePrefix(pageName: string): string {
  * @param window - A Morebits' simplewindow object that will be configured and displayed.
  */
 export function createStatusWindow(window: any): void {
+    const submitButton = document.querySelector<HTMLButtonElement>('.morebits-dialog-buttonpane .submitButtonProxy');
+    if (submitButton) {
+        submitButton.disabled = true;
+    }
     window.setTitle('Procesando acciones');
     let statusdiv: HTMLDivElement = document.createElement('div');
     statusdiv.style.padding = '15px';
@@ -421,11 +425,16 @@ export function finishMorebitsStatus(window: SimpleWindowInstance, statusWindow:
             break;
     }
     new Morebits.status(statusState, statusMessage, statusType);
-    if (refresh) {
+    if (status === 'error') {
+        const submitButton = document.querySelector<HTMLButtonElement>('.morebits-dialog-buttonpane .submitButtonProxy');
+        if (submitButton) {
+            submitButton.disabled = false;
+        }
+    } else if (refresh) {
         setTimeout(() => {
             location.reload();
         }, 2500);
-    } else if (!refresh && status !== 'error') {
+    } else {
         setTimeout(() => {
             statusWindow.close();
             window.close();
