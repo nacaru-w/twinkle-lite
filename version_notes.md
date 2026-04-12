@@ -1,6 +1,7 @@
 # v.5.1.0
 ## Global enhancements:
 * TL modules that add noticeboard requests will now have more unique titles. The corresponding edit summaries will now include a link to the relevant request.
+* The form submit button will now be disabled while the script is carrying out its actions to prevent duplicate submissions. The button is re-enabled if an error occurs.
 
 ## Module: Warnings
 * Added template {{aviso referencias}} to catalogue.
@@ -14,6 +15,9 @@
 
 ## Module: DRC
 * Fixed a bug that inserted a wrong link in the talk page's `cdbpasada` template.
+
+## Module: Noticeboard resolution
+* Fixed a bug where the script would silently succeed without making any changes to the noticeboard page. The script will now show an error message if the section content cannot be fetched or if the response field is not found in the section.
 
 # v.5.0.2
 ## Module: Deletion request maker
