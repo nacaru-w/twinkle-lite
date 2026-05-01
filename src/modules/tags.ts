@@ -420,7 +420,7 @@ function createGroupedWarning(templateList: any[]): string | false {
 function templateBuilder(templateObj: templateParamsDictionary): string {
     let allTemplatesString = '';
     for (const element in templateObj) {
-        let needsSust = tagTemplateDict[element]?.sust ? true : false; // Check whether the template uses sust or not (TP templates don't)
+        let needsSust = !!tagTemplateDict[element]?.sust; // Check whether the template uses sust or not (TP templates don't)
         if (element.includes('problemas artículo|')) {
             needsSust = true;
         }

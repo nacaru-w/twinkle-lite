@@ -11,6 +11,7 @@ import { createDRCFormWindow } from "./modules/deletionrequestcloser";
 import { createFastBlockerButton } from "./modules/fastblocker";
 import { createConfigWindow } from "./modules/config";
 import { createMTSFormWindow } from "./modules/movetosandbox";
+import { createRestorationRequestFormWindow } from "./modules/restorationrequest";
 
 // Let's check first whether the script has been already loaded through global variable
 if (!window.IS_TWINKLE_LITE_LOADED) {
@@ -162,6 +163,14 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 			if (settings?.NBRButtonsCheckbox ?? true) {
 				console.log("Módulo de resolución del tablón de anuncios cargado");
 				createNoticeboardResolutionButtons(settings);
+			}
+		}
+
+		// Page restoration module
+		if (currentNamespace == 0) {
+			const RRPortletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Solicitar restauración', 'TL-button', 'Hacer una solicitud de restauración para esta página');
+			if (RRPortletLink) {
+				RRPortletLink.onclick = () => createRestorationRequestFormWindow();
 			}
 		}
 
