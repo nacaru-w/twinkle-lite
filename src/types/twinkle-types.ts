@@ -176,3 +176,5 @@ export interface DeletionRequestData {
     daysElapsedSinceOpened: number,
     lastPostponed: string | null,
 }
+
+export type PageRestorationType = 'redTemplateDeletion' | 'deletionThroughRequest';
