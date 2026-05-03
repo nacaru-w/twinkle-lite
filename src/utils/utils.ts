@@ -1,6 +1,6 @@
 import { SimpleWindowInstance } from './../types/morebits-types';
-import { APIPageResponse, BlockInfoObject, MovePageOptions, PageCreationBasicInfo, ProtectionStatus, Settings, WikimediaCategory } from '../types/twinkle-types'
-import { ApiProtectParams, ApiQueryBlocksParams, ApiQueryCategoriesParams, ApiQueryInfoParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
+import { APIPageResponse, BlockInfoObject, DeletionStatusInfoObject, MovePageOptions, PageCreationBasicInfo, ProtectionStatus, Settings, WikimediaCategory } from '../types/twinkle-types'
+import { ApiProtectParams, ApiQueryBlocksParams, ApiQueryCategoriesParams, ApiQueryInfoParams, ApiQueryLogEventsParams, ApiQueryParams, ApiQueryRevisionsParams } from 'types-mediawiki/api_params'
 import { ApiResponse } from 'types-mediawiki/mw/Api';
 import { QueryParams } from 'types-mediawiki/mw/Uri';
 
@@ -123,6 +123,36 @@ export async function getCreator(): Promise<string | null> {
     const pages = response.query.pages;
     for (let p in pages) {
         return pages[p].revisions[0].user;
+    }
+
+    return null;
+}
+
+/**
+ * Retrieves the username of the original creator of a deleted page by querying
+ * the page creation log (`letype=create`). This is more reliable than reading
+ * the deletion archive, since archived revisions can be split across titles
+ * (e.g. after a move) or hidden via RevisionDelete.
+ *
+ * @param pageName - The title of the deleted page.
+ * @returns A promise that resolves to the username of the creator of the page,
+ * or `null` if no creation log entry can be found.
+ */
+export async function getDeletedPageCreator(pageName: string): Promise<string | null> {
+    const params: ApiQueryLogEventsParams = {
+        action: 'query',
+        format: 'json',
+        list: 'logevents',
+        letype: 'create',
+        letitle: pageName,
+        ledir: 'newer',
+        lelimit: 1,
+        leprop: 'user',
+    }
+    const response = await api.get(params);
+    const logevents = response.query?.logevents;
+    if (logevents && logevents.length > 0) {
+        return logevents[0].user;
     }
 
     return null;
@@ -656,4 +686,59 @@ export function pageHasDeletionTemplate(pageContent: string | null): boolean {
  */
 export function removeDeletionPageFromContent(content: string) {
     return content.replace(deletionTemplateRegex, '');
+}
+
+export async function getDeletionStatus(pageName: string): Promise<DeletionStatusInfoObject> {
+    const params: ApiQueryLogEventsParams & ApiQueryParams = {
+        action: 'query',
+        format: 'json',
+        titles: pageName,
+        list: 'logevents',
+        letype: 'delete',
+        letitle: pageName,
+        lelimit: 1
+    };
+
+    try {
+        const data = await new mw.Api().get(params);
+
+        const page = Object.values(data.query.pages)[0] as
+            | { pageid: number; ns: number; title: string }
+            | { ns: number; title: string; missing: '' };
+        const deleteLogs = (data.query.logevents || []) as Array<{
+            logid: number;
+            user: string;
+            timestamp: string;
+            comment?: string;
+        }>;
+
+        if (!('missing' in page)) {
+            return {
+                status: 'exists',
+                title: pageName,
+                page,
+                deletionLog: null
+            };
+        } else if (deleteLogs.length > 0) {
+            return {
+                status: 'deleted',
+                title: pageName,
+                page,
+                deletionLog: deleteLogs[0]
+            };
+        } else {
+            return {
+                status: 'never_existed',
+                title: pageName,
+                page,
+                deletionLog: null
+            };
+        }
+    } catch (error) {
+        return {
+            status: 'error',
+            title: pageName,
+            error
+        };
+    }
 }
