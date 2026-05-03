@@ -1,6 +1,6 @@
 import { createDeletionRequestMarkerFormWindow } from "./modules/deletionrequestmaker";
 import { createBlockAppealsButton, createButton, createDRCButton, createHideButton, createNoticeboardResolutionButtons } from "./utils/DOMutils";
-import { isDeletionRequestOpen, currentAction, currentNamespace, currentPageName, currentSkin, currentUser, diffNewId, getConfigPage, isCurrentUserSysop, isMainPage } from "./utils/utils";
+import { isDeletionRequestOpen, currentAction, currentNamespace, currentPageName, currentSkin, currentUser, diffNewId, getConfigPage, isCurrentUserSysop, isMainPage, getDeletionStatus } from "./utils/utils";
 import { createSpeedyDeletionFormWindow } from "./modules/speedydeletion";
 import { createPageProtectionFormWindow } from "./modules/pageprotection";
 import { createTagsFormWindow } from "./modules/tags";
@@ -167,7 +167,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		}
 
 		// Page restoration module
-		if (currentNamespace == 0) {
+		if ((currentNamespace == 0 || currentNamespace == 104) && (await getDeletionStatus(currentPageName)).status === 'deleted') {
 			const RRPortletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Solicitar restauración', 'TL-button', 'Hacer una solicitud de restauración para esta página');
 			if (RRPortletLink) {
 				RRPortletLink.onclick = () => createRestorationRequestFormWindow();
