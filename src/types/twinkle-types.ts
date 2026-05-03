@@ -165,6 +165,19 @@ export interface NoticeboardResolutionInput {
     useAdmintabTemplate: boolean
 }
 
+export interface RestorationRequestInput {
+    deletionType: PageRestorationType,
+    redTemplateDeletionReasonField: string,
+    deletedPageName: string,
+    rDeletedPageName: string,
+    reason: string,
+    rReason: string,
+    sandboxPageLink: string,
+    deletionDiscussionPageLink: string,
+    notify: boolean,
+    rNotify: boolean
+}
+
 export interface WikimediaCategory {
     ns: number,
     title: string
@@ -178,3 +191,45 @@ export interface DeletionRequestData {
 }
 
 export type PageRestorationType = 'redTemplateDeletion' | 'deletionThroughRequest';
+
+export type DeletionStatusInfoObject =
+    | {
+        status: 'exists';
+        title: string;
+        page: {
+            pageid: number;
+            ns: number;
+            title: string;
+        };
+        deletionLog: null;
+    }
+    | {
+        status: 'deleted';
+        title: string;
+        page: {
+            ns: number;
+            title: string;
+            missing: '';
+        };
+        deletionLog: {
+            logid: number;
+            user: string;
+            timestamp: string;
+            comment?: string;
+        };
+    }
+    | {
+        status: 'never_existed';
+        title: string;
+        page: {
+            ns: number;
+            title: string;
+            missing: '';
+        };
+        deletionLog: null;
+    }
+    | {
+        status: 'error';
+        title: string;
+        error: unknown;
+    };
