@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
-import { PageRestorationType } from "types/twinkle-types";
-import { currentPageName, currentPageNameNoUnderscores } from "./../utils/utils";
+import { PageRestorationType, RestorationRequestInput } from "types/twinkle-types";
+import { appendSectionToPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getCreator, getDeletedPageCreator } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let chosenRestorationType: PageRestorationType | null = null;
@@ -55,11 +55,33 @@ export async function createRestorationRequestFormWindow() {
     })
 
     redTemplateDeletionField.append({
+        type: 'input',
+        name: 'deletedPageName',
+        label: 'Nombre del artículo borrado:',
+        value: currentPageNameNoUnderscores,
+        tooltip: 'Proporciona aquí el nombre del artículo que fue borrado, sin el prefijo «Wikipedia:». Por ejemplo, si la página borrada fue «Wikipedia:Ejemplo», solo debes escribir «Ejemplo».',
+        required: true,
+        style: 'margin-block: 0.25em;'
+    });
+
+    redTemplateDeletionField.append({
         type: 'textarea',
         name: 'reason',
         label: 'Describe el motivo:',
         tooltip: 'Describe aquí el motivo por el cual crees que el artículo debería de ser restaurado. Puedes usar wikicódigo en tu descripción. NO AÑADAS TU FIRMA, se hará automáticamente.',
+        required: true
     })
+
+    redTemplateDeletionField.append({
+        type: 'checkbox',
+        list: [{
+            name: 'notify',
+            value: 'notify',
+            label: 'Avisar al usuario que creó inicialmente el artículo (si es posible)',
+            tooltip: 'Marca esta casilla si quieres que se le notifique al usuario que creó inicialmente el artículo dejándole un mensaje en su página de discusión. Se omitirá si el usuario de la solicitud coincide con el creador.',
+            checked: false
+        }],
+    });
 
     // Menu for pages deleted through deletion request
     const deletionThroughRequestField = form.append({
@@ -68,26 +90,6 @@ export async function createRestorationRequestFormWindow() {
         label: 'Opciones',
         style: 'display: none;'
     })
-
-    deletionThroughRequestField.append({
-        type: 'input',
-        name: 'deletedPageName',
-        label: 'Nombre del artículo borrado:',
-        value: currentPageNameNoUnderscores,
-        tooltip: 'Proporciona aquí el nombre del artículo que fue borrado, sin el prefijo «Wikipedia:». Por ejemplo, si la página borrada fue «Wikipedia:Ejemplo», solo debes escribir «Ejemplo».',
-        required: true
-    });
-
-    deletionThroughRequestField.append({
-        type: 'input',
-        name: 'deletionDiscussionPageName',
-        label: 'Consulta de borrado:',
-        value: `Wikipedia:Consultas de borrado/${currentPageNameNoUnderscores}`,
-        tooltip: 'Proporciona aquí el enlace interno a la página donde se produjo la consulta de borrado. Por ejemplo, «Wikipedia:Consultas de borrado/Ejemplo».',
-        required: true,
-        style: 'margin-bottom: 0.5em; width: 100%;',
-    });
-
     deletionThroughRequestField.append({
         type: 'input',
         name: 'sandboxPageLink',
@@ -97,11 +99,45 @@ export async function createRestorationRequestFormWindow() {
     });
 
     deletionThroughRequestField.append({
+        type: 'input',
+        name: 'rDeletedPageName',
+        label: 'Nombre del artículo borrado:',
+        value: currentPageNameNoUnderscores,
+        tooltip: 'Proporciona aquí el nombre del artículo que fue borrado, sin el prefijo «Wikipedia:». Por ejemplo, si la página borrada fue «Wikipedia:Ejemplo», solo debes escribir «Ejemplo».',
+        required: true,
+        style: 'margin-block: 0.25em;'
+    });
+
+    deletionThroughRequestField.append({
+        type: 'input',
+        name: 'deletionDiscussionPageLink',
+        label: 'Consulta de borrado:',
+        value: `Wikipedia:Consultas de borrado/${currentPageNameNoUnderscores}`,
+        tooltip: 'Proporciona aquí el enlace interno a la página donde se produjo la consulta de borrado. Por ejemplo, «Wikipedia:Consultas de borrado/Ejemplo».',
+        required: true,
+        style: 'margin-bottom: 0.5em; width: 100%;',
+    });
+
+
+    deletionThroughRequestField.append({
         type: 'textarea',
-        name: 'reason',
+        name: 'rReason',
         label: 'Describe el motivo:',
         tooltip: 'Describe aquí el motivo por el cual crees que el artículo debería de ser restaurado. Puedes usar wikicódigo en tu descripción. NO AÑADAS TU FIRMA, se hará automáticamente.',
+        required: true
     });
+
+    deletionThroughRequestField.append({
+        type: 'checkbox',
+        list: [{
+            name: 'rNotify',
+            value: 'rNotify',
+            label: 'Avisar al usuario que creó inicialmente el artículo (si es posible)',
+            tooltip: 'Marca esta casilla si quieres que se le notifique al usuario que creó inicialmente el artículo dejándole un mensaje en su página de discusión. Se omitirá si el usuario de la solicitud coincide con el creador.',
+            checked: false
+        }],
+    });
+
 
     form.append({
         type: 'submit',
@@ -136,6 +172,87 @@ function toggleShowMenu(menuToShow: PageRestorationType): void {
     });
 }
 
-function submitMessage() {
-    console.log("doneee");
+function getNoticeboardMessage(page: string, reason: string, deletionDiscussionLink?: string, sandboxLink?: string): string {
+    if (chosenRestorationType === 'redTemplateDeletion') {
+        return `
+; Artículo
+* {{a|${page}}}
+; Razón
+* ${reason}
+; Usuario que lo solicita
+* ~~~~
+; Respuesta
+(a rellenar por un bibliotecario)
+`
+    } else {
+        return `
+; Consulta
+* ${reason}
+; Enlace a la consulta de borrado
+* [[${deletionDiscussionLink}]]
+; Enlace al taller
+* [[${sandboxLink}]]
+; Usuario que consulta
+* ~~~~
+; Respuesta
+(a rellenar por un bibliotecario)
+`
+    }
+}
+
+async function generateUserNotification(noticeboard: string, deletedPage: string): Promise<string> {
+    return `
+''(Este es un aviso generado automáticamente a través de [[WP:TL|Twinkle Lite]])''\n
+He creado una solicitud para la restauración de un artículo que creaste: [[${deletedPage}]]. Puedes consultarla en el [[${noticeboard}#Solicitud de restauración de ${deletedPage}|tablón correspondiente]]. Saludos. ~~~~
+`
+}
+
+
+async function notifyUser(deletedPage: string): Promise<void> {
+    new Morebits.status(`Paso ${step += 1}`, "avisando al usuario...", "info");
+    const creator = await getDeletedPageCreator(currentPageName);
+    if (creator) {
+        await appendSectionToPage(
+            `Usuario_discusión:${creator}`,
+            `Aviso de solicitud de restauración mediante [[WP:TL|Twinkle Lite]]`,
+            `Aviso de solicitud de restauración del artículo [[${deletedPage}]]`,
+            await generateUserNotification(noticeboardDictionary[chosenRestorationType!], deletedPage)
+        )
+    }
+}
+
+async function submitMessage(event: Event): Promise<void> {
+    const form = event.target as HTMLFormElement;
+    const input: RestorationRequestInput = Morebits.quickForm.getInputData(form);
+    const deletedPage = (chosenRestorationType === 'redTemplateDeletion' ? input.deletedPageName : input.rDeletedPageName).trim();
+    const reason = chosenRestorationType === 'redTemplateDeletion' ? input.reason : input.rReason;
+    const notifyCreator = chosenRestorationType === 'redTemplateDeletion' ? input.notify : input.rNotify;
+
+    // if (showConfirmationDialog(`¿Seguro que quieres solicitar la restauración de esta página?`)) {
+    const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(350, 100);
+    createStatusWindow(statusWindow);
+    new Morebits.status(`Paso ${step += 1}`, 'Extrayendo información del formulario...', "info");
+
+    console.log("creator", await getDeletedPageCreator(currentPageName));
+    console.log("input", input)
+
+    if (chosenRestorationType) {
+        try {
+            new Morebits.status(`Paso ${step += 1}`, 'Creando la solicitud en el tablón correspondiente...', "info");
+            await appendSectionToPage(
+                noticeboardDictionary[chosenRestorationType],
+                `Creando solicitud de restauración de ${deletedPage} mediante [[WP:TL|Twinkle Lite]]`,
+                `Solicitud de restauración de [[${deletedPage}]]`,
+                getNoticeboardMessage(deletedPage, reason, input.deletionDiscussionPageLink, input.sandboxPageLink)
+            )
+            if (notifyCreator) await notifyUser(deletedPage);
+            finishMorebitsStatus(Window, statusWindow, 'finished', false);
+
+        } catch (error) {
+            finishMorebitsStatus(Window, statusWindow, 'error');
+            console.error(`Error: ${error}`);
+        }
+    }
+    // }
+
 }
