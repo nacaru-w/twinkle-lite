@@ -340,6 +340,25 @@ function editBuilder(data: QuickFormInputObject): any {
 }
 
 /**
+ * Escapes a free-text custom reason so it isn't interpreted as a criterion code.
+ *
+ * The {{destruir}} template matches each parameter against a #switch of criterion
+ * codes *and* aliases (e.g. «Duplicado» / «Artículo duplicado» → A5,
+ * «Infraesbozo» → A2, «Vandalismo» → G1…). When a user types one of those words
+ * as a custom reason in «Otra razón», the template renders the formal criterion
+ * instead of the literal text. To prevent this we replace the first non-space
+ * character with its HTML numeric entity: the value can no longer match any
+ * #switch case, but it still renders exactly the same. We only act when that
+ * character is alphanumeric, so reasons that start with wikicode ([[, {{, '''…)
+ * —which the field explicitly allows— are left untouched and never collide.
+ * @param {string} reason - The raw custom reason typed by the user.
+ * @returns The reason with its first plain-text character escaped, if applicable.
+ */
+function escapeOtherReason(reason: string): string {
+    return reason.replace(/^(\s*)([A-Za-z0-9])/, (_match, leadingSpace, char) => `${leadingSpace}&#${char.charCodeAt(0)};`);
+}
+
+/**
  * Concatenates all selected criteria into a single string for use in the deletion template.
  * @param {QuickFormInputObject} data - The input data from the form.
  * @returns A string of concatenated criteria.
@@ -354,7 +373,7 @@ function allCriteria(data: QuickFormInputObject): string {
 
     const reasonString = data?.otherreason ?? '';
     if (reasonString != '') {
-        fields.push(reasonString);
+        fields.push(escapeOtherReason(reasonString as string));
     }
     return fields.join('|');
 }
