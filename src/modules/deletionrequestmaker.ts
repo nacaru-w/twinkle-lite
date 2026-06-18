@@ -1,5 +1,6 @@
 import { ListElementData, QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
 import { api, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getCategories, getContent, getCreator, isPageMissing, removeUnderscores, showConfirmationDialog, stripCdbPrefix } from "./../utils/utils";
+import { parseTimestamp, todayAsTimestamp } from "./../utils/dateUtils";
 import { ApiEditPageParams } from "types-mediawiki/api_params";
 import { WikimediaCategory } from "types/twinkle-types";
 
@@ -120,13 +121,37 @@ async function createDeletionRequestPage(category: string, reason: string) {
 }
 
 /**
+ * Builds the deletion notice that is placed at the top of every nominated page.
+ *
+ * It reproduces the canonical eswiki format: a *transcluded* {{cdbM}} —never
+ * substituted, since subst dumps the raw expanded template code onto the article
+ * instead of a clean transclusion— wrapped in the two HTML comments that the
+ * closing module relies on to strip the notice once the consultation is resolved.
+ * The librarian shortcut comment with {{cdbpasada}} mirrors the manual process.
+ * Note the date is injected as a literal string because subst is not expanded
+ * inside HTML comments.
+ * @param page - The deletion-discussion subpage name (without the CDB prefix).
+ * @returns The wikicode notice to prepend to the nominated page.
+ */
+function buildNominatedPageNotice(page: string): string {
+    const pageName = removeUnderscores(page);
+    const date = parseTimestamp(todayAsTimestamp());
+    return [
+        '<!-- Por favor, no retires este mensaje hasta que se resuelva el proceso -->',
+        `{{cdbM|página=${pageName}|fecha=${date}|}}`,
+        `<!-- Sólo para bibliotecarios: {{cdbpasada|página=${pageName}|fecha=${date}|resultado='''mantener'''}} -->`,
+        '<!-- Fin del mensaje de la consulta, puedes editar bajo esta línea -->'
+    ].join('\n');
+}
+
+/**
  * Builds the edit parameters required to place the deletion template on the nominated page.
  * @param revision - The current revision of the page to be edited.
  * @returns An object containing the parameters necessary to make the edit.
  */
 function buildEditOnNominatedPage(revision: any): ApiEditPageParams {
     return {
-        text: `{{sust:cdbM|página=${deletionPageNoPrefix}}}\n` + revision.content,
+        text: buildNominatedPageNotice(deletionPageNoPrefix) + '\n' + revision.content,
         summary: `Añadiendo plantilla de consulta de borrado, véase [[Wikipedia:Consultas de borrado/${removeUnderscores(deletionPageNoPrefix)}]]; mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
         minor: false
     }
@@ -143,8 +168,8 @@ async function makeEditOnOtherNominatedPages(article: string): Promise<void> {
         article,
         (revision): ApiEditPageParams => {
             return {
-                text: `{{sust:cdbM|página=${deletionPageNoPrefix}}}\n` + revision.content,
-                summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${deletionPageNoPrefix}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
+                text: buildNominatedPageNotice(deletionPageNoPrefix) + '\n' + revision.content,
+                summary: `Nominada para su borrado, véase [[Wikipedia:Consultas de borrado/${removeUnderscores(deletionPageNoPrefix)}]] mediante [[WP:Twinkle Lite|Twinkle Lite]]`,
                 minor: false
             }
         }
