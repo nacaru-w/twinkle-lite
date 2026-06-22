@@ -138,6 +138,7 @@ export interface Settings {
     DRCActionsMenuCheckbox: boolean,
     BAButtonMenuCheckbox: boolean,
     MTSActionsMenuCheckbox: boolean,
+    RRActionsMenuCheckbox: boolean,
     NBRButtonsCheckbox: boolean
     askConfirmationCheckbox: boolean,
     useAdmintabTemplateCheckbox: boolean
