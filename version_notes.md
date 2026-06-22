@@ -20,10 +20,10 @@
 * Fixed a bug where the script would silently succeed without making any changes to the noticeboard page. The script will now show an error message if the section content cannot be fetched or if the response field is not found in the section.
 
 ## Module: Restoration request
-* A new module has been added. It allows users to request the restoration of a deleted page directly from the deleted page itself. The user can choose whether the page was deleted via speedy deletion / 30-day red template or through a deletion discussion, and the request is posted to the corresponding noticeboard. There is also an option to notify the user who originally created the page.
+* A new module has been added which allows users to request the restoration of a deleted page directly from the deleted page itself. The user can choose whether the page was deleted via speedy deletion / 30-day red template or through a deletion discussion, and the request is posted to the corresponding noticeboard. There is also an option to notify the user who originally created the page.
 
 ## Module: Speedy deletion
-* Fixed a bug whereby a custom reason written in the "other reason" field that matched a criterion code or one of its aliases (e.g. «Duplicado», «Vandalismo») was rendered as the formal criterion instead of as literal text. Free-text reasons are now escaped so they display exactly as typed, while reasons starting with wikicode are left untouched.
+* Fixed a bug whereby a custom reason written in the "other reason" field that matched a criterion code or one of its aliases (e.g.: «Duplicado», «Vandalismo») was rendered as the formal criterion instead of as literal text. Free-text reasons are now escaped so they display exactly as typed, while reasons starting with wikicode are left untouched.
 
 ## Module: Deletion request maker
 * Fixed a bug whereby the template placed on the nominated page(s) was inserted as raw, expanded template code instead of a clean deletion notice. The module now substitutes the canonical `{{Cdb}}` template.
