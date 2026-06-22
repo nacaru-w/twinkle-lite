@@ -234,6 +234,24 @@ export function createConfigWindow(settings: Settings | null) {
         ]
     })
 
+    const restorationRequestModuleField: QuickFormElementInstance = form.append({
+        type: 'field',
+        label: 'Módulo de solicitud de restauración'
+    })
+
+    restorationRequestModuleField.append({
+        type: 'checkbox',
+        name: 'rrMenu',
+        list: [
+            {
+                value: 'rr-actions',
+                label: 'Activa la opción «Solicitar restauración» en el menú de acciones en páginas borradas',
+                name: 'RRActionsMenuCheckbox',
+                checked: settings?.RRActionsMenuCheckbox ?? true
+            }
+        ]
+    })
+
     const fastBlockerField: QuickFormElementInstance = form.append({
         type: 'field',
         label: 'Módulo de bloqueado rápido (solo bibliotecarios)'

@@ -167,7 +167,7 @@ if (!window.IS_TWINKLE_LITE_LOADED) {
 		}
 
 		// Page restoration module
-		if ((currentNamespace == 0 || currentNamespace == 104) && (await getDeletionStatus(currentPageName)).status === 'deleted') {
+		if ((currentNamespace == 0 || currentNamespace == 104) && (settings?.RRActionsMenuCheckbox ?? true) && (await getDeletionStatus(currentPageName)).status === 'deleted') {
 			const RRPortletLink = mw.util.addPortletLink(menu, 'javascript:void(0)', 'Solicitar restauración', 'TL-button', 'Hacer una solicitud de restauración para esta página');
 			if (RRPortletLink) {
 				RRPortletLink.onclick = () => createRestorationRequestFormWindow();
