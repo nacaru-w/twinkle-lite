@@ -1,6 +1,6 @@
 import { QuickFormElementInstance, SimpleWindowInstance } from "types/morebits-types";
 import { PageRestorationType, RestorationRequestInput } from "types/twinkle-types";
-import { appendSectionToPage, createStatusWindow, currentPageName, currentPageNameNoUnderscores, finishMorebitsStatus, getCreator, getDeletedPageCreator } from "./../utils/utils";
+import { appendSectionToPage, createStatusWindow, currentPageNameNoUnderscores, currentUser, finishMorebitsStatus, getDeletedPageCreator } from "./../utils/utils";
 
 let Window: SimpleWindowInstance;
 let chosenRestorationType: PageRestorationType | null = null;
@@ -210,8 +210,8 @@ He creado una solicitud para la restauración de un artículo que creaste: [[${d
 
 async function notifyUser(deletedPage: string): Promise<void> {
     new Morebits.status(`Paso ${step += 1}`, "avisando al usuario...", "info");
-    const creator = await getDeletedPageCreator(currentPageName);
-    if (creator) {
+    const creator = await getDeletedPageCreator(deletedPage);
+    if (creator && creator !== currentUser) {
         await appendSectionToPage(
             `Usuario_discusión:${creator}`,
             `Aviso de solicitud de restauración mediante [[WP:TL|Twinkle Lite]]`,
@@ -232,9 +232,6 @@ async function submitMessage(event: Event): Promise<void> {
     const statusWindow: SimpleWindowInstance = new Morebits.simpleWindow(350, 100);
     createStatusWindow(statusWindow);
     new Morebits.status(`Paso ${step += 1}`, 'Extrayendo información del formulario...', "info");
-
-    console.log("creator", await getDeletedPageCreator(currentPageName));
-    console.log("input", input)
 
     if (chosenRestorationType) {
         try {
