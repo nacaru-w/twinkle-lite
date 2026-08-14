@@ -1,6 +1,6 @@
 # Twinkle Lite
 
-**Twinkle Lite** is a TypeScript-based lightweight version of the popular Twinkle tool, designed for automating and semi-automating maintenance tasks on Spanish Wikipedia. The tool consists of multiple modules written in JavaScript and is compiled using [Webpack](https://webpack.js.org/). The tool leverages the [Morebits library](https://github.com/wikimedia-gadgets/twinkle/wiki/morebits) and the [Mediawiki API](https://www.mediawiki.org/wiki/API:Main_page) for its functionality.
+**Twinkle Lite** is a Spanish-Wikipedia-specific TypeScript-based version of the popular Twinkle tool, designed for automating and semi-automating maintenance tasks on eswiki. The tool consists of multiple modules written in JavaScript and is compiled using [Webpack](https://webpack.js.org/). The tool leverages the [Morebits library](https://github.com/wikimedia-gadgets/twinkle/wiki/morebits) and the [Mediawiki API](https://www.mediawiki.org/wiki/API:Main_page) for its functionality.
 
 ## Overview
 
@@ -19,13 +19,16 @@ User modules:
 * **Tags**: Grants the option to quickly add maintenance tags to articles (and notify relevant users about it).
 * **Warnings**: Includes an option allowing the addition of warning templates in other users' talk pages.
 * **Hide**: Allows users to request an edit to be hidden.
+* **Move to sandbox**: Provides an option to move a page to its author's userspace sandbox (removing any deletion templates in the process when used by sysops).
+* **Restoration request**: On deleted pages, allows users to request the restoration of the page through the relevant noticeboard, depending on how it was deleted.
+* **Config**: Adds a settings window, accessible from the user's own page, that lets users enable or disable each module's buttons. Preferences are stored in a JSON subpage of the user's userspace.
 
 Sysop modules:
 
 * **Deletion-request-closer**: Identifies deletion request pages and provides an option to close them through a form. Upon submission, the script performs the necessary administrative actions, modifying the deletion request page, the article's talk page, and the nominated page's main page.
 * **Block-appeals**: Handles the resolution of block appeals. This module uses the information provided by admins through a form to modify the appealing user's talk page.
 * **Fast-blocker**: Developed by user -sasha- in JavaScript, this module enables quick blocking of users. It has been integrated into Twinkle Lite as part of the sysop modules and ported to TypeScript.
-* **Noticeboard resolutions**: Allows sysops to leave a response to requests on noticeboard quickly, also permitting leaving a otification on the talk page of the user who wrote the request.
+* **Noticeboard resolutions**: Allows sysops to leave a response to requests on noticeboard quickly, also permitting leaving a notification on the talk page of the user who wrote the request.
 
 Twinkle Lite is inspired by the original [Twinkle](https://github.com/wikimedia-gadgets/twinkle) developed by [AzaToth](https://en.wikipedia.org/wiki/User:AzaToth) on English Wikipedia, and [TwinkleGlobal](https://github.com/Xi-Plus/twinkle-global) by [Xiplus](https://meta.wikimedia.org/wiki/User:Xiplus).
 
